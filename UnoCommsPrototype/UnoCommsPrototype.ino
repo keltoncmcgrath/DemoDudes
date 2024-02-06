@@ -8,10 +8,6 @@ SoftwareSerial mySerial(2, 3);  //TX & RX
 int flag = 255;
 int num_blocks = 0;
 
-// Read Conditionals
-bool num_block_loop = true;
-bool block_info_loop = true;
-
 
 void setup() {
   // Begin serial comms
@@ -20,35 +16,33 @@ void setup() {
 
   // Read num blocks on chassis
   Serial.println(F("How Many Blocks on Chassis?"));
-  while(num_block_loop){
+  while(true){
     if(Serial.available() == 1) {
-      num_blocks = Serial.read();
-      num_block_loop = false;
+      num_blocks = Serial.read() - '0';   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
+      break;
     }
   }
   char block_info[4*num_blocks] = {};
+  Serial.println(int(num_blocks));
 
   // Read block info from serial monitor
   for(int i=0; i<int(num_blocks); i++){
     Serial.print(F("Info of Block "));
     Serial.print(i+1);
     Serial.println(F(":"));
-    block_info_loop = true;
-    while(block_info_loop){
+    while(true){
       if(Serial.available() == 5){
+        Serial.read();
         block_info[i*4+0] = Serial.read();
         block_info[i*4+1] = Serial.read();
         block_info[i*4+2] = Serial.read();
         block_info[i*4+3] = Serial.read();
-        block_info_loop = false;
+        break;
       }
-    }  
+    }
   }
 
   Serial.println(block_info);
-  
-  
-  
 }
 
 void loop() {
