@@ -17,39 +17,37 @@ void setup() {
   // Read num blocks on chassis
   Serial.println(F("How Many Blocks on Chassis?"));
   while(true){
-    if(Serial.available() == 1) {
+    if(Serial.available() == 2) {
       num_blocks = Serial.read() - '0';   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
+      Serial.read();
       break;
     }
   }
-  char block_info[4*num_blocks] = {};
-  Serial.println(int(num_blocks));
 
-  // Read block info from serial monitor
+  // Read block data from serial monitor
+  char block_data[4*num_blocks] = {};
   for(int i=0; i<int(num_blocks); i++){
     Serial.print(F("Info of Block "));
     Serial.print(i+1);
     Serial.println(F(":"));
     while(true){
       if(Serial.available() == 5){
+        block_data[i*4+0] = Serial.read();
+        block_data[i*4+1] = Serial.read();
+        block_data[i*4+2] = Serial.read();
+        block_data[i*4+3] = Serial.read();
         Serial.read();
-        block_info[i*4+0] = Serial.read();
-        block_info[i*4+1] = Serial.read();
-        block_info[i*4+2] = Serial.read();
-        block_info[i*4+3] = Serial.read();
         break;
       }
     }
   }
 
-  Serial.println(block_info);
+  // Send block data to mega
+  mySerial.write(block_data);
 }
 
-void loop() {
-  // Data to send
-  // TODO
 
-  // Sending Data
+void loop() {
   // TODO
   
 }
