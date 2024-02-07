@@ -7,6 +7,7 @@ char yellow[] = {};
 // Variables
 int num_blocks;
 int flag = 33;
+int rc;
 
 
 void setup() {
@@ -21,7 +22,6 @@ void loop() {
   if(Serial3.available()>=2){                         // Checks for start flag and number of blocks
     if(Serial3.read() == flag){                       // Checks if the first byte is the start flag
       num_blocks = Serial3.read() - '0';              // Store number of blocks
-      Serial.println(num_blocks);
       while(true){                                    // While we know data is sending
         if(Serial3.available()>=num_blocks*4){        // If all the data is sent
           for(int i=0; i<num_blocks; i++){            // Read the data block by block
