@@ -7,7 +7,6 @@ char yellow[] = {};
 // Variables
 int num_blocks;
 int flag = 33;
-int rc;
 
 
 void setup() {
