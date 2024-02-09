@@ -1,5 +1,5 @@
 #include "DualTB9051FTGMotorShield.h"
-#include <Encoder.h> 
+#include <Encoder.h>
 // Creates an object that is easier to call than Dual....MotorShield
 DualTB9051FTGMotorShield md;
 
