@@ -1,34 +1,51 @@
+// Include Libraries
 #include "DualTB9051FTGMotorShield.h"
 #include <Encoder.h>
+#include <Servo.h>
+
 // Creates an object that is easier to call than Dual....MotorShield
 DualTB9051FTGMotorShield md;
 
-//Initializing Variables
-int duration = 1500;        // Setting time to run
-float speed = 400;            // Setting Motor Speed
+// Create Servo Objects
+Servo arm_servo;
+Servo shovel_servo; 
+
+// Action Vars
+long num_stripes = 131 * 64;    // Total encoder stripes
+int duration = 1500;            // Setting time to run
+float speed = 400;              // Setting Motor Speed
 float turn_speed;
 
+// Comms Vars
 int flag = 33;                // Setting flag variables
 char command;                 // Setting the command variable
 
+// Pin Vars
 int encoder1_pinA = 20;       // Declaring econder1 pins
 int encoder1_pinB = 21;       // Declaring econder1 pins
 int encoder2_pinA = 18;       // Declaring econder2 pins
 int encoder2_pinB = 19;       // Declaring econder2 pins
 int encoder1_count;           // Initializing encoder1 count values
 int encoder2_count;           // Initializing encoder2 count values
+int arm_servo_pin = 22; 
+int shovel_servo_pin = 23;
 
- //Initialzing encoder objects
+//Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
 Encoder encoder2(encoder2_pinA,encoder2_pinB);
 
-long num_stripes = 131 * 64;
 
 // Motor on function
 void MotorOn(float speed, float duration){
   // Sets Speed
-  md.setM2Speed(speed); //Setting motor 2's speed
-  md.setM1Speed(speed); //Setting motor 1/s speed
+  if(speed<0){
+    md.setM2Speed(speed+10); //Setting motor 2's speed
+    md.setM1Speed(speed); //Setting motor 1's speed
+  }
+  else{
+    md.setM2Speed(speed); //Setting motor 2's speed
+    md.setM1Speed(speed-10); //Setting motor 1's speed
+  }
   delay(duration);      //Keeping the motors on for a set duration
   md.setM2Speed(0);     //Turning motors2 off
   md.setM1Speed(0);     //Turning motor1 off
@@ -49,12 +66,27 @@ void Turn(char command){
   encoder2_count = encoder2.read();
   md.setM1Speed(turn_speed);
   md.setM2Speed(-turn_speed);
-  while((abs(encoder1_count) <= stripe_turning) && (abs(encoder2_count) <= stripe_turning)){
+  while((abs(encoder1_count) <= stripe_turning) || (abs(encoder2_count) <= stripe_turning)){
   encoder1_count = encoder1.read();
   encoder2_count = encoder2.read();
   }
   md.setM1Speed(0);
   md.setM2Speed(0);
+}
+
+
+void ArmServo() {
+  Serial.print("Arm Servo");
+  arm_servo.write(0);
+  delay(2000);
+  arm_servo.write(180); 
+}
+
+void ShovelServo(){
+  Serial.print("Hello"); 
+  shovel_servo.write(0);
+  delay(2000);
+  shovel_servo.write(180); 
 }
 
 void setup() {
@@ -67,6 +99,9 @@ void setup() {
   md.enableDrivers();
 
   Serial.println("Ready for signal...");
+
+  arm_servo.attach(arm_servo_pin);
+  shovel_servo.attach(shovel_servo_pin); 
 }
 
 void loop() {
@@ -90,6 +125,14 @@ void loop() {
     case 'l':
       Turn(command);
       break;
+    case 'a':
+      Serial.println("In arm case");
+      ArmServo();
+      break;
+    case 's':
+      Serial.println("In Shovel Case");
+      ShovelServo();
+      break; 
   }
   command = 0;
 }
