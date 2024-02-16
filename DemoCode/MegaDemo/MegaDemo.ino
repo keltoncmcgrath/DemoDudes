@@ -8,7 +8,7 @@ DualTB9051FTGMotorShield md;
 
 // Create Servo Objects
 Servo arm_servo;
-Servo shovel_servo; 
+Servo shovel_servo;
 
 // Action Vars
 long num_stripes = 131 * 64;    // Total encoder stripes
@@ -74,20 +74,20 @@ void Turn(char command){
   md.setM2Speed(0);
 }
 
-
+// Arms Servo Function
 void ArmServo() {
-  Serial.print("Arm Servo");
   arm_servo.write(0);
   delay(2000);
   arm_servo.write(180); 
 }
 
+// Shovel Servo Function
 void ShovelServo(){
-  Serial.print("Hello"); 
   shovel_servo.write(0);
   delay(2000);
   shovel_servo.write(180); 
 }
+
 
 void setup() {
   //Serial Communication
@@ -108,8 +108,8 @@ void loop() {
   if(Serial3.available()>=2){
     if(Serial3.read() == flag){
       command = Serial3.read();
-      // Serial.write(command);
-      // Serial.println("Print");
+      Serial.write(command);
+      Serial.println();
     }
   }
   switch(command) {
@@ -126,11 +126,9 @@ void loop() {
       Turn(command);
       break;
     case 'a':
-      Serial.println("In arm case");
       ArmServo();
       break;
     case 's':
-      Serial.println("In Shovel Case");
       ShovelServo();
       break; 
   }
