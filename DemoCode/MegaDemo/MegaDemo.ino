@@ -2,13 +2,16 @@
 #include "DualTB9051FTGMotorShield.h"
 #include <Encoder.h>
 #include <Servo.h>
+#include <PWMServo.h>
 
 // Creates an object that is easier to call than Dual....MotorShield
 DualTB9051FTGMotorShield md;
 
 // Create Servo Objects
-Servo arm_servo;
-Servo shovel_servo;
+// Servo arm_servo;
+// Servo shovel_servo;
+PWMServo arm_servo;
+PWMServo shovel_servo;
 
 // Action Vars
 long num_stripes = 131 * 64;    // Total encoder stripes
@@ -27,8 +30,8 @@ int encoder2_pinA = 18;       // Declaring econder2 pins
 int encoder2_pinB = 19;       // Declaring econder2 pins
 int encoder1_count;           // Initializing encoder1 count values
 int encoder2_count;           // Initializing encoder2 count values
-int arm_servo_pin = 22; 
-int shovel_servo_pin = 23;
+int arm_servo_pin = 12; 
+int shovel_servo_pin = 13;
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
