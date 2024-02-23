@@ -95,7 +95,7 @@ void ShovelServo(){
 void setup() {
   //Serial Communication
   Serial.begin(9600);
-  Serial3.begin(9600);
+  Serial2.begin(9600);
 
   //Initializing and Enabling Driver Shield
   md.init();
@@ -108,9 +108,9 @@ void setup() {
 }
 
 void loop() {
-  if(Serial3.available()>=2){
-    if(Serial3.read() == flag){
-      command = Serial3.read();
+  if(Serial2.available()>=2){
+    if(Serial2.read() == flag){
+      command = Serial2.read();
       Serial.write(command);
       Serial.println();
     }
