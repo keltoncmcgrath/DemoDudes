@@ -5,8 +5,8 @@
 SoftwareSerial mySerial(2, 3);  //TX & RX
 
 // Data and Variables
-int flag = 33;              //33 corresponds to an exclamation point serving as a good flag variable for block data
-char demo_command;          //Initializing a variable for user input
+int flag = 33;      //33 corresponds to an exclamation point serving as a good flag variable for block data
+char demo_command;  //Initializing a variable for user input
 
 
 void setup() {
@@ -23,18 +23,16 @@ void setup() {
   Serial.println(F("l - Turn Left"));
   Serial.println(F("a - Move Arm Servo Up and Down"));
   Serial.println(F("s - Move Shovel Servo Up and Down"));
-
 }
 
 
 void loop() {
-  // 
-  if (Serial.available() == 2) {        //The first bit corresponds to the demo command and the second bit corresponds to the enter command
-    demo_command = Serial.read();       //Serial.read() reads the character of demo_command
-    Serial.read();                      //Reads the enter command again to remove it from the buffer
+  //
+  if (Serial.available() == 2) {   //The first bit corresponds to the demo command and the second bit corresponds to the enter command
+    demo_command = Serial.read();  //Serial.read() reads the character of demo_command
+    Serial.read();                 //Reads the enter command again to remove it from the buffer
     // Write the demo command from the uno to the mega
     mySerial.write(flag);
     mySerial.write(demo_command);
   }
-
 }
