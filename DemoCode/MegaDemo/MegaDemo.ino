@@ -3,6 +3,7 @@
 #include <Encoder.h>
 #include <Servo.h>
 #include <PWMServo.h>
+#include <QTRSensors.h>
 
 // Creates an object that is easier to call than Dual....MotorShield
 DualTB9051FTGMotorShield md;
@@ -13,11 +14,19 @@ DualTB9051FTGMotorShield md;
 PWMServo arm_servo;
 PWMServo shovel_servo;
 
+// Create IR Sensor Object
+QTRSensors qtr;
+
 // Action Vars
 long num_stripes = 131 * 64;    // Total encoder stripes
 int duration = 1500;            // Setting time to run
 float speed = 400;              // Setting Motor Speed
 float turn_speed;
+float distance = 20;             // cm
+float dist_volts;
+float a;                          //distance sensor lin fit variable
+float b;                          //distance sensor lin fit variable
+float dist_read; 
 
 // Comms Vars
 int flag = 33;                // Setting flag variables
@@ -32,6 +41,14 @@ int encoder1_count;           // Initializing encoder1 count values
 int encoder2_count;           // Initializing encoder2 count values
 int arm_servo_pin = 12; 
 int shovel_servo_pin = 13;
+int dist_sensor = A7;
+const uint8_t ir_pins[] = {24, 25, 26, 27, 28, 29, 30, 31};
+
+// IR Array Variables
+const uint8_t ir_sensor_count = 8;
+uint16_t ir_values[ir_sensor_count] = {};
+int ir_bias[ir_sensor_count] = {};
+
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -52,6 +69,19 @@ void MotorOn(float speed, float duration){
   delay(duration);      //Keeping the motors on for a set duration
   md.setM2Speed(0);     //Turning motors2 off
   md.setM1Speed(0);     //Turning motor1 off
+}
+
+void DistSense(float distance, float speed){
+  md.setM2Speed(speed+10);
+  md.setM1Speed(speed); 
+  dist_volts = analogRead(dist_sensor);
+  a = exp(7.502420862);
+  b = -0.9238074889;
+  dist_read = pow((dist_volts/a),(1/b));
+  if (dist_read <= distance){
+    md.setM2Speed(0);
+    md.setM1Speed(0);
+  }
 }
 
 // Turming function
@@ -91,6 +121,11 @@ void ShovelServo(){
   shovel_servo.write(180); 
 }
 
+// Line Following Demo Function
+void LineFollow(){
+  
+}
+
 
 void setup() {
   //Serial Communication
@@ -101,10 +136,14 @@ void setup() {
   md.init();
   md.enableDrivers();
 
+  // Communicate
   Serial.println("Ready for signal...");
 
+  // Attatch Pins to Servo Objects
   arm_servo.attach(arm_servo_pin);
-  shovel_servo.attach(shovel_servo_pin); 
+  shovel_servo.attach(shovel_servo_pin);
+
+  // Setup IR Array
 }
 
 void loop() {
@@ -134,6 +173,13 @@ void loop() {
     case 's':
       ShovelServo();
       break; 
+    case 'd':
+      DistSense(distance, speed);
+      break;
+    case 'i':
+      LineFollow();
+      break;
+      
   }
   command = 0;
 }
