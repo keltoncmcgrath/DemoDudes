@@ -17,16 +17,11 @@ PWMServo shovel_servo;
 // Create IR Sensor Object
 QTRSensors qtr;
 
-// Action Vars
+// Moving Variables
 long num_stripes = 131 * 64;    // Total encoder stripes
 int duration = 1500;            // Setting time to run
 float speed = 300;              // Setting Motor Speed
 float turn_speed;
-float dist_desired = 20;        // cm
-float dist_val;
-float a = exp(7.502420862);     //distance sensor lin fit variable
-float b = -0.9238074889;        //distance sensor lin fit variable
-float dist_actual; 
 
 // Comms Vars
 int flag = 33;                // Setting flag variables
@@ -43,10 +38,10 @@ int arm_servo_pin = 23;
 int shovel_servo_pin = 22;
 // int arm_servo_pin = 13;
 //int shovel_servo_pin = 12;
-int dist_pin = A7;
+int dist_pin = A8;
 const uint8_t ir_pins[] = {24, 25, 26, 28, 27, 29, 30, 31};
 
-// IR Array Variables
+// IR Array Vars
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_bias[] = {166, 58, 58, 106, 58, 106, 106};
@@ -57,9 +52,17 @@ float ir_dist_actual;
 float ir_error;
 int m1s;
 int m2s;
-int kp = 150;
+int kp = 75;
 float num = 0;
 float den = 0;
+
+// Rane Finder Vars
+float dist_desired = 20;      // cm
+float dist_val;
+float a = exp(7.453976699);   //distance sensor lin fit variable
+float b = -0.907499336;       //distance sensor lin fit variable
+float dist_actual;
+bool stop = false;
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -70,24 +73,22 @@ Encoder encoder2(encoder2_pinA,encoder2_pinB);
 void MotorOn(float speed, float duration){
   // Sets Speed
   if(speed<0){
-    md.setM2Speed(speed+10); //Setting motor 2's speed
-    md.setM1Speed(speed); //Setting motor 1's speed
+    md.setSpeeds(speed, speed+10);
   }
   else{
-    md.setM2Speed(speed); //Setting motor 2's speed
-    md.setM1Speed(speed-10); //Setting motor 1's speed
+    md.setSpeeds(speed-10, speed);
   }
   delay(duration);      //Keeping the motors on for a set duration
-  md.setM2Speed(0);     //Turning motors2 off
-  md.setM1Speed(0);     //Turning motor1 off
+  md.setSpeeds(0, 0);
 }
 
-void DistSense(float dist_desired, float speed){
+void DistSense(){
   md.setSpeeds(speed, speed+10);
   dist_val = analogRead(dist_pin);
-  dist_actual = pow((dist_val/a),(1/b));
-  if (dist_actual <= dist_desired){
+  dist_actual = pow(dist_val/a, 1/b);
+  if(dist_actual <= dist_desired){
     md.setSpeeds(0, 0);
+    stop = true;
   }
 }
 
@@ -210,7 +211,10 @@ void loop() {
       ShovelServo();
       break; 
     case 'd':
-      DistSense(dist_desired, speed);
+      while(!stop){
+        DistSense();
+      }
+      stop = false;
       break;
     case 'i':
       while(true){
