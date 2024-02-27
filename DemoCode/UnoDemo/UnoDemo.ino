@@ -23,6 +23,8 @@ void setup() {
   Serial.println(F("l - Turn Left"));
   Serial.println(F("a - Move Arm Servo Up and Down"));
   Serial.println(F("s - Move Shovel Servo Up and Down"));
+  Serial.println(F("i - Follow a Line"));
+  Serial.println(F("d - Drive and Stop a Distance Away from an Object"));
 }
 
 

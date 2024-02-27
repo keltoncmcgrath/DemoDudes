@@ -1,12 +1,12 @@
 // Include Libraries
-#include "DualTB9051FTGMotorShield.h"
+#include "DualTB9051FTGMotorShieldUnoMega.h"
 #include <Encoder.h>
 #include <Servo.h>
 #include <PWMServo.h>
 #include <QTRSensors.h>
 
 // Creates an object that is easier to call than Dual....MotorShield
-DualTB9051FTGMotorShield md;
+DualTB9051FTGMotorShieldUnoMega md;
 
 // Create Servo Objects
 // Servo arm_servo;
@@ -20,13 +20,13 @@ QTRSensors qtr;
 // Action Vars
 long num_stripes = 131 * 64;    // Total encoder stripes
 int duration = 1500;            // Setting time to run
-float speed = 400;              // Setting Motor Speed
+float speed = 300;              // Setting Motor Speed
 float turn_speed;
-float distance = 20;             // cm
-float dist_volts;
-float a;                          //distance sensor lin fit variable
-float b;                          //distance sensor lin fit variable
-float dist_read; 
+float dist_desired = 20;        // cm
+float dist_val;
+float a = exp(7.502420862);     //distance sensor lin fit variable
+float b = -0.9238074889;        //distance sensor lin fit variable
+float dist_actual; 
 
 // Comms Vars
 int flag = 33;                // Setting flag variables
@@ -39,16 +39,27 @@ int encoder2_pinA = 18;       // Declaring econder2 pins
 int encoder2_pinB = 19;       // Declaring econder2 pins
 int encoder1_count;           // Initializing encoder1 count values
 int encoder2_count;           // Initializing encoder2 count values
-int arm_servo_pin = 12; 
-int shovel_servo_pin = 13;
-int dist_sensor = A7;
-const uint8_t ir_pins[] = {24, 25, 26, 27, 28, 29, 30, 31};
+int arm_servo_pin = 23; 
+int shovel_servo_pin = 22;
+// int arm_servo_pin = 13;
+//int shovel_servo_pin = 12;
+int dist_pin = A7;
+const uint8_t ir_pins[] = {24, 25, 26, 28, 27, 29, 30, 31};
 
 // IR Array Variables
 const uint8_t ir_sensor_count = 8;
-uint16_t ir_values[ir_sensor_count] = {};
-int ir_bias[ir_sensor_count] = {};
-
+uint16_t ir_values[ir_sensor_count];
+int ir_bias[] = {166, 58, 58, 106, 58, 106, 106};
+int ir_unbiased[ir_sensor_count];
+float ir_sensor_spacing[] = {0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6};
+float ir_dist_desired = 2.8;
+float ir_dist_actual;
+float ir_error;
+int m1s;
+int m2s;
+int kp = 150;
+float num = 0;
+float den = 0;
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -71,16 +82,12 @@ void MotorOn(float speed, float duration){
   md.setM1Speed(0);     //Turning motor1 off
 }
 
-void DistSense(float distance, float speed){
-  md.setM2Speed(speed+10);
-  md.setM1Speed(speed); 
-  dist_volts = analogRead(dist_sensor);
-  a = exp(7.502420862);
-  b = -0.9238074889;
-  dist_read = pow((dist_volts/a),(1/b));
-  if (dist_read <= distance){
-    md.setM2Speed(0);
-    md.setM1Speed(0);
+void DistSense(float dist_desired, float speed){
+  md.setSpeeds(speed, speed+10);
+  dist_val = analogRead(dist_pin);
+  dist_actual = pow((dist_val/a),(1/b));
+  if (dist_actual <= dist_desired){
+    md.setSpeeds(0, 0);
   }
 }
 
@@ -112,18 +119,45 @@ void ArmServo() {
   arm_servo.write(0);
   delay(2000);
   arm_servo.write(180); 
+  delay(1500);
+  arm_servo.write(90);
 }
 
 // Shovel Servo Function
 void ShovelServo(){
   shovel_servo.write(0);
   delay(2000);
-  shovel_servo.write(180); 
+  shovel_servo.write(180);
+  delay(1500);
+  shovel_servo.write(90); 
 }
 
 // Line Following Demo Function
 void LineFollow(){
-  
+  // Read sensor values and take bias off
+  qtr.read(ir_values);
+  for(int i=0; i<ir_sensor_count; i++){
+    ir_unbiased[i] = ir_values[i] - ir_bias[i];
+    Serial.print(ir_values[i]);
+    Serial.print("\t");
+  }
+  Serial.println();
+
+  // Calculate distance of line from deisred distance
+  for(int i=0; i<ir_sensor_count; i++){
+    num = num + (ir_unbiased[i] * ir_sensor_spacing[i]);
+    den = den + ir_unbiased[i];
+  }
+  ir_dist_actual = num/den; 
+  num = 0;
+  den = 0;
+
+  // Calculate error and control speed
+  ir_error = ir_dist_desired - ir_dist_actual;
+  m1s = speed - kp*ir_error;
+  m2s = speed + kp*ir_error;
+  // Serial.println(ir_error);
+  md.setSpeeds(m1s, m2s);
 }
 
 
@@ -144,6 +178,8 @@ void setup() {
   shovel_servo.attach(shovel_servo_pin);
 
   // Setup IR Array
+  qtr.setTypeRC();
+  qtr.setSensorPins(ir_pins, ir_sensor_count);
 }
 
 void loop() {
@@ -174,10 +210,12 @@ void loop() {
       ShovelServo();
       break; 
     case 'd':
-      DistSense(distance, speed);
+      DistSense(dist_desired, speed);
       break;
     case 'i':
-      LineFollow();
+      while(true){
+        LineFollow();
+      }
       break;
       
   }
