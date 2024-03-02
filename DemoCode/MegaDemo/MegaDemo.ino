@@ -9,10 +9,10 @@
 DualTB9051FTGMotorShieldUnoMega md;
 
 // Create Servo Objects
-// Servo arm_servo;
-// Servo shovel_servo;
-PWMServo arm_servo;
-PWMServo shovel_servo;
+Servo arm_servo;
+Servo shovel_servo;
+// PWMServo arm_servo;
+// PWMServo shovel_servo;
 
 // Create IR Sensor Object
 QTRSensors qtr;
@@ -34,12 +34,11 @@ int encoder2_pinA = 18;       // Declaring econder2 pins
 int encoder2_pinB = 19;       // Declaring econder2 pins
 int encoder1_count;           // Initializing encoder1 count values
 int encoder2_count;           // Initializing encoder2 count values
-int arm_servo_pin = 23; 
-int shovel_servo_pin = 22;
-// int arm_servo_pin = 13;
-//int shovel_servo_pin = 12;
+int arm_servo_pin = 22; 
+int shovel_servo_pin = 23;
 int dist_pin = A8;
 const uint8_t ir_pins[] = {24, 25, 26, 28, 27, 29, 30, 31};
+int mag_pin = A9;
 
 // IR Array Vars
 const uint8_t ir_sensor_count = 8;
@@ -63,6 +62,9 @@ float a = exp(7.453976699);   //distance sensor lin fit variable
 float b = -0.907499336;       //distance sensor lin fit variable
 float dist_actual;
 bool stop = false;
+
+//Initializing Hall Effect Sensor
+float mag_val;
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -117,9 +119,9 @@ void Turn(char command){
 
 // Arms Servo Function
 void ArmServo() {
-  arm_servo.write(0);
+  arm_servo.write(90);
   delay(2000);
-  arm_servo.write(180); 
+  arm_servo.write(30); 
   delay(1500);
   arm_servo.write(90);
 }
@@ -161,6 +163,14 @@ void LineFollow(){
   md.setSpeeds(m1s, m2s);
 }
 
+void HallEffect(){
+  mag_val = analogRead(mag_pin);
+  Serial.println(mag_val);
+}
+
+void ColorSense(){
+
+}
 
 void setup() {
   //Serial Communication
@@ -221,7 +231,11 @@ void loop() {
         LineFollow();
       }
       break;
-      
+    case 'h':
+      while(true){
+        HallEffect();
+      }
+      break;
   }
   command = 0;
 }
