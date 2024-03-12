@@ -79,7 +79,10 @@ int green_sum = 0;
 int red_sum = 0; 
 int blue_avg = 0;
 int green_avg = 0;
-int red_avg = 0; 
+int red_avg = 0;
+int red_calibration_vals[color_samples];
+int yellow_calibration_vals[color_samples];
+int blue_calibration_vals[color_samples]; 
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -232,20 +235,42 @@ void ColorSense(){
 }
 
 void ColorCalibration(){
-  
+  // Calibrate Red Block
+  Serial.println("Place Red Block on Sensor");
+  delay(5000);
+  Serial.println("Reading Red Values...");
+  for(int i=0; i<color_samples; i++){
+    digitalWrite(red_pin, LOW);
+    delay(color_delay_time);
+    red_calibration_vals[i] = analogRead(photo_trans_pin);
+    red_sum += analogRead(photo_trans_pin);
+
+    
+  }
+
+  // Calibrate Yellow Block
+  Serial.println("Place Yellow Block on Sensor");
+  delay(5000);
+  Serial.println("Reading Yellow Values...");
+  for(int i=0; i<color_samples; i++){
+    digitalWrite(red_pin, LOW);
+    delay(color_delay_time);
+    red_calibration_vals[i] = analogRead(photo_trans_pin);
+    red_sum += analogRead(photo_trans_pin);
+  }
 }
 
 void setup() {
   //Serial Communication
   Serial.begin(9600);
   Serial2.begin(9600);
+  while(!Serial){
+    ;
+  }
 
   //Initializing and Enabling Driver Shield
   md.init();
   md.enableDrivers();
-
-  // Communicate
-  Serial.println("Ready for signal...");
 
   // Attatch Pins to Servo Objects
   arm_servo.attach(arm_servo_pin);
@@ -265,7 +290,9 @@ void setup() {
   while(true){
     if(Serial.available()){
       if(Serial.read() == 'y'){
+        Serial.println("Calibrating...");
         ColorCalibration();
+        Serial.println("Done!");
         break;
       }
       else{
@@ -273,6 +300,9 @@ void setup() {
       }
     }
   }
+
+  // Communicate Ready for Signal
+  Serial.println("Ready for Signal...");
   
 }
 
