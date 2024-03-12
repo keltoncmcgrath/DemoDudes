@@ -25,7 +25,8 @@ void setup() {
   Serial.println(F("s - Move Shovel Servo Up and Down"));
   Serial.println(F("i - Follow a Line"));
   Serial.println(F("d - Drive and Stop a Distance Away from an Object"));
-  Serial.println(F("h - Read Hall Effect Sensor Values"));
+  Serial.println(F("m - Detect Magnetic Field"));
+  Serial.println(F("c - Detect Color of Block"));
 }
 
 

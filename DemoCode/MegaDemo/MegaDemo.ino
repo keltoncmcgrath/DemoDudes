@@ -39,6 +39,10 @@ int shovel_servo_pin = 23;
 int dist_pin = A8;
 const uint8_t ir_pins[] = {24, 25, 26, 28, 27, 29, 30, 31};
 int mag_pin = A9;
+int blue_pin = 33;
+int red_pin = 35;
+int green_pin = 34;
+int photo_trans_pin = A10;
 
 // IR Array Vars
 const uint8_t ir_sensor_count = 8;
@@ -65,6 +69,17 @@ bool stop = false;
 
 //Initializing Hall Effect Sensor
 float mag_val;
+
+// Color Sensor Variables
+int color_delay_time = 10;
+const int color_samples = 30;
+int color_vals[color_samples][3];
+int blue_sum = 0;
+int green_sum = 0;
+int red_sum = 0; 
+int blue_avg = 0;
+int green_avg = 0;
+int red_avg = 0; 
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -163,13 +178,61 @@ void LineFollow(){
   md.setSpeeds(m1s, m2s);
 }
 
-void HallEffect(){
+void MagSense(){
   mag_val = analogRead(mag_pin);
   Serial.println(mag_val);
 }
 
 void ColorSense(){
+  for(int i = 0; i<=color_samples; i++){
+    // Reading Red Light 
+    digitalWrite(red_pin, LOW);
+    delay(color_delay_time);
+    color_vals[i][0] = analogRead(photo_trans_pin);
+    digitalWrite(red_pin, HIGH);
+    red_sum += color_vals[i][0];
 
+    // Reading Green Light
+    digitalWrite(green_pin, LOW);
+    delay(color_delay_time);
+    color_vals[i][1] = analogRead(photo_trans_pin);
+    digitalWrite(green_pin, HIGH);
+    green_sum += color_vals[i][1];
+
+    // Reading Blue Light
+    digitalWrite(blue_pin, LOW);
+    delay(color_delay_time);
+    color_vals[i][2] = analogRead(photo_trans_pin);
+    digitalWrite(blue_pin,HIGH);
+    blue_sum += color_vals[i][2];
+  }
+  
+  red_avg = red_sum/color_samples;
+  green_avg = green_sum/color_samples;
+  blue_avg = blue_sum/color_samples;
+  Serial.println(red_avg);
+  Serial.println(green_avg);
+  Serial.println(blue_avg); 
+
+  if(red_avg > green_avg){
+    if(red_avg > blue_avg){
+      Serial.println("Block is RED");
+    }
+    Serial.println("Block is BLUE");
+  }
+  else if(green_avg > blue_avg){
+    Serial.println("Block is GREEN");
+  }
+  else{
+    Serial.println("Block is BLUE");
+  }
+  red_sum = 0;
+  green_sum = 0; 
+  blue_sum = 0; 
+}
+
+void ColorCalibration(){
+  
 }
 
 void setup() {
@@ -191,6 +254,26 @@ void setup() {
   // Setup IR Array
   qtr.setTypeRC();
   qtr.setSensorPins(ir_pins, ir_sensor_count);
+
+  // Set Color Sensor Pins
+  pinMode(blue_pin, OUTPUT);  digitalWrite(blue_pin, HIGH);
+  pinMode(red_pin, OUTPUT);   digitalWrite(red_pin, HIGH);
+  pinMode(green_pin,OUTPUT);  digitalWrite(green_pin, HIGH);
+
+  // Automated Color Calibration
+  Serial.println("Calibrate Color Sensor? (y/n)");
+  while(true){
+    if(Serial.available()){
+      if(Serial.read() == 'y'){
+        ColorCalibration();
+        break;
+      }
+      else{
+        break;
+      }
+    }
+  }
+  
 }
 
 void loop() {
@@ -231,11 +314,14 @@ void loop() {
         LineFollow();
       }
       break;
-    case 'h':
+    case 'm':
       while(true){
-        HallEffect();
+        MagSense();
       }
       break;
+    case 'c':
+      ColorSense();
+      break; 
   }
   command = 0;
 }
