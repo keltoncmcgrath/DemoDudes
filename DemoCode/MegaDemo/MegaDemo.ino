@@ -72,9 +72,9 @@ float mag_val;
 
 // Color Sensor Variables
 bool is_color = false;
-int blue_sum = 0;
-int green_sum = 0;
 int red_sum = 0; 
+int green_sum = 0;
+int blue_sum = 0;
 int red_val;
 int green_val;
 int blue_val;
@@ -85,12 +85,15 @@ float red_std[3] = {0, 0, 0};
 float green_std[3] = {0, 0, 0};
 float blue_std[3] = {0, 0, 0};
 int color_delay_time = 10;
-const int color_samples = 30;
+const int color_samples = 100;
 int red_calibration_vals[color_samples];
 int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_ranges[3][3][2];
 int color_vals[color_samples][3];
+
+// Mag Sensor Variables
+int mag_flag = 600;
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -192,9 +195,13 @@ void LineFollow(){
 void MagSense(){
   mag_val = analogRead(mag_pin);
   Serial.println(mag_val);
+  if(mag_val > mag_flag){
+    Serial.println("Ramp down!")
+  }
 }
 
 void ColorSense(){
+  Serial.println("Fart");
   // Reading Red Light 
   digitalWrite(red_pin, LOW);
   delay(color_delay_time);
@@ -239,6 +246,7 @@ void ColorSense(){
     Serial.print('\t');
     Serial.println(blue_val);
   }
+  is_color = false;
 }
 
 void ColorCalibration(){
@@ -292,7 +300,7 @@ void ColorCalibration(){
     green_std[j] = sqrt(green_std[j]/(color_samples-1));
     blue_std[j] = sqrt(blue_std[j]/(color_samples-1));
 
-    // Set Sums Back to Zero
+    // Set Sums to Zero
     red_sum = 0;
     green_sum = 0;
     blue_sum = 0;
@@ -300,14 +308,14 @@ void ColorCalibration(){
     // Find Ranges of Values for Each Block
     for(int i=0; i<3; i++){
       // Red
-      color_ranges[i][0][0] = red_avg[i]-3*red_std[i];
-      color_ranges[i][0][1] = red_avg[i]+3*red_std[i];
+      color_ranges[i][0][0] = red_avg[i]-4*red_std[i];
+      color_ranges[i][0][1] = red_avg[i]+4*red_std[i];
       // Green
-      color_ranges[i][1][0] = green_avg[i]-3*green_std[i];
-      color_ranges[i][1][1] = green_avg[i]+3*green_std[i];
+      color_ranges[i][1][0] = green_avg[i]-4*green_std[i];
+      color_ranges[i][1][1] = green_avg[i]+4*green_std[i];
       // Blue
-      color_ranges[i][2][0] = blue_avg[i]-3*blue_std[i];
-      color_ranges[i][2][1] = blue_avg[i]+3*blue_std[i];
+      color_ranges[i][2][0] = blue_avg[i]-4*blue_std[i];
+      color_ranges[i][2][1] = blue_avg[i]+4*blue_std[i];
     }
   }
   for(int i=0; i<3; i++){
