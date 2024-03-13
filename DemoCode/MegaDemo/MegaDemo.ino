@@ -44,6 +44,22 @@ int red_pin = 35;
 int green_pin = 34;
 int photo_trans_pin = A10;
 
+// General Vars
+float t;
+float t_start;
+
+// Arm Servo Variables
+int arm_angle_start = 90;
+int arm_angle_final = 18;
+float arm_angle_des;
+float arm_t_final = 10;
+
+// Shovel Servo Variables
+int shov_angle_start = 90;
+int shov_angle_final = 18;
+float shov_angle_des;
+float shov_t_final = 10;
+
 // IR Array Vars
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
@@ -145,20 +161,26 @@ void Turn(char command){
 
 // Arms Servo Function
 void ArmServo() {
-  arm_servo.write(90);
-  delay(2000);
-  arm_servo.write(30); 
-  delay(1500);
-  arm_servo.write(90);
+  t = (millis()-t_start) / 1000;
+  if(arm_angle_start > arm_angle_final){
+    arm_angle_des = ((arm_angle_start-arm_angle_final) / (1+exp(t-arm_t_final/2))) + arm_angle_final;
+  }
+  if(arm_angle_start < arm_angle_final){
+    arm_angle_des = arm_angle_final / (1+exp(-t+arm_t_final/2));
+  }
+  arm_servo.write(arm_angle_des);
 }
 
 // Shovel Servo Function
 void ShovelServo(){
-  shovel_servo.write(0);
-  delay(2000);
-  shovel_servo.write(180);
-  delay(1500);
-  shovel_servo.write(90); 
+  t = (millis()-t_start) / 1000;
+  if(shov_angle_start > shov_angle_final){
+    shov_angle_des = ((shov_angle_start-shov_angle_final) / (1+exp(t-shov_t_final/2))) + shov_angle_final;
+  }
+  if(shov_angle_start < shov_angle_final){
+    shov_angle_des = shov_angle_final / (1+exp(-t+shov_t_final/2));
+  }
+  shovel_servo.write(shov_angle_des);
 }
 
 // Line Following Demo Function
@@ -333,6 +355,9 @@ void setup() {
   while(!Serial){
     ;
   }
+
+  // Initilaize Start Time
+  t_start = millis();
 
   //Initializing and Enabling Driver Shield
   md.init();
