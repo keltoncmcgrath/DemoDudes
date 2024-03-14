@@ -17,12 +17,6 @@ Servo shovel_servo;
 // Create IR Sensor Object
 QTRSensors qtr;
 
-// Moving Variables
-long num_stripes = 131 * 64;    // Total encoder stripes
-int duration = 1500;            // Setting time to run
-float speed = 200;                    // Setting Motor Speed
-float turn_speed;
-
 // Comms Vars
 int flag = 33;                // Setting flag variables
 char command;                 // Setting the command variable
@@ -47,6 +41,7 @@ int photo_trans_pin = A10;
 // General Vars
 float t;
 float t_start;
+float pi = 3.1415927;
 
 // Arm Servo Variables
 int arm_home = 93;
@@ -76,6 +71,7 @@ int m2s;
 int kp = 75;
 float num = 0;
 float den = 0;
+int speed = 400;
 
 // Rane Finder Vars
 float dist_desired = 20;      // cm
@@ -113,6 +109,28 @@ int color_vals[color_samples][3];
 // Mag Sensor Variables
 int mag_flag = 600;
 
+// Travel Variables
+float wheel_radius = 3.5;    //cm 
+float theta1;
+float theta2;
+float theta1_des = 0;
+float theta2_des = 0;
+float dist_final = 50;
+float time_final = 2.5;
+float theta1_final = dist_final/wheel_radius;
+float theta2_final = dist_final/wheel_radius;
+long counts1;
+long counts2;
+int gear_ratio = 131;
+int counts_per_rev = 64;
+float omega1_des = theta1_final/time_final;
+float omega2_des = theta2_final/time_final;
+float delta_T;
+float t_old; 
+float speed1;   
+float speed2;                 
+float KP = 300;
+
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
 Encoder encoder2(encoder2_pinA,encoder2_pinB);
@@ -120,9 +138,50 @@ Encoder encoder2(encoder2_pinA,encoder2_pinB);
 
 // Motor on function
 void MotorOn(){
-  // Sets Speed
-  md.setSpeeds(speed, speed);
-  delay(duration);      //Keeping the motors on for a set duration
+  t_start = millis();
+  encoder1.write(0);
+  encoder2.write(0); 
+  counts1 = 0;
+  counts2 = 0;
+  theta1_des = 0;
+  theta2_des = 0;
+  t_old = 0;
+  while(abs(theta1_des) < abs(theta1_final) && abs(theta2_des) < abs(theta2_final)){
+    t = (millis()-t_start)/1000;
+    delta_T = t - t_old;
+    counts1 = encoder1.read();
+    counts2 = encoder2.read();
+    theta1 = float(counts1*2*pi) / (gear_ratio * counts_per_rev);
+    theta2 = float(counts2*2*pi) / (gear_ratio * counts_per_rev);
+
+    if(command == 'f'){
+      theta1_des += omega1_des*delta_T;
+      theta2_des += omega2_des*delta_T; 
+    }
+    else{
+      theta1_des -= omega1_des*delta_T;
+      theta2_des -= omega2_des*delta_T;
+    }
+    if(abs(theta1_des)>=abs(theta1_final)){
+      theta1_des = theta1_final;
+    }
+    if(abs(theta2_des)>=abs(theta2_final)){
+      theta2_des = theta2_final;
+    }
+
+    speed1 = KP * (theta1_des-theta1);
+    speed2 = KP * (theta2_des-theta2);
+    
+    speed1 = constrain(speed1, -400, 400);
+    speed2 = constrain(speed2, -400, 400);
+
+    Serial.print(theta1);
+    Serial.print('\t');
+    Serial.println(theta2);
+
+    md.setSpeeds(speed1,speed2); 
+    t_old = t;
+  }
   md.setSpeeds(0, 0);
 }
 
@@ -138,29 +197,12 @@ void DistSense(){
 
 // Turming function
 void Turn(char command){
-  double stripe_turning = num_stripes * 0.6786;    // Initializing the number of stripes we want to turn for turning
-  if(command == 'r'){
-    turn_speed = 200;
-  }
-  else if(command == 'l'){
-    turn_speed = -200;
-  }
-  encoder1.write(0);
-  encoder1_count = encoder1.read();
-  encoder2.write(0);
-  encoder2_count = encoder2.read();
-  md.setM1Speed(turn_speed);
-  md.setM2Speed(-turn_speed);
-  while((abs(encoder1_count) <= stripe_turning) || (abs(encoder2_count) <= stripe_turning)){
-  encoder1_count = encoder1.read();
-  encoder2_count = encoder2.read();
-  }
-  md.setM1Speed(0);
-  md.setM2Speed(0);
+ 
+
 }
 
 // Arms Servo Function
-void ArmServo() {
+void ArmServo(){
   t_start = millis();
   arm_angle_start = arm_servo.read();
   while(arm_servo.read() != arm_angle_final){
@@ -226,7 +268,7 @@ void MagSense(){
   mag_val = analogRead(mag_pin);
   Serial.println(mag_val);
   if(mag_val > mag_flag){
-    Serial.println("Ramp down!")
+    Serial.println("Ramp down!");
   }
 }
 
@@ -392,22 +434,6 @@ void setup() {
   pinMode(red_pin, OUTPUT);   digitalWrite(red_pin, HIGH);
   pinMode(green_pin,OUTPUT);  digitalWrite(green_pin, HIGH);
 
-  // Automated Color Calibration
-  Serial.println("Calibrate Color Sensor? (y/n)");
-  while(true){
-    if(Serial.available()){
-      if(Serial.read() == 'y'){
-        Serial.println("Calibrating...");
-        ColorCalibration();
-        Serial.println("Done!");
-        break;
-      }
-      else{
-        break;
-      }
-    }
-  }
-
   // Communicate Ready for Signal
   Serial.println("Ready for Signal...");
   
@@ -423,11 +449,9 @@ void loop() {
   }
   switch(command) {
     case 'f': 
-      speed = 400;
       MotorOn();
       break;
     case 'b':
-      speed = -400;
       MotorOn();
       break;
     case 'r':
@@ -462,6 +486,20 @@ void loop() {
       }
       break;
     case 'c':
+      Serial.println("Calibrate Color Sensor? (y/n)");
+      while(true){
+        if(Serial.available()){
+          if(Serial.read() == 'y'){
+            Serial.println("Calibrating...");
+            ColorCalibration();
+            Serial.println("Done!");
+            break;
+          }
+          else{
+            break;
+          }
+        }
+      }
       ColorSense();
       break; 
   }
