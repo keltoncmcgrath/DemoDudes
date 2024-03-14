@@ -20,7 +20,7 @@ QTRSensors qtr;
 // Moving Variables
 long num_stripes = 131 * 64;    // Total encoder stripes
 int duration = 1500;            // Setting time to run
-float speed = 300;              // Setting Motor Speed
+float speed = 200;                    // Setting Motor Speed
 float turn_speed;
 
 // Comms Vars
@@ -28,10 +28,10 @@ int flag = 33;                // Setting flag variables
 char command;                 // Setting the command variable
 
 // Pin Vars
-int encoder1_pinA = 20;       // Declaring econder1 pins
-int encoder1_pinB = 21;       // Declaring econder1 pins
-int encoder2_pinA = 18;       // Declaring econder2 pins
-int encoder2_pinB = 19;       // Declaring econder2 pins
+int encoder2_pinA = 20;       // Declaring econder1 pins
+int encoder2_pinB = 21;       // Declaring econder1 pins
+int encoder1_pinA = 19;       // Declaring econder2 pins
+int encoder1_pinB = 18;       // Declaring econder2 pins
 int encoder1_count;           // Initializing encoder1 count values
 int encoder2_count;           // Initializing encoder2 count values
 int arm_servo_pin = 22; 
@@ -43,6 +43,24 @@ int blue_pin = 33;
 int red_pin = 35;
 int green_pin = 34;
 int photo_trans_pin = A10;
+
+// General Vars
+float t;
+float t_start;
+
+// Arm Servo Variables
+int arm_home = 93;
+int arm_angle_start;
+int arm_angle_final;
+float arm_angle_des;
+float arm_t_final = 2;
+float arm_tol = 0.1;
+
+// Shovel Servo Variables
+int shov_angle_start = 90;
+int shov_angle_final = 90;
+float shov_angle_des;
+float shov_t_final = 10;
 
 // IR Array Vars
 const uint8_t ir_sensor_count = 8;
@@ -101,14 +119,9 @@ Encoder encoder2(encoder2_pinA,encoder2_pinB);
 
 
 // Motor on function
-void MotorOn(float speed, float duration){
+void MotorOn(){
   // Sets Speed
-  if(speed<0){
-    md.setSpeeds(speed, speed+10);
-  }
-  else{
-    md.setSpeeds(speed-10, speed);
-  }
+  md.setSpeeds(speed, speed);
   delay(duration);      //Keeping the motors on for a set duration
   md.setSpeeds(0, 0);
 }
@@ -148,20 +161,37 @@ void Turn(char command){
 
 // Arms Servo Function
 void ArmServo() {
-  arm_servo.write(90);
-  delay(2000);
-  arm_servo.write(30); 
-  delay(1500);
-  arm_servo.write(90);
+  t_start = millis();
+  arm_angle_start = arm_servo.read();
+  while(arm_servo.read() != arm_angle_final){
+    t = (millis()-t_start) / 1000;
+    if(arm_angle_start > arm_angle_final){
+      arm_angle_des = ((arm_angle_start-arm_angle_final) / (1+exp((10/arm_t_final)*t-5))) + arm_angle_final;
+    }
+    if(arm_angle_start < arm_angle_final){
+      arm_angle_des = (arm_angle_final-arm_angle_start) / (1+exp(-(10/arm_t_final*t)+5)) + arm_angle_start + 1;
+    }
+    arm_servo.write(arm_angle_des);
+    Serial.print(arm_servo.read());
+    Serial.print('\t');
+    Serial.print(arm_angle_des);
+    Serial.print('\t');
+    Serial.println(t);
+  }
+  delay(1000);
 }
 
 // Shovel Servo Function
 void ShovelServo(){
-  shovel_servo.write(0);
-  delay(2000);
-  shovel_servo.write(180);
-  delay(1500);
-  shovel_servo.write(90); 
+  t = (millis()-t_start) / 1000;
+  shov_angle_start = shovel_servo.read();
+  if(shov_angle_start > shov_angle_final){
+    shov_angle_des = ((shov_angle_start-shov_angle_final) / (1+exp(t-shov_t_final/2))) + shov_angle_final;
+  }
+  if(shov_angle_start < shov_angle_final){
+    shov_angle_des = (shov_angle_final-shov_angle_start) / (1+exp(-t+shov_t_final/2)) + shov_angle_start;
+  }
+  shovel_servo.write(shov_angle_des);
 }
 
 // Line Following Demo Function
@@ -342,6 +372,9 @@ void setup() {
     ;
   }
 
+  // Initilaize Start Time
+  t_start = millis();
+
   //Initializing and Enabling Driver Shield
   md.init();
   md.enableDrivers();
@@ -390,10 +423,12 @@ void loop() {
   }
   switch(command) {
     case 'f': 
-      MotorOn(speed,duration);
+      speed = 400;
+      MotorOn();
       break;
     case 'b':
-      MotorOn(-speed,duration);
+      speed = -400;
+      MotorOn();
       break;
     case 'r':
       Turn(command);
@@ -402,6 +437,9 @@ void loop() {
       Turn(command);
       break;
     case 'a':
+      arm_angle_final = 15;
+      ArmServo();
+      arm_angle_final = 93;
       ArmServo();
       break;
     case 's':
