@@ -31,7 +31,7 @@ int encoder2_count;           // Initializing encoder2 count values
 int arm_servo_pin = 22; 
 int shovel_servo_pin = 23;
 int dist_pin = A8;
-const uint8_t ir_pins[] = {24, 25, 26, 28, 27, 29, 30, 31};
+const uint8_t ir_pins[] = {24, 25, 26, 27, 28, 29, 30, 31};
 int mag_pin = A9;
 int blue_pin = 33;
 int red_pin = 35;
@@ -50,7 +50,7 @@ int arm_home = 93;
 int arm_angle_start;
 int arm_angle_final;
 float arm_angle_des;
-float arm_t_final = 2;
+float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Variables
@@ -62,7 +62,7 @@ float shov_t_final = 10;
 // IR Array Vars
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
-int ir_bias[] = {166, 58, 58, 106, 58, 106, 106};
+int ir_bias[] = {144, 93, 93, 93, 136, 93, 98, 119};
 int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = {0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6};
 float ir_dist_desired = 2.8;
@@ -70,17 +70,17 @@ float ir_dist_actual;
 float ir_error;
 int m1s;
 int m2s;
-int kp = 75;
+int kp = 100;
 float num = 0;
 float den = 0;
-int speed = 400;
+int speed = 200;
 
 // Rane Finder Vars
 float dist_desired = 20;      // cm
 float dist_val;
+float dist_actual;
 float a = exp(7.453976699);   //distance sensor lin fit variable
 float b = -0.907499336;       //distance sensor lin fit variable
-float dist_actual;
 bool stop = false;
 
 //Initializing Hall Effect Sensor
@@ -127,13 +127,13 @@ float speed2;
 float KP = 300;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float dist_final = 50;          // cm
+float dist_final = 100;          // cm
 float turn_angle_final = pi;    // rad
 float arc_radius = 50;          // cm
-float arc_angle_final = pi;     // rad
-float time_final = 2.5;         // s
+float arc_angle_final = pi/2;     // rad
+float time_final = 10;         // s
 float wheel_radius = 3.5;       // cm 
-float wheel_dist = 17.78;       // cm
+float wheel_dist = 19.7;       // cm
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
@@ -153,7 +153,7 @@ void MotorOn(){
   encoder2.write(0);
 
   // Set theta final and omega besed on direction of travel
-  if(command = 'f'){
+  if(command == 'f'){
     theta1_final = dist_final/wheel_radius;
     theta2_final = dist_final/wheel_radius;
   }
@@ -190,25 +190,11 @@ void MotorOn(){
     speed1 = constrain(speed1, -400, 400);
     speed2 = constrain(speed2, -400, 400);
 
-    Serial.print(theta1);
-    Serial.print('\t');
-    Serial.println(theta2);
-
     // Set motor speeds and record old time
     md.setSpeeds(speed1,speed2); 
     t_old = t;
   }
   md.setSpeeds(0, 0);
-}
-
-void DistSense(){
-  md.setSpeeds(speed, speed+10);
-  dist_val = analogRead(dist_pin);
-  dist_actual = pow(dist_val/a, 1/b);
-  if(dist_actual <= dist_desired){
-    md.setSpeeds(0, 0);
-    stop = true;
-  }
 }
 
 // Turming function
@@ -287,6 +273,7 @@ void Arc(){
   // Set theta final and omega besed on direction of travel
   theta1_final = arc_angle_final * arc_radius / wheel_radius;
   theta2_final = arc_angle_final * (arc_radius+wheel_dist) / wheel_radius;
+
   omega1_des = theta1_final/time_final;
   omega2_des = theta2_final/time_final;
 
@@ -300,15 +287,11 @@ void Arc(){
     theta1 = float(counts1*2*pi) / (gear_ratio * counts_per_rev);
     theta2 = float(counts2*2*pi) / (gear_ratio * counts_per_rev);
 
+
     // Calculate new desired thetas
-    if(command == 'f'){
-      theta1_des += omega1_des*delta_T;
-      theta2_des += omega2_des*delta_T; 
-    }
-    else{
-      theta1_des -= omega1_des*delta_T;
-      theta2_des -= omega2_des*delta_T;
-    }
+    theta1_des += omega1_des*delta_T;
+    theta2_des += omega2_des*delta_T; 
+
     if(abs(theta1_des)>=abs(theta1_final)){
       theta1_des = theta1_final;
     }
@@ -321,10 +304,10 @@ void Arc(){
     speed2 = KP * (theta2_des-theta2);
     speed1 = constrain(speed1, -400, 400);
     speed2 = constrain(speed2, -400, 400);
+    Serial.print(speed1);
+    Serial.print("\t");
+    Serial.println(speed2);
 
-    Serial.print(theta1);
-    Serial.print('\t');
-    Serial.println(theta2);
 
     // Set motor speeds and record old time
     md.setSpeeds(speed1,speed2); 
@@ -374,17 +357,17 @@ void LineFollow(){
   qtr.read(ir_values);
   for(int i=0; i<ir_sensor_count; i++){
     ir_unbiased[i] = ir_values[i] - ir_bias[i];
-    Serial.print(ir_values[i]);
-    Serial.print("\t");
+    // Serial.print(ir_unbiased[i]);
+    // Serial.print('\t');
   }
-  Serial.println();
+  // Serial.println();
 
   // Calculate distance of line from deisred distance
   for(int i=0; i<ir_sensor_count; i++){
     num = num + (ir_unbiased[i] * ir_sensor_spacing[i]);
     den = den + ir_unbiased[i];
   }
-  ir_dist_actual = num/den; 
+  ir_dist_actual = num/den;
   num = 0;
   den = 0;
 
@@ -392,8 +375,22 @@ void LineFollow(){
   ir_error = ir_dist_desired - ir_dist_actual;
   m1s = speed - kp*ir_error;
   m2s = speed + kp*ir_error;
+  Serial.print(m1s);
+  Serial.print('\t');
+  Serial.println(m2s);
+
   // Serial.println(ir_error);
   md.setSpeeds(m1s, m2s);
+}
+
+void DistSense(){
+  md.setSpeeds(speed, speed+10);
+  dist_val = analogRead(dist_pin);
+  dist_actual = pow(dist_val/a, 1/b);
+  if(dist_actual <= dist_desired){
+    md.setSpeeds(0, 0);
+    stop = true;
+  }
 }
 
 void MagSense(){
@@ -538,6 +535,37 @@ void ColorCalibration(){
   }
 }
 
+void Begin(){
+  dist_val = 0;
+  dist_desired = 10;
+
+  for(int i=0; i<10; i++){
+    dist_val += analogRead(dist_pin);
+  }
+
+  dist_val /= 10;
+  dist_actual = pow(dist_val/a, 1/b);
+  // Serial.println(dist_actual);
+
+  while(dist_actual >= dist_desired){
+    LineFollow();
+    dist_val = analogRead(dist_pin);
+    dist_actual = pow(dist_val/a, 1/b);
+    // Serial.println(dist_actual);
+  }
+  md.setSpeeds(0,0);
+  arm_t_final = 1;
+  arm_angle_final = 73;
+  ArmServo();
+
+  dist_final = 1.25;
+  time_final = 1;
+  command = 'f';
+  MotorOn();
+  command = 'b';
+  MotorOn();
+}
+
 void setup() {
   //Serial Communication
   Serial.begin(9600);
@@ -597,11 +625,12 @@ void loop() {
       break;
 
     case 'o':
+      Serial.println("HERE");
       Arc();
       break;
 
     case 'a':
-      arm_angle_final = 15;
+      arm_angle_final = 73;
       ArmServo();
       arm_angle_final = 93;
       ArmServo();
@@ -646,7 +675,11 @@ void loop() {
         }
       }
       ColorSense();
-      break; 
+      break;
+
+      case 'g':
+        Begin();
+        break;
   }
   command = 0;
 }

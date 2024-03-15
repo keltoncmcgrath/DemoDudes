@@ -21,12 +21,14 @@ void setup() {
   Serial.println(F("b - Drive Backwards"));
   Serial.println(F("r - Turn Right"));
   Serial.println(F("l - Turn Left"));
+  Serial.println(F("o - Travel a Certain Arc Length"));
   Serial.println(F("a - Move Arm Servo Up and Down"));
   Serial.println(F("s - Move Shovel Servo Up and Down"));
   Serial.println(F("i - Follow a Line"));
   Serial.println(F("d - Drive and Stop a Distance Away from an Object"));
   Serial.println(F("m - Detect Magnetic Field"));
   Serial.println(F("c - Detect Color of Block"));
+  Serial.println(F("g - Perform Beginning Sequence"));
 }
 
 
