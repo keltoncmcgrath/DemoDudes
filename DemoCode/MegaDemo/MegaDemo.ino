@@ -34,8 +34,8 @@ int dist_pin = A8;
 const uint8_t ir_pins[] = {24, 25, 26, 27, 28, 29, 30, 31};
 int mag_pin = A9;
 int blue_pin = 33;
-int red_pin = 35;
 int green_pin = 34;
+int red_pin = 35;
 int photo_trans_pin = A10;
 
 // General Vars
