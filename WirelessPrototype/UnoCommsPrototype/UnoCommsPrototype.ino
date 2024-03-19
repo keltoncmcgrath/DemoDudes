@@ -47,6 +47,7 @@ void setup() {
   }
 
   // Send block data to mega
+  mySerial.write(flag);
   for (int i = 0; i < num_blocks * 4 + 2; i++) {
     mySerial.write(block_data[i]);
     Serial.write(block_data[i]);

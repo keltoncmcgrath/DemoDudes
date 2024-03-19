@@ -59,22 +59,22 @@ void BlockLoc(char rc[4]){
 void setup() {
   // Begin serial communication
   Serial.begin(9600);
-  Serial3.begin(9600);
+  Serial2.begin(9600);
 }
 
 
 void loop() {
   // Read incoming block information
-  if(Serial3.available()>=2){                         // Checks for start flag and number of blocks
-    if(Serial3.read() == flag){                       // Checks if the first byte is the start flag
-      num_blocks = Serial3.read() - '0';              // Store number of blocks
+  if(Serial2.available()>=2){                         // Checks for start flag and number of blocks
+    if(Serial2.read() == flag){                       // Checks if the first byte is the start flag
+      num_blocks = Serial2.read() - '0';              // Store number of blocks
       while(true){                                    // While we know data is sending
-        if(Serial3.available()>=num_blocks*4){        // If all the data is sent
+        if(Serial2.available()>=num_blocks*4){        // If all the data is sent
           for(int i=0; i<num_blocks; i++){            // Read the data block by block
-            rc[0] = Serial3.read();
-            rc[1] = Serial3.read();
-            rc[2] = Serial3.read();
-            rc[3] = Serial3.read();
+            rc[0] = Serial2.read();
+            rc[1] = Serial2.read();
+            rc[2] = Serial2.read();
+            rc[3] = Serial2.read();
             BlockLoc(rc);
           }
           break;
@@ -82,7 +82,7 @@ void loop() {
       }
     }
   }
-//   if(Serial3.available()){
+//   if(Serial2.available()){
 //     Serial.write(rc);
 //   }
 }
