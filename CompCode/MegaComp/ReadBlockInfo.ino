@@ -9,35 +9,34 @@ void ReadBlockInfo(void){
               read_block.face = Serial2.read();         // Read face value
               read_block.pos = Serial2.read();          // Read position value
               read_block.elev = Serial2.read();         // Read elevation value
-              block_color = Serial2.read();             // Read Block Color
+              read_block.color = Serial2.read();        // Read Block Color
 
 
               // Cross off read block from desired block position array
-              if(block_color == 'r'){                                                                                                 // If block is red
-                for(int j=0; j<(sizeof(red1)/sizeof(struct block)); j++){                                                             // Loop over length of array
-                  if(read_block.face==red1[j].face && read_block.pos==red1[j].pos && read_block.elev==red1[j].elev){                  // Check if all position identifiers are the same for first array
-                    red1[j].placed = true;                                                                                            // If they are, changed placed bool to true
-                  }
-                  else if(read_block.face==red2[j].face && read_block.pos==red2[j].pos && read_block.elev==red2[j].elev){             // Check if all position identifiers are the same for first array
-                    red2[j].placed = true;                                                                                            // If they are, changed placed bool to true
-                  }
+              for(int j=0; j<(sizeof(red1)/sizeof(struct block)); j++){                                                             // Loop over length of array
+                if(read_block.face==red1[j].face && read_block.pos==red1[j].pos && read_block.elev==red1[j].elev){                  // Check if all position identifiers are the same for first array
+                  red1[j].placed = true;                                                                                            // If they are, changed placed bool to true
+                  red1[j].color = read_block.color;                                                                                 // And change color to block color
+                }
+                else if(read_block.face==red2[j].face && read_block.pos==red2[j].pos && read_block.elev==red2[j].elev){             // Check if all position identifiers are the same for first array
+                  red2[j].placed = true;                                                                                            // If they are, changed placed bool to true
+                  red2[j].color = read_block.color;                                                                                 // And change color to block color
                 }
               }
-              else if(block_color == 'y'){                                                                                            // If block is yellow
-                for(int j=0; j<(sizeof(yellow1)/sizeof(struct block)); j++){
-                  if(read_block.face==yellow1[j].face && read_block.pos==yellow1[j].pos && read_block.elev==yellow1[j].elev){
-                    yellow1[j].placed = true;
-                  }
-                  else if(read_block.face==yellow2[j].face && read_block.pos==yellow2[j].pos && read_block.elev==yellow2[j].elev){
-                    yellow2[j].placed = true;
-                  }
+              for(int j=0; j<(sizeof(yellow1)/sizeof(struct block)); j++){
+                if(read_block.face==yellow1[j].face && read_block.pos==yellow1[j].pos && read_block.elev==yellow1[j].elev){
+                  yellow1[j].placed = true;
+                  yellow1[j].color = read_block.color;
+                }
+                else if(read_block.face==yellow2[j].face && read_block.pos==yellow2[j].pos && read_block.elev==yellow2[j].elev){
+                  yellow2[j].placed = true;
+                  yellow2[j].color = read_block.color;
                 }
               }
-              else if(block_color == 'b'){                                                                                            // If block is blue
-                for(int j=0; j<(sizeof(blue)/sizeof(struct block)); j++){
-                  if(read_block.face==blue[j].face && read_block.pos==blue[j].pos && read_block.elev==blue[j].elev){
-                    blue[j].placed = true;
-                  }
+              for(int j=0; j<(sizeof(blue)/sizeof(struct block)); j++){
+                if(read_block.face==blue[j].face && read_block.pos==blue[j].pos && read_block.elev==blue[j].elev){
+                  blue[j].placed = true;
+                  blue[j].color = read_block.color;
                 }
               }
               // End of checking block

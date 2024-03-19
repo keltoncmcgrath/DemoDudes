@@ -35,8 +35,7 @@ void CollectBlock(void){
       final_stage = true;
     }
     else if(final_stage){
-      collect_block_bool = false;
-      color_sense_bool = true;
+      state = 'c';
       t_start = millis();
     }
   }
