@@ -43,17 +43,13 @@ void Turn(){
     }
 
     // Control and constrain speed
-    speed1 = KP * (theta1_des-theta1);
-    speed2 = KP * (theta2_des-theta2); 
-    speed1 = constrain(speed1, -400, 400);
-    speed2 = constrain(speed2, -400, 400);
-
-    Serial.print(theta1);
-    Serial.print('\t');
-    Serial.println(theta2);
+    m1s = KP * (theta1_des-theta1);
+    m2s = KP * (theta2_des-theta2); 
+    m1s = constrain(m1s, -400, 400);
+    m2s = constrain(m2s, -400, 400);
 
     // Set motor speeds and record old time
-    md.setSpeeds(speed1,speed2); 
+    md.setSpeeds(m1s,m2s); 
     t_old = t;
   }
   md.setSpeeds(0, 0);

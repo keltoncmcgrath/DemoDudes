@@ -16,7 +16,7 @@ void LineFollow(void){
 
   // Calculate error and control speed
   ir_error = ir_dist_desired - ir_dist_actual;
-  m1s = speed - kp*ir_error;
-  m2s = speed + kp*ir_error;
+  m1s = line_follow_speed - kp*ir_error;
+  m2s = line_follow_speed + kp*ir_error;
   md.setSpeeds(m1s, m2s);
 }

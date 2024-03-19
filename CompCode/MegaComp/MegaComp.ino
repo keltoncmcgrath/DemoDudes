@@ -20,6 +20,7 @@ struct block {
   char face;
   char pos;
   char elev;
+  char color;
   bool placed;
 };
 
@@ -150,16 +151,17 @@ float omega1_des;
 float omega2_des;
 long counts1;
 long counts2;
-float speed1;
-float speed2;
+int m1s;
+int m2s;
 
 // Travel Variables
-int speed;
 float guide1 = 53.34;   // cm
 float guide3 = 68.58;   // cm
 float guide4 = 0;       // cm, measure dist later
 float guide6 = 0;       // cm, measure dist later
-
+int turn_speed = 200;
+int straight_speed = 300;
+int line_follow_speed = 200;
 
 // Encoder Vars
 int encoder1_count;
@@ -168,7 +170,7 @@ Encoder encoder1(encoder1_pinA,encoder1_pinB);
 Encoder encoder2(encoder2_pinA,encoder2_pinB);
 
 // Arm Servo Vars
-int arm_home = 93;
+int servo_home = 93;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -176,7 +178,6 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Vars
-int shov_home = 93;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -205,8 +206,11 @@ int red_calibration_vals[color_samples];
 int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
-int color_ranges[3][3][2];
-
+int color_ranges[3][3][2] = {
+  {{218, 291}, {224, 305}, {-3, 33}},
+  {{219, 290}, {228, 299}, {-3, 33}},
+  {{218, 291}, {227, 302}, {-2, 32}}
+};  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
 int kp = 100;
@@ -220,8 +224,6 @@ float ir_dist_actual;
 float ir_error;
 float num = 0;
 float den = 0;
-int m1s;
-int m2s;
 
 // Range Finder Vars
 float dist_desired = 10;      // cm
@@ -240,6 +242,7 @@ bool start_sequence_bool = true;
 bool collect_block_bool = false;
 bool travel_bool = false;
 bool dump_block_bool = false;
+bool color_sense_bool = false;
 
 // Function Bools
 bool line_follow_bool = true;
@@ -248,6 +251,10 @@ bool arm_servo_bool = false;
 bool shovel_servo_bool = false;
 bool straight_line_bool = false;
 bool turn_bool = false;
+
+// Event Bools
+bool final_stage = false;
+bool color_detected = false;
 
 
 ///////////////////////////////
@@ -295,8 +302,6 @@ void setup() {
       }
     }
   }
-
-  // Start Beginning Sequence
 }
 
 
@@ -304,29 +309,99 @@ void setup() {
 ///--------- LOOP ---------///
 //////////////////////////////
 void loop() {
+  // Line Follow Until a Distance
   if(start_sequence_bool && dist_actual > dist_desired) {
-    Serial.println("Beginning Line Following");
     LineFollow();
     DistSense();
-  } 
+  }
+  // Get Ready for Collecting a Block
   else if(start_sequence_bool&& dist_actual <= dist_desired) {
     start_sequence_bool = false;
     collect_block_bool = true;
+
+    // Set Travel State Initial Variables
+    t_start = millis();
+    t_old = 0;
+    dist_final = 1.25;
+    time_final = 1;
+    counts1 = 0;
+    counts2 = 0;
+    theta1_des = 0;
+    theta2_des = 0;
+    encoder1.write(0);
+    encoder2.write(0);
+    final_stage = false;
+    // Initialize Straight Line Variables
+    theta1_final = dist_final/wheel_radius;
+    theta2_final = dist_final/wheel_radius;
+    omega1_des = theta1_final/time_final;
+    omega2_des = theta2_final/time_final;
+    // Set Servo State Initial Variables
+    arm_t_final = 1;
+    shov_t_final = 1;
+    arm_angle_final = 73;
+    shov_angle_final = servo_home;
+    arm_angle_start = arm_servo.read();
+    shov_angle_start = shovel_servo.read();
   }
 
+
+  // Collect Block
   if(collect_block_bool){
-    Serial.println("Collecting Block");
     CollectBlock();   // Set turn_bool true?
     current_block = {'w', '4', 'l', false};
-    collect_block_bool = false;
-    travel_bool = true;
   }
 
+
+  // Sense Block Color
+  if(color_sense_bool){
+    t = (millis()-t_start)/1000;
+    ColorSense();
+    // Serial.println(current_block.color);
+    if(current_block.color != '\0'){
+      color_sense_bool = false;
+      travel_bool = true;
+    }
+    else if(t > 10){
+      color_sense_bool = false;
+      collect_block_bool = true;
+
+      // Set Travel State Initial Variables
+      t_start = millis();
+      t_old = 0;
+      dist_final = 1.25;
+      time_final = 1;
+      counts1 = 0;
+      counts2 = 0;
+      theta1_des = 0;
+      theta2_des = 0;
+      encoder1.write(0);
+      encoder2.write(0);
+      final_stage = false;
+      // Initialize Straight Line Variables
+      theta1_final = dist_final/wheel_radius;
+      theta2_final = dist_final/wheel_radius;
+      omega1_des = theta1_final/time_final;
+      omega2_des = theta2_final/time_final;
+      // Set Servo State Initial Variables
+      arm_t_final = 1;
+      shov_t_final = 1;
+      arm_angle_final = 73;
+      shov_angle_final = servo_home;
+      arm_angle_start = arm_servo.read();
+      shov_angle_start = shovel_servo.read();
+    }
+  }
+
+
+  // Travel to Preffered Block Location
   if(travel_bool){
-    Serial.println("Travelling to Loc");
+    Serial.println("Traveling to Loc");
     TravelToLoc();
   }
 
+
+  // Drop Block Off at Chassis
   if(dump_block_bool){
     Serial.println("Dumping Block");
     DumpBlock();
@@ -334,4 +409,5 @@ void loop() {
     // Set travel to dispense bool to true
   }
   
+
 }
