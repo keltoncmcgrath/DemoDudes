@@ -53,10 +53,10 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Variables
-int shov_angle_start = 90;
-int shov_angle_final = 90;
+int shov_angle_start;
+int shov_angle_final;
 float shov_angle_des;
-float shov_t_final = 10;
+float shov_t_final = 2;
 
 // IR Array Vars
 const uint8_t ir_sensor_count = 8;
@@ -339,15 +339,24 @@ void ArmServo(){
 
 // Shovel Servo Function
 void ShovelServo(){
-  t = (millis()-t_start) / 1000;
+  t_start = millis();
   shov_angle_start = shovel_servo.read();
-  if(shov_angle_start > shov_angle_final){
-    shov_angle_des = ((shov_angle_start-shov_angle_final) / (1+exp(t-shov_t_final/2))) + shov_angle_final;
+  while(shovel_servo.read() != shov_angle_final){
+    t = (millis()-t_start) / 1000;
+    if(shov_angle_start > shov_angle_final){
+      shov_angle_des = ((shov_angle_start-shov_angle_final) / (1+exp((10/shov_t_final)*t-5))) + shov_angle_final;
+    }
+    if(shov_angle_start < shov_angle_final){
+      shov_angle_des = (shov_angle_final-shov_angle_start) / (1+exp(-(10/shov_t_final*t)+5)) + shov_angle_start + 1;
+    }
+    shovel_servo.write(shov_angle_des);
+    Serial.print(shovel_servo.read());
+    Serial.print('\t');
+    Serial.print(shov_angle_des);
+    Serial.print('\t');
+    Serial.println(t);
   }
-  if(shov_angle_start < shov_angle_final){
-    shov_angle_des = (shov_angle_final-shov_angle_start) / (1+exp(-t+shov_t_final/2)) + shov_angle_start;
-  }
-  shovel_servo.write(shov_angle_des);
+  delay(1000);
 }
 
 // Line Following Demo Function
@@ -630,15 +639,19 @@ void loop() {
       break;
 
     case 'a':
-      arm_angle_final = 60;
+      arm_angle_final = 25;
       ArmServo();
       arm_angle_final = 93;
-      ArmServo();
+      // ArmServo();
       break;
 
     case 's':
+      shov_t_final = 2;
+      shov_angle_final = 180;
       ShovelServo();
-      break; 
+      shov_angle_final = 93;
+      ShovelServo();
+      break;
 
     case 'd':
       while(!stop){

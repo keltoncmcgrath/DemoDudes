@@ -10,7 +10,7 @@ void TravelToLoc(void){
           if(!final_stage){
             // Set straight travel variables according to pos
             if(current_block.pos == '1'){
-              dist_final = guide1;
+              dist_final = guide1-2;
               time_final = 4;
             }
             else if(current_block.pos == '2'){
@@ -21,10 +21,16 @@ void TravelToLoc(void){
               dist_final = guide3;
               time_final = 5;
             }
+            // Travel Vars
             theta1_final = dist_final / wheel_radius;
             theta2_final = dist_final / wheel_radius;
             final_stage = true;
             ResetTravelVars();
+            // Arm Servo Vars
+            arm_angle_final = arm_max_angle;
+            arm_angle_start = arm_servo.read();
+            arm_t_final = 2;
+            // Change State
             straight_bool = true;
             turn_bool = false;
             // Add turn command to linked list
@@ -36,6 +42,7 @@ void TravelToLoc(void){
       }
 
       if(straight_bool){
+
         StraightLine();
         if(abs(theta1_des)>=abs(theta1_final) && abs(theta2_des)>=abs(theta2_final)){
           turn_angle_final = pi/2;

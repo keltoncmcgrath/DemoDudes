@@ -167,9 +167,9 @@ float guide3 = 68.58;  // cm
 float guide4 = 27.84;  // cm, measure dist later
 float guide5 = 35.46;  // cm, measure dist later
 float guide6 = 43.04;  // cm, measure dist later
-int turn_speed = 200;
-int straight_speed = 300;
-int line_follow_speed = 200;
+// int turn_speed = 200;
+// int straight_speed = 300;
+int line_follow_speed = 300;
 
 // Encoder Vars
 int encoder1_count;
@@ -179,6 +179,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 
 // Arm Servo Vars
 int servo_home = 93;
+int arm_max_angle = 25;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -186,6 +187,8 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Vars
+int shov_max_angle = 150;
+int shov_dump_angle = 180;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -235,8 +238,10 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dist_desired = 11.75;   // cm
-float dist_actual = 1000;  // cm
+float dist_dump = 15;       // cm
+float dist_collect = 12.75; // cm
+float dist_actual = 1000;   // cm
+float dist_desired;
 float dist_val;
 float a = exp(7.453976699);
 float b = -0.907499336;
@@ -317,7 +322,7 @@ void loop() {
       if (dist_actual <= dist_desired) {
         state = 'b';
         // Set Travel State Initial Variables
-        dist_final = 3;
+        dist_final = 4;
         time_final = 1;
         final_stage = false;
         theta1_final = dist_final / wheel_radius;
@@ -345,13 +350,13 @@ void loop() {
     case 'c':
       Serial.println("Detecting Color");
       t = (millis() - t_start) / 1000;
-      // ColorSense();
+      ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
         DetermineBlockLoc();
         if (current_block.face == 'n' || current_block.face == 'e') {
           arc_angle_final = pi / 2;
-          arc_radius = 0;
+          arc_radius = 0.8;
           theta1_final = arc_angle_final * (arc_radius+wheel_dist) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
           time_final = 2;
@@ -373,7 +378,7 @@ void loop() {
       else if (t > block_wait_time) {
         state = 'b';
         // Set Travel State Initial Variables
-        dist_final = 1.25;
+        dist_final = 4;
         time_final = 1;
         theta1_final = dist_final / wheel_radius;
         theta2_final = dist_final / wheel_radius;
