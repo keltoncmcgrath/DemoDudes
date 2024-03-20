@@ -20,8 +20,8 @@ struct block {
   char face;
   char pos;
   char elev;
-  char color;
   bool placed;
+  char color;
 };
 
 struct linked_list {
@@ -68,7 +68,8 @@ char rc;
 int flag = 33;
 int num_blocks;
 char block_color;
-struct block current_block;
+bool use_first = true;
+struct block current_block = { 'n', '1', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -137,13 +138,13 @@ struct block blue[12] = {
 float KP = 300;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;   // cm 
-float wheel_dist = 19.7;    // cm
-float dist_final;           // cm
-float turn_angle_final;     // rad
-float arc_radius;           // cm
-float arc_angle_final;      // rad
-float time_final;           // s
+float wheel_radius = 3.5;  // cm
+float wheel_dist = 21.3;   // cm
+float dist_final;          // cm
+float turn_angle_final;    // rad
+float arc_radius;          // cm
+float arc_angle_final;     // rad
+float time_final;          // s
 char turn_dir;
 char travel_dir;
 float theta1;
@@ -160,10 +161,12 @@ int m1s;
 int m2s;
 
 // Travel Variables
-float guide1 = 53.34;   // cm
-float guide3 = 68.58;   // cm
-float guide4 = 0;       // cm, measure dist later
-float guide6 = 0;       // cm, measure dist later
+float guide1 = 53.34;  // cm
+float guide2 = 60.96;  // cm
+float guide3 = 68.58;  // cm
+float guide4 = 27.84;  // cm, measure dist later
+float guide5 = 35.46;  // cm, measure dist later
+float guide6 = 43.04;  // cm, measure dist later
 int turn_speed = 200;
 int straight_speed = 300;
 int line_follow_speed = 200;
@@ -171,8 +174,8 @@ int line_follow_speed = 200;
 // Encoder Vars
 int encoder1_count;
 int encoder2_count;
-Encoder encoder1(encoder1_pinA,encoder1_pinB);
-Encoder encoder2(encoder2_pinA,encoder2_pinB);
+Encoder encoder1(encoder1_pinA, encoder1_pinB);
+Encoder encoder2(encoder2_pinA, encoder2_pinB);
 
 // Arm Servo Vars
 int servo_home = 93;
@@ -213,9 +216,9 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
 int color_ranges[3][3][2] = {
-  { {218, 291}, {224, 305}, {-3, 33} },
-  { {219, 290}, {228, 299}, {-3, 33} },
-  { {218, 291}, {227, 302}, {-2, 32} }
+  { { 218, 291 }, { 224, 305 }, { -3, 33 } },
+  { { 219, 290 }, { 228, 299 }, { -3, 33 } },
+  { { 218, 291 }, { 227, 302 }, { -2, 32 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -232,8 +235,8 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dist_desired = 10;      // cm
-float dist_actual = 1000;     // cm
+float dist_desired = 10;   // cm
+float dist_actual = 1000;  // cm
 float dist_val;
 float a = exp(7.453976699);
 float b = -0.907499336;
@@ -250,17 +253,10 @@ int mag_thresh = 600;
 // bool dump_block_bool = false;
 // bool color_sense_bool = false;
 
-// Function Bools
-bool line_follow_bool = true;
-bool dist_sense_bool = false;
-bool arm_servo_bool = false;
-bool shovel_servo_bool = false;
-bool straight_line_bool = false;
-bool turn_bool = false;
-
 // Event Bools
-bool final_stage = false;
-bool color_detected = false;
+bool final_stage;
+bool turn_bool;
+bool straight_bool;
 
 
 ///////////////////////////////
@@ -273,9 +269,6 @@ void setup() {
   while (!Serial && !Serial2) {
     ;  // Wait until connected
   }
-
-  // Initilaize Start Time
-  t_start = millis();
 
   //Initializing and Enabling Driver Shield
   md.init();
@@ -315,31 +308,21 @@ void setup() {
 ///--------- LOOP ---------///
 //////////////////////////////
 void loop() {
-  switch(state){
+  switch (state) {
     // Line follow to dispenser
     case 'a':
       Serial.println("Following Line");
       LineFollow();
       DistSense();
-      if(dist_actual <= dist_desired){
+      if (dist_actual <= dist_desired) {
         state = 'b';
         // Set Travel State Initial Variables
-        t_start = millis();
-        t_old = 0;
         dist_final = 1.25;
         time_final = 1;
-        counts1 = 0;
-        counts2 = 0;
-        theta1_des = 0;
-        theta2_des = 0;
-        encoder1.write(0);
-        encoder2.write(0);
         final_stage = false;
-        // Initialize Straight Line Variables
-        theta1_final = dist_final/wheel_radius;
-        theta2_final = dist_final/wheel_radius;
-        omega1_des = theta1_final/time_final;
-        omega2_des = theta2_final/time_final;
+        theta1_final = dist_final / wheel_radius;
+        theta2_final = dist_final / wheel_radius;
+        ResetTravelVars();
         // Set Servo State Initial Variables
         arm_t_final = 1;
         shov_t_final = 1;
@@ -354,40 +337,45 @@ void loop() {
     // Catch a block
     case 'b':
       Serial.println("Collecting Block");
-      CollectBlock();   // Set turn_bool true?
-      current_block = {'w', '4', 'l', false};
+      CollectBlock();
       break;
 
 
     // Sense Color of Block
     case 'c':
       Serial.println("Detecting Color");
-      t = (millis()-t_start)/1000;
-      ColorSense();
+      t = (millis() - t_start) / 1000;
+//////// ColorSense();
       // Continue if color is detected
-      if(current_block.color != '\0'){
+      if (current_block.color != '\0') {
+        DetermineBlockLoc();
+        if (current_block.face == 'n' || current_block.face == 'e') {
+          turn_angle_final = pi / 2;
+          time_final = 2;
+        } 
+        else {
+          turn_angle_final = pi;
+          time_final = 4;
+        }
+        // Turn Variables
+        theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+        theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
+        final_stage = false;
+        ResetTravelVars();
+        // Change state
+        turn_bool = true;
         state = 'd';
       }
       // Else collect another block
-      else if(t > block_wait_time){
+      else if (t > block_wait_time) {
         state = 'b';
         // Set Travel State Initial Variables
-        t_start = millis();
-        t_old = 0;
         dist_final = 1.25;
         time_final = 1;
-        counts1 = 0;
-        counts2 = 0;
-        theta1_des = 0;
-        theta2_des = 0;
-        encoder1.write(0);
-        encoder2.write(0);
+        theta1_final = dist_final / wheel_radius;
+        theta2_final = dist_final / wheel_radius;
         final_stage = false;
-        // Initialize Straight Line Variables
-        theta1_final = dist_final/wheel_radius;
-        theta2_final = dist_final/wheel_radius;
-        omega1_des = theta1_final/time_final;
-        omega2_des = theta2_final/time_final;
+        ResetTravelVars();
         // Set Servo State Initial Variables
         arm_t_final = 1;
         shov_t_final = 1;
@@ -401,7 +389,7 @@ void loop() {
 
     // Travel to desired block location
     case 'd':
-      Serial.println("Traveling to Loc");
+      // Serial.println("Traveling to Loc");
       TravelToLoc();
       break;
 
@@ -411,104 +399,4 @@ void loop() {
       DumpBlock();
       break;
   }
-  // // Line Follow Until a Distance
-  // if(start_sequence_bool && dist_actual > dist_desired) {
-  //   LineFollow();
-  //   DistSense();
-  // }
-  // Get Ready for Collecting a Block
-  // else if(start_sequence_bool&& dist_actual <= dist_desired) {
-  //   start_sequence_bool = false;
-  //   collect_block_bool = true;
-
-  //   // Set Travel State Initial Variables
-  //   t_start = millis();
-  //   t_old = 0;
-  //   dist_final = 1.25;
-  //   time_final = 1;
-  //   counts1 = 0;
-  //   counts2 = 0;
-  //   theta1_des = 0;
-  //   theta2_des = 0;
-  //   encoder1.write(0);
-  //   encoder2.write(0);
-  //   final_stage = false;
-  //   // Initialize Straight Line Variables
-  //   theta1_final = dist_final/wheel_radius;
-  //   theta2_final = dist_final/wheel_radius;
-  //   omega1_des = theta1_final/time_final;
-  //   omega2_des = theta2_final/time_final;
-  //   // Set Servo State Initial Variables
-  //   arm_t_final = 1;
-  //   shov_t_final = 1;
-  //   arm_angle_final = 73;
-  //   shov_angle_final = servo_home;
-  //   arm_angle_start = arm_servo.read();
-  //   shov_angle_start = shovel_servo.read();
-  // }
-
-
-  // // Collect Block
-  // if(collect_block_bool){
-  //   CollectBlock();   // Set turn_bool true?
-  //   current_block = {'w', '4', 'l', false};
-  // }
-
-
-  // // Sense Block Color
-  // if(color_sense_bool){
-  //   t = (millis()-t_start)/1000;
-  //   ColorSense();
-  //   // Serial.println(current_block.color);
-  //   if(current_block.color != '\0'){
-  //     color_sense_bool = false;
-  //     travel_bool = true;
-  //   }
-  //   else if(t > 10){
-  //     color_sense_bool = false;
-  //     collect_block_bool = true;
-
-  //     // Set Travel State Initial Variables
-  //     t_start = millis();
-  //     t_old = 0;
-  //     dist_final = 1.25;
-  //     time_final = 1;
-  //     counts1 = 0;
-  //     counts2 = 0;
-  //     theta1_des = 0;
-  //     theta2_des = 0;
-  //     encoder1.write(0);
-  //     encoder2.write(0);
-  //     final_stage = false;
-  //     // Initialize Straight Line Variables
-  //     theta1_final = dist_final/wheel_radius;
-  //     theta2_final = dist_final/wheel_radius;
-  //     omega1_des = theta1_final/time_final;
-  //     omega2_des = theta2_final/time_final;
-  //     // Set Servo State Initial Variables
-  //     arm_t_final = 1;
-  //     shov_t_final = 1;
-  //     arm_angle_final = 73;
-  //     shov_angle_final = servo_home;
-  //     arm_angle_start = arm_servo.read();
-  //     shov_angle_start = shovel_servo.read();
-  //   }
-  // }
-
-
-  // // Travel to Preffered Block Location
-  // if(travel_bool){
-  //   Serial.println("Traveling to Loc");
-  //   TravelToLoc();
-  // }
-
-
-  // // Drop Block Off at Chassis
-  // if(dump_block_bool){
-  //   Serial.println("Dumping Block");
-  //   DumpBlock();
-  //   dump_block_bool = false;
-  // }
-  
-
 }

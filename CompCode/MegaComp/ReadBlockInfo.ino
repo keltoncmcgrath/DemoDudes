@@ -46,6 +46,32 @@ void ReadBlockInfo(void){
             break;
           }
         }
+
+        // Determine which block loc array to use
+        for(int i=0; i<6; i++){   // Iterate through desired red block locations
+          if(red1[i].placed){                                         // If there is a block placed in red1
+            if(red1[i].color == 'r'){                                 // If that block is red
+              use_first = true;                                       // Use red1
+              break;
+            }
+            else{                                                     // Else if that block is not red
+              use_first = false;                                      // Use red2
+              break;
+            }
+          }
+          else if(red2[i].placed){                                  // Iterate through desired red block locations
+            if(red2[i].placed){                                         // If there is a block placed in red2
+              if(red2[i].color == 'r'){                                 // If that block is red
+                use_first = false;                                      // Use red2
+                break;
+              }
+              else{                                                     // Else if that block is not red
+                use_first = true;                                       // Use red1
+                break;
+              }
+            }
+          }
+        }
         break;
       }
     }

@@ -21,7 +21,7 @@ void CollectBlock(void){
 
     // Initialize Variables for Back Travel
     if(!final_stage){
-      dist_final = -1.25;
+      dist_final = -dist_final;
       theta1_final = dist_final/wheel_radius;
       theta2_final = dist_final/wheel_radius;
       omega1_des = theta1_final/time_final;

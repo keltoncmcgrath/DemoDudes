@@ -56,6 +56,7 @@ void setup() {
       Serial.write(num_blocks + '0');
     }
   }
+  Serial.println();
 }
 
 
