@@ -69,7 +69,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '1', 'l', false, 'y' };
+struct block current_block;// = { 'n', '1', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -222,7 +222,7 @@ int color_ranges[3][3][2] = {
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 100;
+int kp = 200;
 int ir_bias[] = { 144, 93, 93, 93, 136, 93, 98, 119 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
@@ -235,7 +235,7 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dist_desired = 10;   // cm
+float dist_desired = 11.75;   // cm
 float dist_actual = 1000;  // cm
 float dist_val;
 float a = exp(7.453976699);
@@ -317,7 +317,7 @@ void loop() {
       if (dist_actual <= dist_desired) {
         state = 'b';
         // Set Travel State Initial Variables
-        dist_final = 1.25;
+        dist_final = 3;
         time_final = 1;
         final_stage = false;
         theta1_final = dist_final / wheel_radius;
@@ -345,7 +345,7 @@ void loop() {
     case 'c':
       Serial.println("Detecting Color");
       t = (millis() - t_start) / 1000;
-//////// ColorSense();
+      ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
         DetermineBlockLoc();

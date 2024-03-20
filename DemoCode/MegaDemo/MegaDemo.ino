@@ -127,7 +127,7 @@ float speed2;
 float KP = 300;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float dist_final = 100;          // cm
+float dist_final = 40;          // cm
 float turn_angle_final = pi;    // rad
 float arc_radius = 50;          // cm
 float arc_angle_final = pi/2;     // rad
@@ -631,7 +631,7 @@ void loop() {
       break;
 
     case 'a':
-      arm_angle_final = 73;
+      arm_angle_final = 60;
       ArmServo();
       arm_angle_final = 93;
       ArmServo();
