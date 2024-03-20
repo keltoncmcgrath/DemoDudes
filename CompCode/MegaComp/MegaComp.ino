@@ -69,7 +69,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block;// = { 'n', '1', 'l', false, 'y' };
+struct block current_block = { 'n', '1', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -345,21 +345,24 @@ void loop() {
     case 'c':
       Serial.println("Detecting Color");
       t = (millis() - t_start) / 1000;
-      ColorSense();
+      // ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
         DetermineBlockLoc();
         if (current_block.face == 'n' || current_block.face == 'e') {
-          turn_angle_final = pi / 2;
+          arc_angle_final = pi / 2;
+          arc_radius = 0;
+          theta1_final = arc_angle_final * (arc_radius+wheel_dist) / wheel_radius;
+          theta2_final = arc_angle_final * arc_radius / wheel_radius;
           time_final = 2;
         } 
         else {
           turn_angle_final = pi;
+          theta1_final = turn_angle_final * (wheel_dist/2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist/2) / wheel_radius;
           time_final = 4;
         }
         // Turn Variables
-        theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
-        theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
         final_stage = false;
         ResetTravelVars();
         // Change state

@@ -2,7 +2,6 @@
 #include "DualTB9051FTGMotorShieldUnoMega.h"
 #include <Encoder.h>
 #include <Servo.h>
-#include <PWMServo.h>
 #include <QTRSensors.h>
 
 // Creates an object that is easier to call than Dual....MotorShield

@@ -1,4 +1,4 @@
-void Turn(){
+void Arc(){
   // Update varaibles
   t = (millis()-t_start)/1000;
   delta_T = t - t_old;
@@ -9,7 +9,7 @@ void Turn(){
 
   // Calculate new desired thetas
   theta1_des += omega1_des*delta_T;
-  theta2_des += omega2_des*delta_T;
+  theta2_des += omega2_des*delta_T; 
 
   if(abs(theta1_des)>=abs(theta1_final)){
     theta1_des = theta1_final;
@@ -20,11 +20,11 @@ void Turn(){
 
   // Control and constrain speed
   m1s = KP * (theta1_des-theta1);
-  m2s = KP * (theta2_des-theta2); 
+  m2s = KP * (theta2_des-theta2);
   m1s = constrain(m1s, -400, 400);
   m2s = constrain(m2s, -400, 400);
 
-  // Set Speeds and uptate t_old
+  // Set motor speeds and record old time
   md.setSpeeds(m1s, m2s); 
   t_old = t;
 }
