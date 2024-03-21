@@ -42,7 +42,7 @@ void TravelToLoc(void){
       }
 
       if(straight_bool){
-
+        ArmServo();
         StraightLine();
         if(abs(theta1_des)>=abs(theta1_final) && abs(theta2_des)>=abs(theta2_final)){
           turn_angle_final = pi/2;

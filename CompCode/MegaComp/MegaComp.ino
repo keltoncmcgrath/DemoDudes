@@ -316,10 +316,10 @@ void loop() {
   switch (state) {
     // Line follow to dispenser
     case 'a':
-      Serial.println("Following Line");
+      // Serial.println("Following Line");
       LineFollow();
       DistSense();
-      if (dist_actual <= dist_desired) {
+      if (dist_actual <= dist_collect) {
         state = 'b';
         // Set Travel State Initial Variables
         dist_final = 4;
@@ -350,7 +350,7 @@ void loop() {
     case 'c':
       Serial.println("Detecting Color");
       t = (millis() - t_start) / 1000;
-      ColorSense();
+      // ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
         DetermineBlockLoc();
