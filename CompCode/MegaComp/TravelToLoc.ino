@@ -35,7 +35,19 @@ void TravelToLoc(void){
             turn_bool = false;
             // Add turn command to linked list
           }
+          // Prepare for block dump
           else if(final_stage){
+            if(current_block.elev == 'l'){
+              arm_angle_final = arm_collect_angle;
+              arm_angle_start = arm_servo.read();
+              arm_t_final = 1;
+            }
+            dist_final = -2;
+            time_final = 1.5;
+            theta1_final = dist_final / wheel_radius;
+            theta2_final = dist_final / wheel_radius;
+            final_stage = false;
+            ResetTravelVars();
             state = 'e';
           }
         }

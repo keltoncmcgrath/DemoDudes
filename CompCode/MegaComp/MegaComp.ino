@@ -180,6 +180,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 25;
+int arm_collect_angle = 73;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -238,9 +239,10 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dist_dump = 15;       // cm
-float dist_collect = 12.75; // cm
-float dist_actual = 1000;   // cm
+float dump_dist_upper = 15;   // cm
+float dump_dist_lower = 12;   // cm
+float dist_collect = 12.75;   // cm
+float dist_actual = 1000;     // cm
 float dist_desired;
 float dist_val;
 float a = exp(7.453976699);
@@ -250,13 +252,6 @@ bool stop = false;
 // Mag Vars
 float mag_val;
 int mag_thresh = 600;
-
-// State Bools
-// bool start_sequence_bool = true;
-// bool collect_block_bool = false;
-// bool travel_bool = false;
-// bool dump_block_bool = false;
-// bool color_sense_bool = false;
 
 // Event Bools
 bool final_stage;
@@ -316,7 +311,6 @@ void loop() {
   switch (state) {
     // Line follow to dispenser
     case 'a':
-      // Serial.println("Following Line");
       LineFollow();
       DistSense();
       if (dist_actual <= dist_collect) {
@@ -331,7 +325,7 @@ void loop() {
         // Set Servo State Initial Variables
         arm_t_final = 1;
         shov_t_final = 1;
-        arm_angle_final = 73;
+        arm_angle_final = arm_collect_angle;
         shov_angle_final = servo_home;
         arm_angle_start = arm_servo.read();
         shov_angle_start = shovel_servo.read();
@@ -341,14 +335,12 @@ void loop() {
 
     // Catch a block
     case 'b':
-      Serial.println("Collecting Block");
       CollectBlock();
       break;
 
 
     // Sense Color of Block
     case 'c':
-      Serial.println("Detecting Color");
       t = (millis() - t_start) / 1000;
       // ColorSense();
       // Continue if color is detected
@@ -397,14 +389,18 @@ void loop() {
 
     // Travel to desired block location
     case 'd':
-      // Serial.println("Traveling to Loc");
       TravelToLoc();
       break;
 
     // Dump block onto chassis
     case 'e':
-      Serial.println("Dumping Block");
+      // Serial.println("Dumping Block");
       DumpBlock();
+      break;
+
+    case 'f':
+      // Serial.println("Returning to Dispenser");
+      Return();
       break;
   }
 }
