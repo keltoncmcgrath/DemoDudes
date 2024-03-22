@@ -2,7 +2,7 @@
 ///-- LIBRARIES & OBJECTS --///
 ///////////////////////////////
 // Include Libraries
-#include "DualTB9051FTGMotorShieldUnoMega.h"
+#include <DualTB9051FTGMotorShieldUnoMega.h>
 #include <Encoder.h>
 #include <Servo.h>
 #include <QTRSensors.h>
@@ -311,6 +311,7 @@ void loop() {
   switch (state) {
     // Line follow to dispenser
     case 'a':
+      Serial.println("Line Following");
       LineFollow();
       DistSense();
       if (dist_actual <= dist_collect) {
@@ -335,12 +336,14 @@ void loop() {
 
     // Catch a block
     case 'b':
+      Serial.println("Collecting Block");
       CollectBlock();
       break;
 
 
     // Sense Color of Block
     case 'c':
+      Serial.println("Sensing Color");
       t = (millis() - t_start) / 1000;
       // ColorSense();
       // Continue if color is detected
@@ -389,12 +392,13 @@ void loop() {
 
     // Travel to desired block location
     case 'd':
+      Serial.println("Traveling to Location");
       TravelToLoc();
       break;
 
     // Dump block onto chassis
     case 'e':
-      // Serial.println("Dumping Block");
+      Serial.println("Dumping Block");
       DumpBlock();
       break;
 
