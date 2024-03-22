@@ -135,16 +135,17 @@ struct block blue[12] = {
 };
 
 // Trajectory Vars
-float KP = 300;
+float KP = 400;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;  // cm
-float wheel_dist = 21.3;   // cm
-float dist_final;          // cm
-float turn_angle_final;    // rad
-float arc_radius;          // cm
-float arc_angle_final;     // rad
-float time_final;          // s
+float wheel_radius = 3.5;      // cm
+float wheel_dist_arc = 20;     // cm
+float wheel_dist_turn = 20.9;  // cm
+float dist_final;              // cm
+float turn_angle_final;        // rad
+float arc_radius;              // cm
+float arc_angle_final;         // rad
+float time_final;              // s
 char turn_dir;
 char travel_dir;
 float theta1;
@@ -161,9 +162,9 @@ int m1s;
 int m2s;
 
 // Travel Variables
-float guide1 = 53.34;  // cm
-float guide2 = 60.96;  // cm
-float guide3 = 68.58;  // cm
+float guide1 = 55;    // cm
+float guide2 = 61.5;  // cm
+float guide3 = 70;    // cm
 float guide4 = 27.84;  // cm, measure dist later
 float guide5 = 35.46;  // cm, measure dist later
 float guide6 = 43.04;  // cm, measure dist later
@@ -181,6 +182,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 int servo_home = 93;
 int arm_max_angle = 25;
 int arm_collect_angle = 73;
+int arm_low_dump_angle = 75;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -226,7 +228,7 @@ int color_ranges[3][3][2] = {
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 200;
+int kp = 300;
 int ir_bias[] = { 144, 93, 93, 93, 136, 93, 98, 119 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
@@ -239,9 +241,10 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dump_dist_upper = 15;   // cm
-float dump_dist_lower = 12;   // cm
-float dist_collect = 12.75;   // cm
+float dump_dist_upper = 12;   // cm
+float dump_dist_lower3 = 14;   // cm
+float dump_dist_lower1 = 13;  // cm
+float dist_collect = 14;   // cm
 float dist_actual = 1000;     // cm
 float dist_desired;
 float dist_val;
@@ -317,7 +320,7 @@ void loop() {
       if (dist_actual <= dist_collect) {
         state = 'b';
         // Set Travel State Initial Variables
-        dist_final = 4;
+        dist_final = 6;
         time_final = 1;
         final_stage = false;
         theta1_final = dist_final / wheel_radius;
@@ -348,18 +351,18 @@ void loop() {
       // ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
-        DetermineBlockLoc();
+        // DetermineBlockLoc();
         if (current_block.face == 'n' || current_block.face == 'e') {
-          arc_angle_final = pi / 2;
+          arc_angle_final = pi/2;
           arc_radius = 0.8;
-          theta1_final = arc_angle_final * (arc_radius+wheel_dist) / wheel_radius;
+          theta1_final = arc_angle_final * (arc_radius+wheel_dist_arc) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
-          time_final = 2;
+          time_final = 3;
         } 
         else {
           turn_angle_final = pi;
-          theta1_final = turn_angle_final * (wheel_dist/2) / wheel_radius;
-          theta2_final = -turn_angle_final * (wheel_dist/2) / wheel_radius;
+          theta1_final = turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
           time_final = 4;
         }
         // Turn Variables
@@ -392,7 +395,8 @@ void loop() {
 
     // Travel to desired block location
     case 'd':
-      Serial.println("Traveling to Location");
+      // Serial.println("Traveling to Location");
+      Serial.println(current_block.pos);
       TravelToLoc();
       break;
 

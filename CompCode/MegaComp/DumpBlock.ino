@@ -9,14 +9,16 @@ void DumpBlock(void){
         if(arm_servo.read() != arm_angle_final){
           ArmServo();
         }
+        if(final_stage){
+          DistSense();
+        }
         StraightLine();
-        DistSense();
         if((abs(theta1_des)>=abs(theta1_final) && abs(theta2_des)>=abs(theta2_final)) || dist_actual <= dump_dist_lower){
           md.setSpeeds(0, 0);
           // Prepare for forward travel
           if(!final_stage){
-            dist_final = 5;
-            time_final = 3;
+            dist_final = 14;
+            time_final = 5;
             theta1_final = dist_final / wheel_radius;
             theta2_final = dist_final / wheel_radius;
             final_stage = true;
