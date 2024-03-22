@@ -69,7 +69,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '1', 'l', false, 'y' };
+struct block current_block = { 'n', '1', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -135,12 +135,12 @@ struct block blue[12] = {
 };
 
 // Trajectory Vars
-float KP = 400;
+float KP = 500;
 int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 3.5;      // cm
 float wheel_dist_arc = 20;     // cm
-float wheel_dist_turn = 20.9;  // cm
+float wheel_dist_turn = 20.8;  // cm
 float dist_final;              // cm
 float turn_angle_final;        // rad
 float arc_radius;              // cm
@@ -241,13 +241,13 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dump_dist_upper = 12;   // cm
-float dump_dist_lower3 = 14;   // cm
-float dump_dist_lower1 = 13;  // cm
-float dist_collect = 14;   // cm
+float dump_dist_upper = 11;   // cm
+float dump_dist_lower = 11;   // cm
+float dist_collect = 14.5;   // cm
 float dist_actual = 1000;     // cm
+int num_dist_vals = 10;
+float dist_val = 0;
 float dist_desired;
-float dist_val;
 float a = exp(7.453976699);
 float b = -0.907499336;
 bool stop = false;
@@ -260,6 +260,7 @@ int mag_thresh = 600;
 bool final_stage;
 bool turn_bool;
 bool straight_bool;
+bool servo_bool;
 
 
 ///////////////////////////////
@@ -357,7 +358,7 @@ void loop() {
           arc_radius = 0.8;
           theta1_final = arc_angle_final * (arc_radius+wheel_dist_arc) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
-          time_final = 3;
+          time_final = 2;
         } 
         else {
           turn_angle_final = pi;
@@ -395,8 +396,7 @@ void loop() {
 
     // Travel to desired block location
     case 'd':
-      // Serial.println("Traveling to Location");
-      Serial.println(current_block.pos);
+      Serial.println("Traveling to Location");
       TravelToLoc();
       break;
 

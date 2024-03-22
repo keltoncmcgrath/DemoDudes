@@ -5,6 +5,7 @@ float dist_actual = 1000;   // cm
 float dist_val;
 float a = exp(7.453976699);
 float b = -0.907499336;
+int num_dist_vals = 10;
 
 void setup() {
   // put your setup code here, to run once:
@@ -13,7 +14,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  dist_val = analogRead(dist_pin);
+  for(int i=0; i<num_dist_vals; i++){
+    dist_val += analogRead(dist_pin);
+  }
+  dist_val /= num_dist_vals;
   dist_actual = pow(dist_val/a, 1/b);
+  dist_val = 0;
   Serial.println(dist_actual);
 }

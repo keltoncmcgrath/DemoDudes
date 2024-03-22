@@ -3,6 +3,21 @@ void TravelToLoc(void){
   switch(current_block.face){
     // North Face Case
     case 'n':
+      // Travel straight to face
+      if(straight_bool){
+        ArmServo();
+        StraightLine();
+        if(abs(theta1_des)>=abs(theta1_final) && abs(theta2_des)>=abs(theta2_final)){
+          turn_angle_final = pi/2;
+          time_final = 2;
+          theta1_final = turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
+          ResetTravelVars();
+          turn_bool = true;
+          straight_bool = false;
+        }
+      }
+      // Turn to align with face
       if(turn_bool){
         Turn();
         if(abs(theta1_des)>=abs(theta1_final) && abs(theta2_des)>=abs(theta2_final)){
@@ -41,31 +56,23 @@ void TravelToLoc(void){
               arm_angle_final = arm_low_dump_angle;
               arm_angle_start = arm_servo.read();
               arm_t_final = 1;
+              dist_actual = 1000;
+              dist_final = -6;
+              time_final = 2;
+              arm_t_final = 2;
             }
-            dist_actual = 50;
-            dist_final = -5;
-            time_final = 2;
-            arm_t_final = 2;
+            else if(current_block.elev == 'u'){
+              dist_final = -4;
+              time_final = 2;
+              straight_bool = true;
+              servo_bool = false;
+            }
             theta1_final = dist_final / wheel_radius;
             theta2_final = dist_final / wheel_radius;
             final_stage = false;
             ResetTravelVars();
             state = 'e';
           }
-        }
-      }
-
-      if(straight_bool){
-        ArmServo();
-        StraightLine();
-        if(abs(theta1_des)>=abs(theta1_final) && abs(theta2_des)>=abs(theta2_final)){
-          turn_angle_final = pi/2;
-          time_final = 2;
-          theta1_final = turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
-          theta2_final = -turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
-          ResetTravelVars();
-          turn_bool = true;
-          straight_bool = false;
         }
       }
       break;
