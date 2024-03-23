@@ -69,7 +69,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '1', 'u', false, 'y' };
+struct block current_block = { 'e', '5', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -141,11 +141,12 @@ int gear_ratio = 131;
 float wheel_radius = 3.5;      // cm
 float wheel_dist_arc = 20;     // cm
 float wheel_dist_turn = 20.8;  // cm
+float turn_time = 2;           // s
 float dist_final;              // cm
 float turn_angle_final;        // rad
 float arc_radius;              // cm
 float arc_angle_final;         // rad
-float time_final;              // s
+float time_final;
 char turn_dir;
 char travel_dir;
 float theta1;
@@ -158,18 +159,18 @@ float omega1_des;
 float omega2_des;
 long counts1;
 long counts2;
+float dist_traveled;
 int m1s;
 int m2s;
 
 // Travel Variables
-float guide1 = 55;    // cm
-float guide2 = 61.5;  // cm
-float guide3 = 70;    // cm
-float guide4 = 27.84;  // cm, measure dist later
-float guide5 = 35.46;  // cm, measure dist later
-float guide6 = 43.04;  // cm, measure dist later
-// int turn_speed = 200;
-// int straight_speed = 300;
+float east_guide = 122.5;  // cm
+float guide1 = 55;         // cm
+float guide2 = 61.5;       // cm
+float guide3 = 70;         // cm
+float guide4 = 27.84;      // cm, measure dist later
+float guide5 = 35.46;      // cm, measure dist later
+float guide6 = 43.04;      // cm, measure dist later
 int line_follow_speed = 300;
 
 // Encoder Vars
@@ -237,6 +238,7 @@ float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
 float ir_dist_desired = 2.8;                                           // cm
 float ir_dist_actual;
 float ir_error;
+bool all_black;
 float num = 0;
 float den = 0;
 
@@ -258,9 +260,11 @@ int mag_thresh = 600;
 
 // Event Bools
 bool final_stage;
+bool final_final_stage;
 bool turn_bool;
 bool straight_bool;
 bool servo_bool;
+bool line_follow_bool;
 
 
 ///////////////////////////////
@@ -382,6 +386,7 @@ void loop() {
         theta1_final = dist_final / wheel_radius;
         theta2_final = dist_final / wheel_radius;
         final_stage = false;
+        final_final_stage = false;
         ResetTravelVars();
         // Set Servo State Initial Variables
         arm_t_final = 1;
@@ -396,16 +401,19 @@ void loop() {
 
     // Travel to desired block location
     case 'd':
-      Serial.println("Traveling to Location");
+      // Serial.println("Traveling to Location");
       TravelToLoc();
       break;
 
+
     // Dump block onto chassis
     case 'e':
-      Serial.println("Dumping Block");
+      // Serial.println("Dumping Block");
       DumpBlock();
       break;
 
+
+    // Return to Dispenser
     case 'f':
       // Serial.println("Returning to Dispenser");
       Return();

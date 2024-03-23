@@ -33,7 +33,6 @@ void loop() {
   // put your main code here, to run repeatedly:
   for(int i=0; i<ir_sensor_count; i++){
     ir_values[i] = 0;
-
   }
 
   for(int i=0; i<num_calcs; i++){
@@ -45,8 +44,8 @@ void loop() {
   }
   for(int i=0; i<ir_sensor_count; i++){
     ir_bias[i] = ir_values[i] / num_calcs;
-    Serial.print(ir_bias[i]);
-    Serial.print('\t');
+    // Serial.print(ir_bias[i]);
+    // Serial.print('\t');
   }
-  Serial.println();
+  // Serial.println();
 }
