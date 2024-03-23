@@ -57,7 +57,6 @@ void DumpBlock(void){
           }
         }
       }
-      Serial.println("No Bueno");
       break;
     
     // Block placed on black line
