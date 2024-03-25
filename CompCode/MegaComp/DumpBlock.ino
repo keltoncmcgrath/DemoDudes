@@ -11,6 +11,9 @@ void DumpBlock(void) {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
         }
+        if (shovel_servo.read() != shov_angle_final){
+          ShovelServo();
+        }
         DistSense();
         StraightLine();
         // Return to dispenser
@@ -25,8 +28,11 @@ void DumpBlock(void) {
         if (straight_bool) {
           StraightLine();
           DistSense();
+          Serial.print(dist_actual);
+          Serial.print('\t');
+          Serial.println(dump_dist_upper);
           // Set shovel servo vars and set state
-          if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final) || dist_actual <= dump_dist_upper) {
+          if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final) || dist_actual >= dump_dist_upper) {
             md.setSpeeds(0, 0);
             arm_angle_final = arm_max_angle;
             arm_angle_start = arm_servo.read();

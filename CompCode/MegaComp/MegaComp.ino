@@ -69,7 +69,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'e', '5', 'l', false, 'y' };
+struct block current_block = { 'e', '4', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -166,12 +166,14 @@ int m2s;
 // Travel Variables
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
+float north_guide = 34.5;   // cm
 float guide1 = 55;          // cm
 float guide2 = 61.5;        // cm
 float guide3 = 70;          // cm
 float guide4 = 27.84;       // cm, measure dist later
-float guide5 = 35.46;       // cm, measure dist later
+float guide5 = 55.5 - north_guide;       // cm, measure dist later
 float guide6 = 43.04;       // cm, measure dist later
+float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
 
 // Encoder Vars
@@ -194,6 +196,7 @@ float arm_tol = 0.1;
 // Shovel Servo Vars
 int shov_max_angle = 150;
 int shov_dump_angle = 180;
+int shov_collect_angle = 75;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -244,11 +247,11 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dump_dist_upper = 11;  // cm
+float dump_dist_upper = 13;  // cm
 float dump_dist_lower = 11;  // cm
-float dist_collect = 14.5;   // cm
+float dist_collect = 14;     // cm
 float dist_actual = 1000;    // cm
-int num_dist_vals = 10;
+int num_dist_vals = 50;
 float dist_val = 0;
 float dist_desired;
 float a = exp(7.453976699);
@@ -326,8 +329,8 @@ void loop() {
       if (dist_actual <= dist_collect) {
         state = 'b';
         // Set Travel State Initial Variables
-        dist_final = 6;
-        time_final = 1;
+        dist_final = collect_dist;
+        time_final = 1.5;
         final_stage = false;
         theta1_final = dist_final / wheel_radius;
         theta2_final = dist_final / wheel_radius;
@@ -336,7 +339,7 @@ void loop() {
         arm_t_final = 1;
         shov_t_final = 1;
         arm_angle_final = arm_collect_angle;
-        shov_angle_final = servo_home;
+        shov_angle_final = shov_collect_angle;
         arm_angle_start = arm_servo.read();
         shov_angle_start = shovel_servo.read();
       }
@@ -356,7 +359,7 @@ void loop() {
       t = (millis() - t_start) / 1000;
       // ColorSense();
       // Continue if color is detected
-      if (current_block.color != '\0') {
+      if (current_block.color != '\0') {  //current_block.color != '\0'
         // DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
@@ -390,7 +393,7 @@ void loop() {
       else if (t > block_wait_time) {
         state = 'b';
         // Set Travel State Initial Variables
-        dist_final = 4;
+        dist_final = collect_dist;
         time_final = 1;
         theta1_final = dist_final / wheel_radius;
         theta2_final = dist_final / wheel_radius;
@@ -401,7 +404,7 @@ void loop() {
         arm_t_final = 1;
         shov_t_final = 1;
         arm_angle_final = 73;
-        shov_angle_final = servo_home;
+        shov_angle_final = shov_collect_angle;
         arm_angle_start = arm_servo.read();
         shov_angle_start = shovel_servo.read();
       }

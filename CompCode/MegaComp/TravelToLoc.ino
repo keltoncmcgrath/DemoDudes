@@ -43,7 +43,7 @@ void TravelToLoc(void) {
               dist_final = -6;
               time_final = 2;
             } else if (current_block.elev == 'u') {
-              dist_final = -6;
+              dist_final = 0;
               time_final = 2;
             }
             theta1_final = dist_final / wheel_radius;
@@ -76,10 +76,13 @@ void TravelToLoc(void) {
           // Prepare to dump block
           else if (final_stage) {
             if (current_block.elev == 'l') {
-              dist_final = 6;
+              dist_final = 7;
               time_final = 2;
+              shov_angle_final = servo_home;
+              shov_angle_start = shovel_servo.read();
+              shov_t_final = 1.5;
             } else if (current_block.elev == 'u') {
-              dist_final = 2;
+              dist_final = -2;
               time_final = 2;
               straight_bool = true;
               servo_bool = false;
@@ -139,6 +142,9 @@ void TravelToLoc(void) {
               dist_final = 5;
               time_final = 2;
               line_follow_speed = 50;
+              shov_angle_final = servo_home;
+              shov_angle_start = shovel_servo.read();
+              shov_t_final = 1.5;
             } else if (current_block.elev == 'u') {
               dist_final = 10;
               time_final = 5;
@@ -242,6 +248,9 @@ void TravelToLoc(void) {
             if (current_block.elev == 'l') {
               dist_final = 6;
               time_final = 2;
+              shov_angle_final = servo_home;
+              shov_angle_start = shovel_servo.read();
+              shov_t_final = 1.5;
             } else if (current_block.elev == 'u') {
               dist_final = 2;
               time_final = 2;
@@ -334,6 +343,9 @@ void TravelToLoc(void) {
             if (current_block.elev == 'l') {
               dist_final = 5;
               time_final = 2;
+              shov_angle_final = servo_home;
+              shov_angle_start = shovel_servo.read();
+              shov_t_final = 1.5;
             } else if (current_block.elev == 'u') {
               dist_final = 10;
               time_final = 5;
