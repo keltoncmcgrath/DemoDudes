@@ -410,7 +410,6 @@ void MagSense(){
 }
 
 void ColorSense(){
-  Serial.println("Fart");
   // Reading Red Light 
   digitalWrite(red_pin, LOW);
   delay(color_delay_time);
@@ -428,6 +427,11 @@ void ColorSense(){
   delay(color_delay_time);
   blue_val = analogRead(photo_trans_pin);
   digitalWrite(blue_pin,HIGH);
+  Serial.print(red_val);
+  Serial.print('\t');
+  Serial.print(green_val);
+  Serial.print('\t');
+  Serial.println(blue_val);
 
   for(int i=0; i<3; i++){
     if(red_val > color_ranges[i][0][0] & red_val < color_ranges[i][0][1]){

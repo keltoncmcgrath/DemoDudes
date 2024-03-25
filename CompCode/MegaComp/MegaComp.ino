@@ -223,9 +223,9 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
 int color_ranges[3][3][2] = {
-  { { 218, 291 }, { 224, 305 }, { -3, 33 } },
-  { { 219, 290 }, { 228, 299 }, { -3, 33 } },
-  { { 218, 291 }, { 227, 302 }, { -2, 32 } }
+  { { 136, 227 }, { -11, 49 },  { -10, 20 } },
+  { { 223, 324 }, { 228, 325 }, { -10, 40 } },
+  { { -11, 27 },  { -0, 70 },   { -1, 65 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -353,11 +353,16 @@ void loop() {
     case 'c':
       Serial.println("Sensing Color");
       t = (millis() - t_start) / 1000;
-      // ColorSense();
+      ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
-        // DetermineBlockLoc();
+        DetermineBlockLoc();
         if (current_block.face == 'n' || current_block.face == 'e') {
+          Serial.print(current_block.face);
+          Serial.print('\t');
+          Serial.print(current_block.pos);
+          Serial.print('\t');
+          Serial.println(current_block.color);
           arc_angle_final = pi/2;
           arc_radius = 0.8;
           theta1_final = arc_angle_final * (arc_radius+wheel_dist_arc) / wheel_radius;
