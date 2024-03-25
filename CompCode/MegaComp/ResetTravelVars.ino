@@ -1,4 +1,4 @@
-void ResetTravelVars(void){
+void ResetTravelVars(void) {
   t_start = millis();
   t_old = 0;
   counts1 = 0;
@@ -8,6 +8,6 @@ void ResetTravelVars(void){
   encoder1.write(0);
   encoder2.write(0);
   // Initialize Straight Line Variables
-  omega1_des = theta1_final/time_final;
-  omega2_des = theta2_final/time_final;
+  omega1_des = theta1_final / time_final;
+  omega2_des = theta2_final / time_final;
 }

@@ -69,7 +69,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'e', '5', 'u', false, 'y' };
+struct block current_block = { 'e', '5', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -164,13 +164,14 @@ int m1s;
 int m2s;
 
 // Travel Variables
-float east_guide = 122.5;  // cm
-float guide1 = 55;         // cm
-float guide2 = 61.5;       // cm
-float guide3 = 70;         // cm
-float guide4 = 27.84;      // cm, measure dist later
-float guide5 = 35.46;      // cm, measure dist later
-float guide6 = 43.04;      // cm, measure dist later
+float east_guide = 122.5;   // cm
+float south_guide = 68.58;  // cm
+float guide1 = 55;          // cm
+float guide2 = 61.5;        // cm
+float guide3 = 70;          // cm
+float guide4 = 27.84;       // cm, measure dist later
+float guide5 = 35.46;       // cm, measure dist later
+float guide6 = 43.04;       // cm, measure dist later
 int line_follow_speed = 300;
 
 // Encoder Vars
@@ -223,9 +224,9 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
 int color_ranges[3][3][2] = {
-  { { 136, 227 }, { -11, 49 },  { -10, 20 } },
-  { { 223, 324 }, { 228, 325 }, { -10, 40 } },
-  { { -11, 27 },  { -0, 70 },   { -1, 65 } }
+  { { 261, 328 }, { 8, 53 }, { -5, 19 } },
+  { { 340, 370 }, { 330, 365 }, { 15, 50 } },
+  { { -4, 24 }, { 14, 63 }, { 12, 63 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -243,10 +244,10 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dump_dist_upper = 11;   // cm
-float dump_dist_lower = 11;   // cm
+float dump_dist_upper = 11;  // cm
+float dump_dist_lower = 11;  // cm
 float dist_collect = 14.5;   // cm
-float dist_actual = 1000;     // cm
+float dist_actual = 1000;    // cm
 int num_dist_vals = 10;
 float dist_val = 0;
 float dist_desired;
@@ -353,33 +354,36 @@ void loop() {
     case 'c':
       Serial.println("Sensing Color");
       t = (millis() - t_start) / 1000;
-      ColorSense();
+      // ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {
-        DetermineBlockLoc();
+        // DetermineBlockLoc();
+        Serial.print(current_block.face);
+        Serial.print('\t');
+        Serial.print(current_block.pos);
+        Serial.print('\t');
+        Serial.print(current_block.elev);
+        Serial.print('\t');
+        Serial.println(current_block.color);
         if (current_block.face == 'n' || current_block.face == 'e') {
-          Serial.print(current_block.face);
-          Serial.print('\t');
-          Serial.print(current_block.pos);
-          Serial.print('\t');
-          Serial.println(current_block.color);
-          arc_angle_final = pi/2;
+          arc_angle_final = pi / 2;
           arc_radius = 0.8;
-          theta1_final = arc_angle_final * (arc_radius+wheel_dist_arc) / wheel_radius;
+          theta1_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
-          time_final = 2;
-        } 
-        else {
+          time_final = turn_time;
+        } else {
           turn_angle_final = pi;
-          theta1_final = turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
-          theta2_final = -turn_angle_final * (wheel_dist_turn/2) / wheel_radius;
-          time_final = 4;
+          theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+          time_final = turn_time + 1;
         }
         // Turn Variables
         final_stage = false;
+        final_final_stage = false;
         ResetTravelVars();
         // Change state
         turn_bool = true;
+        straight_bool = false;
         state = 'd';
       }
       // Else collect another block
@@ -413,7 +417,7 @@ void loop() {
 
     // Dump block onto chassis
     case 'e':
-      // Serial.println("Dumping Block");
+      Serial.println("Dumping Block");
       DumpBlock();
       break;
 

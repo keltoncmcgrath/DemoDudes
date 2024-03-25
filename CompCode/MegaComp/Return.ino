@@ -1,3 +1,3 @@
-void Return(void){
+void Return(void) {
   ;
 }

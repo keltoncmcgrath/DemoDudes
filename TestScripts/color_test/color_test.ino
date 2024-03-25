@@ -11,5 +11,5 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  digitalWrite(red_pin, LOW);
+  digitalWrite(blue_pin, LOW);
 }
