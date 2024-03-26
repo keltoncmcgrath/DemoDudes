@@ -34,35 +34,76 @@ struct node {
 };
 
 class linked_list {
-private:
-
-public:
-  struct node *head, *tail;
-  // Initialization function
-  linked_list() {
-    this->head = nullptr;
-    this->tail = this->head;
-  }
-  // New node function
-  void AddNode(char action1, float final1, float duration1, float radius1 = 0, char action2 = '\0', float final2 = 0, float duration2 = 0) {
-    struct node *temp = new node;
-    temp->action[0] = action1;
-    temp->action[1] = action2;
-    temp->final_val[0] = final1;
-    temp->final_val[1] = final2;
-    temp->duration[0] = duration1;
-    temp->duration[1] = duration2;
-    temp->radius = radius1;
-    temp->next = head;
-    head = temp;
-  }
-  // Delete node function
-  void DelNode() {
-    struct node *temp = new node;
-    temp = head;
-    head = head->next;
-    delete temp;
-  }
+  public:
+    struct node *head;
+    // Initialization function
+    linked_list() {
+      this->head = nullptr;
+    }
+    // New node function
+    void AddNode(char action1, float final1, float duration1 = 0, float radius1 = 0, char action2 = '\0', float final2 = 0, float duration2 = 0) {
+      struct node *temp = new node;
+      temp->action[0] = action1;
+      temp->action[1] = action2;
+      temp->final_val[0] = final1;
+      temp->final_val[1] = final2;
+      temp->duration[0] = duration1;
+      temp->duration[1] = duration2;
+      temp->radius = radius1;
+      temp->next = head;
+      head = temp;
+    }
+    // Delete node function
+    void DeleteNode() {
+      struct node *temp = new node;
+      temp = head;
+      head = head->next;
+      delete temp;
+    }
+    // Add new node at end of LL
+    void AddTailNode(char action1, float final1, float duration1, float radius1 = 0, char action2 = '\0', float final2 = 0, float duration2 = 0) {
+      // Construct node to be added
+      struct node *temp = new node;
+      temp->action[0] = action1;
+      temp->action[1] = action2;
+      temp->final_val[0] = final1;
+      temp->final_val[1] = final2;
+      temp->duration[0] = duration1;
+      temp->duration[1] = duration2;
+      temp->radius = radius1;
+      temp->next = nullptr;
+      // Insert as first node if head is null
+      if(head == nullptr){
+        temp->next = head;
+        head = temp;
+        return;
+      }
+      // Find last node
+      struct node *last = head;
+      last->next = head->next;
+      while (last->next != nullptr) {
+        last = last->next;
+      }
+      // Insert new node
+      last->next = temp;
+    }
+    // Delete node at end of LL
+    void DeleteTailNode() {
+      struct node *temp = head;
+      // Delete current node if it's the last
+      if(head->next == nullptr){
+        head = head->next;
+        delete temp;
+        return;
+      }
+      // Find second to last node
+      while (temp->next->next != nullptr){
+        temp = temp->next;
+      }
+      // Delete last node and point second to last to null
+      delete temp->next;
+      temp->next = nullptr;
+    }
 } directions;
 
 
@@ -105,7 +146,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '1', 'l', false, 'y' };
+struct block current_block = { 'n', '1', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -206,9 +247,9 @@ float north_guide = 34.5;           // cm
 float guide1 = 55;                  // cm
 float guide2 = 61.5;                // cm
 float guide3 = 70;                  // cm
-float guide4 = 27.84;               // cm, measure dist later
-float guide5 = 55.5 - north_guide;  // cm, measure dist later
-float guide6 = 43.04;               // cm, measure dist later
+float guide4 = 55;                  // cm, measure dist later
+float guide5 = 61.5;                // cm, measure dist later
+float guide6 = 70;                  // cm, measure dist later
 float collect_dist = 5.5;           // cm
 int line_follow_speed = 300;
 
@@ -305,6 +346,8 @@ bool turn_bool;
 bool straight_bool;
 bool servo_bool;
 bool line_follow_bool;
+bool new_action;
+bool next_node;
 
 
 ///////////////////////////////
@@ -359,6 +402,7 @@ void loop() {
   switch (state) {
     // Line follow to dispenser
     case 'a':
+      shovel_servo.write(75);
       Serial.println("Line Following");
       LineFollow();
       DistSense();
@@ -393,7 +437,7 @@ void loop() {
     case 'c':
       Serial.println("Sensing Color");
       t = (millis() - t_start) / 1000;
-      // ColorSense();
+      ColorSense();
       // Continue if color is detected
       if (current_block.color != '\0') {  //current_block.color != '\0'
         // DetermineBlockLoc();
@@ -452,6 +496,7 @@ void loop() {
     case 'd':
       // Serial.println("Traveling to Location");
       TravelToLoc();
+      // state = 'f';
       break;
 
 
@@ -466,7 +511,7 @@ void loop() {
     case 'f':
       // Serial.println("Returning to Dispenser");
       if (directions.head != nullptr) {
-        GoHome();
+        Travel();
       }
       break;
   }

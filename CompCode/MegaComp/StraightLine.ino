@@ -1,4 +1,3 @@
-// Motor on function
 void StraightLine(void) {
   // Update varaibles
   t = (millis() - t_start) / 1000;

@@ -32,7 +32,6 @@ void TravelToLoc(void) {
             // Change State
             straight_bool = true;
             turn_bool = false;
-            // Add actions to LL
           }
           // Prepare to back up before dump
           else if (final_stage) {
