@@ -32,7 +32,8 @@ void DumpBlock(void) {
           Serial.print('\t');
           Serial.println(dump_dist_upper);
           // Set shovel servo vars and set state
-          if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final) || dist_actual >= dump_dist_upper) {
+          // dist_actual >= dump_dist_upper for north face && dist_final = 0 in traveltoloc
+          if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final) || dist_actual <= dump_dist_upper) {
             md.setSpeeds(0, 0);
             arm_angle_final = arm_max_angle;
             arm_angle_start = arm_servo.read();
@@ -70,6 +71,7 @@ void DumpBlock(void) {
     // Block placed on black line
     case '2':
     case '5':
+    // Lower block
       if (current_block.elev == 'l') {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
@@ -80,11 +82,14 @@ void DumpBlock(void) {
           md.setSpeeds(0, 0);
           state = 'f';
         }
-      } else if (current_block.elev == 'u') {
+      } 
+      // Upper block
+      else if (current_block.elev == 'u') {
         // Travel straight until at distance
         if (straight_bool) {
           LineFollow();
           DistSense();
+          Serial.println(dist_actual);
           // Set shovel servo vars and set state
           if (dist_actual <= dump_dist_upper) {
             md.setSpeeds(0, 0);
@@ -101,7 +106,7 @@ void DumpBlock(void) {
           }
         }
         // Dump block
-        if (servo_bool) {
+        else if (servo_bool) {
           ShovelServo();
           if (shovel_servo.read() == shov_angle_final) {
             // Reset vars to reset shovel to home

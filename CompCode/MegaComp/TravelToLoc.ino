@@ -32,6 +32,7 @@ void TravelToLoc(void) {
             // Change State
             straight_bool = true;
             turn_bool = false;
+            // Add actions to LL
           }
           // Prepare to back up before dump
           else if (final_stage) {
@@ -42,8 +43,9 @@ void TravelToLoc(void) {
               dist_actual = 1000;
               dist_final = -6;
               time_final = 2;
+              // Add actions to LL
             } else if (current_block.elev == 'u') {
-              dist_final = 0;
+              dist_final = -6;
               time_final = 2;
             }
             theta1_final = dist_final / wheel_radius;
@@ -82,7 +84,7 @@ void TravelToLoc(void) {
               shov_angle_start = shovel_servo.read();
               shov_t_final = 1.5;
             } else if (current_block.elev == 'u') {
-              dist_final = -2;
+              dist_final = 5;
               time_final = 2;
               straight_bool = true;
               servo_bool = false;
@@ -90,7 +92,27 @@ void TravelToLoc(void) {
             theta1_final = dist_final / wheel_radius;
             theta2_final = dist_final / wheel_radius;
             ResetTravelVars();
+            line_follow_speed = 50;
+            // Add home directions to LL
+            directions.AddNode('t', pi/2, turn_time);
+            if(current_block.pos == '1'){
+              directions.AddNode('d', guide1, 4, 0, 'a', arm_collect_angle, 2);
+            }
+            else if(current_block.pos == '2'){
+              directions.AddNode('d', guide2, 4.5, 0, 'a', arm_collect_angle, 2);
+            }
+            else if(current_block.pos == '3'){
+              directions.AddNode('d', guide3, 5, 0, 'a', arm_collect_angle, 2);
+            }
+            directions.AddNode('t', pi/2, turn_time);
+            directions.AddNode('d', -3, 2);
             state = 'e';
+            for(int i=0; i<4; i++){
+              Serial.print(directions.head->action[0]);
+              Serial.print('\t');
+              Serial.println(directions.head->action[1]);
+              directions.head = directions.head->next;
+            }
           }
         }
       }
@@ -141,14 +163,12 @@ void TravelToLoc(void) {
             if (current_block.elev == 'l') {
               dist_final = 5;
               time_final = 2;
-              line_follow_speed = 50;
               shov_angle_final = servo_home;
               shov_angle_start = shovel_servo.read();
               shov_t_final = 1.5;
             } else if (current_block.elev == 'u') {
               dist_final = 10;
               time_final = 5;
-              line_follow_speed = 50;
               straight_bool = true;
               servo_bool = false;
             }
@@ -156,6 +176,7 @@ void TravelToLoc(void) {
             theta2_final = dist_final / wheel_radius;
             final_stage = false;
             ResetTravelVars();
+            line_follow_speed = 50;
             state = 'e';
           }
         }
@@ -260,6 +281,7 @@ void TravelToLoc(void) {
             theta1_final = dist_final / wheel_radius;
             theta2_final = dist_final / wheel_radius;
             ResetTravelVars();
+            line_follow_speed = 50;            
             state = 'e';
           }
         }
@@ -327,9 +349,9 @@ void TravelToLoc(void) {
             theta2_final = dist_final / wheel_radius;
             ResetTravelVars();
             // Arm Servo Vars
-            if (current_block.elev = 'l') {
+            if (current_block.elev == 'l') {
               arm_angle_final = arm_low_dump_angle;
-            } else if (current_block.elev = 'u') {
+            } else if (current_block.elev == 'u') {
               arm_angle_final = arm_max_angle;
             }
             arm_angle_start = arm_servo.read();
@@ -349,7 +371,6 @@ void TravelToLoc(void) {
             } else if (current_block.elev == 'u') {
               dist_final = 10;
               time_final = 5;
-              line_follow_speed = 50;
               straight_bool = true;
               servo_bool = false;
             }
@@ -357,6 +378,7 @@ void TravelToLoc(void) {
             theta2_final = dist_final / wheel_radius;
             final_stage = false;
             ResetTravelVars();
+            line_follow_speed = 50;
             state = 'e';
           }
         }

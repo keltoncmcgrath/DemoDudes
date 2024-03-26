@@ -16,6 +16,7 @@ Servo shovel_servo;
 //////////////////////////////
 ///------ STRUCTURES ------///
 //////////////////////////////
+
 struct block {
   char face;
   char pos;
@@ -24,10 +25,45 @@ struct block {
   char color;
 };
 
-struct linked_list {
-  char command;
-  struct linked_list *next;
+struct node {
+  char action[2];
+  float final_val[2];
+  float duration[2];
+  float radius;
+  struct node *next;
 };
+
+class linked_list {
+private:
+
+public:
+  struct node *head, *tail;
+  // Initialization function
+  linked_list() {
+    this->head = nullptr;
+    this->tail = this->head;
+  }
+  // New node function
+  void AddNode(char action1, float final1, float duration1, float radius1 = 0, char action2 = '\0', float final2 = 0, float duration2 = 0) {
+    struct node *temp = new node;
+    temp->action[0] = action1;
+    temp->action[1] = action2;
+    temp->final_val[0] = final1;
+    temp->final_val[1] = final2;
+    temp->duration[0] = duration1;
+    temp->duration[1] = duration2;
+    temp->radius = radius1;
+    temp->next = head;
+    head = temp;
+  }
+  // Delete node function
+  void DelNode() {
+    struct node *temp = new node;
+    temp = head;
+    head = head->next;
+    delete temp;
+  }
+} directions;
 
 
 //////////////////////////////
@@ -69,7 +105,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'e', '4', 'u', false, 'y' };
+struct block current_block = { 'n', '1', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -164,16 +200,16 @@ int m1s;
 int m2s;
 
 // Travel Variables
-float east_guide = 122.5;   // cm
-float south_guide = 68.58;  // cm
-float north_guide = 34.5;   // cm
-float guide1 = 55;          // cm
-float guide2 = 61.5;        // cm
-float guide3 = 70;          // cm
-float guide4 = 27.84;       // cm, measure dist later
-float guide5 = 55.5 - north_guide;       // cm, measure dist later
-float guide6 = 43.04;       // cm, measure dist later
-float collect_dist = 5.5;   // cm
+float east_guide = 122.5;           // cm
+float south_guide = 68.58;          // cm
+float north_guide = 34.5;           // cm
+float guide1 = 55;                  // cm
+float guide2 = 61.5;                // cm
+float guide3 = 70;                  // cm
+float guide4 = 27.84;               // cm, measure dist later
+float guide5 = 55.5 - north_guide;  // cm, measure dist later
+float guide6 = 43.04;               // cm, measure dist later
+float collect_dist = 5.5;           // cm
 int line_follow_speed = 300;
 
 // Encoder Vars
@@ -374,7 +410,7 @@ void loop() {
           theta1_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
           time_final = turn_time;
-        } else {
+        } else if (current_block.face == 's' || current_block.face == 'w') {
           turn_angle_final = pi;
           theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
           theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
@@ -388,6 +424,7 @@ void loop() {
         turn_bool = true;
         straight_bool = false;
         state = 'd';
+        // Add action to LL
       }
       // Else collect another block
       else if (t > block_wait_time) {
@@ -420,7 +457,7 @@ void loop() {
 
     // Dump block onto chassis
     case 'e':
-      Serial.println("Dumping Block");
+      // Serial.println("Dumping Block");
       DumpBlock();
       break;
 
@@ -428,7 +465,9 @@ void loop() {
     // Return to Dispenser
     case 'f':
       // Serial.println("Returning to Dispenser");
-      Return();
+      if (directions.head != nullptr) {
+        GoHome();
+      }
       break;
   }
 }
