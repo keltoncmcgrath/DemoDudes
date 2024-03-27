@@ -115,6 +115,28 @@ void Travel(void) {
         next_node = true;
       }
       break;
+
+    // Travel to black line
+    case 'k':
+      if (new_action) {
+        line_speed = 200;
+        ResetTravelVars();
+        if (directions.head->action[1] == '\0') {
+          new_action = false;
+        }
+      }
+      StraightRange();
+      qtr.read(ir_values);
+      for(int i=0; i<ir_sensor_count; i++){
+        if(ir_values[i] <2000){
+          break;
+        } else {
+          md.setSpeeds(0, 0);
+          next_node = true;
+        }
+      }
+      break;
+
   }
 
   // Servo actions
@@ -131,7 +153,7 @@ void Travel(void) {
         }
       }
       ArmServo();
-      if (arm_servo.read() == arm_angle_final) {
+      if (arm_servo.read()==arm_angle_final && directions.head->action[0]=='\0') {
         next_node = true;
       }
       break;
@@ -148,7 +170,7 @@ void Travel(void) {
         }
       }
       ShovelServo();
-      if (shovel_servo.read() == shov_angle_final) {
+      if (shovel_servo.read()==shov_angle_final && directions.head->action[0] == '\0') {
         next_node = true;
       }
       break;

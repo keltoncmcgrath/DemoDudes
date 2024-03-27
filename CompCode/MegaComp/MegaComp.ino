@@ -147,7 +147,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '2', 'u', false, 'y' };
+struct block current_block = { 'n', '3', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -197,7 +197,7 @@ struct block yellow2[10] = {
   { 's', '2', 'u', false },
   { 'e', '5', 'u', false }
 };
-struct block blue[12] = {
+struct block blue[8] = {
   { 'n', '1', 'u', false },
   { 'n', '3', 'u', false },
   { 's', '1', 'u', false },
@@ -205,6 +205,7 @@ struct block blue[12] = {
   { 'n', '2', 'u', false },
   { 'w', '5', 'u', false },
   { 's', '2', 'u', false },
+  { 'e', '5', 'u', false }
 };
 
 // Trajectory Vars
@@ -399,6 +400,9 @@ void setup() {
 ///--------- LOOP ---------///
 //////////////////////////////
 void loop() {
+  if(state != 'd'){
+    Serial.println(state);
+  }
   switch (state) {
     // Initiate Dispenser Travel
     case 'a':
@@ -461,9 +465,9 @@ void loop() {
 
     case 'f':
       GetDirectionsHome();
-      // new_action = true;
-      // last_state = state;
-      // state = 'd';
+      new_action = true;
+      last_state = state;
+      state = 'd';
       break;
   }
 }
