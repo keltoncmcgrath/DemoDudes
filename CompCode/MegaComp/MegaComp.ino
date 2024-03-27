@@ -23,6 +23,13 @@ struct block {
   char elev;
   bool placed;
   char color;
+  void Reset(void){
+    face = '\0';
+    pos = '\0';
+    elev = '\0';
+    placed = false;
+    color = '\0';
+  }
 };
 
 struct node {
@@ -215,14 +222,14 @@ float KP = 500;
 int straight_kp = 125;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;        // cm
-float wheel_dist_arc = 20.35;    // cm
-float wheel_dist_turn;           // cm
-float turn_time = 2;             // s
-float dist_final;                // cm
-float turn_angle_final;          // rad
-float arc_radius;                // cm
-float arc_angle_final;           // rad
+float wheel_radius = 3.5;      // cm
+float wheel_dist_arc = 20.35;  // cm
+float wheel_dist_turn;         // cm
+float turn_time = 2;           // s
+float dist_final;              // cm
+float turn_angle_final;        // rad
+float arc_radius;              // cm
+float arc_angle_final;         // rad
 float time_final;
 char turn_dir;
 char travel_dir;
@@ -338,8 +345,12 @@ float b = -0.907499336;
 bool stop = false;
 
 // Mag Vars
-float mag_val;
-int mag_ss = 517;
+float alpha = 0.05;
+int mag_thresh = 10;
+int mag_val;
+int mag_val_last;
+int mag_ss;
+
 
 // Event Bools
 bool final_stage;
@@ -353,6 +364,7 @@ bool next_node;
 bool line_dist;
 bool second_line;
 bool last_line_state;
+bool ramp_down;
 
 
 ///////////////////////////////
@@ -379,12 +391,16 @@ void setup() {
   qtr.setSensorPins(ir_pins, ir_sensor_count);
 
   // Set Color Sensor Pins
-  pinMode(blue_pin, OUTPUT);          digitalWrite(blue_pin, HIGH);
-  pinMode(red_pin, OUTPUT);           digitalWrite(red_pin, HIGH);
-  pinMode(green_pin, OUTPUT);         digitalWrite(green_pin, HIGH);
+  pinMode(blue_pin, OUTPUT);
+  digitalWrite(blue_pin, HIGH);
+  pinMode(red_pin, OUTPUT);
+  digitalWrite(red_pin, HIGH);
+  pinMode(green_pin, OUTPUT);
+  digitalWrite(green_pin, HIGH);
 
   // Setup turn LEDs
-  pinMode(right_turn_pin, OUTPUT);    pinMode(left_turn_pin, OUTPUT);
+  pinMode(right_turn_pin, OUTPUT);
+  pinMode(left_turn_pin, OUTPUT);
 
   // Check for Start Command and Read Block Info
   Serial.println("Ready For Signal...");
@@ -404,12 +420,14 @@ void setup() {
 ///--------- LOOP ---------///
 //////////////////////////////
 void loop() {
-  if(state != 'd'){
-    Serial.println(state);
+  if (state != 'd') {
   }
   switch (state) {
     // Initiate Dispenser Travel
     case 'a':
+      HallEffect();
+      mag_ss = mag_val;
+      // current_block.Reset();
       directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 2);
       line_dist = true;
       new_action = true;
@@ -430,9 +448,18 @@ void loop() {
     // Color Sense
     case 'c':
       t = (millis() - t_start) / 1000;
-      // ColorSense();
-      // Continue if color is detected
-      if (current_block.color != '\0') {  //current_block.color != '\0'
+      HallEffect();
+      Serial.print(mag_val);
+      Serial.print('\t');
+      Serial.println(mag_ss);
+      if(mag_val > mag_ss + mag_thresh || mag_val < mag_ss - mag_thresh){
+        ramp_down = true;
+      } else {
+        state = 'b';
+      }
+      if(current_block.color == '\0'){
+        ColorSense();
+      } else if (ramp_down) {  //current_block.color != '\0'
         // DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
@@ -446,10 +473,10 @@ void loop() {
         last_state = state;
         state = 'd';
       }
-      // Else collect another block
-      else if (t > block_wait_time) {
-        state = 'b';
-      }
+      // // Else collect another block
+      // else if (t > block_wait_time) {   //if (t > block_wait_time)
+      //   state = 'b';
+      // }
       break;
 
 

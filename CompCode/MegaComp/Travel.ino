@@ -196,9 +196,9 @@ void Travel(void) {
       }
       md.setSpeeds(0, 0);
       next_node = true;
-// End case
-end_of_case:
-      break;
+      // End case
+      end_of_case:
+            break;
   }
 
   // Servo actions
