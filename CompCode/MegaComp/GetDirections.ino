@@ -26,13 +26,12 @@ void GetDirections(void) {
     // East Face
     case 'e':
       arc_radius = 0.8;
-      dist_final = east_guide - arc_radius - (wheel_dist_arc / 2);
       line_dist = false;
       directions.AddTailNode('o', PI / 2, turn_time, arc_radius);
       if (current_block.elev == 'l') {
-        directions.AddTailNode('d', dist_final, 6, 0, 'a', arm_collect_angle, 3);
+        directions.AddTailNode('k', 300, 0, 0, 'a', arm_collect_angle, 3);
       } else if (current_block.elev == 'u') {
-        directions.AddTailNode('d', dist_final, 6, 0, 'a', arm_max_angle, 3);
+        directions.AddTailNode('k', 300, 0, 0, 'a', arm_max_angle, 3);
       }
       directions.AddTailNode('t', PI / 2, turn_time);
       if (current_block.pos == '4') {

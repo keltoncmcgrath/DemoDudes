@@ -119,7 +119,9 @@ void Travel(void) {
     // Travel to black line
     case 'k':
       if (new_action) {
-        line_speed = 200;
+        last_line_state = true;
+        second_line = false;
+        line_speed = directions.head->final_val[0];
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
           new_action = false;
@@ -128,12 +130,25 @@ void Travel(void) {
       StraightRange();
       qtr.read(ir_values);
       for (int i = 0; i < ir_sensor_count; i++) {
-        if(ir_values[i] < 2000){
+        if (ir_values[i] < 500) {
+          // Over white line
+          if (!last_line_state) {
+            second_line = true;
+          }
+          last_line_state = true;
           goto end_of_case;
         }
       }
+      // Over black line
+      last_line_state = false;
+      if (line_speed > 0 && current_block.face == 'e' && !second_line) {
+        goto end_of_case;
+      }
+      md.setSpeeds(0, 0);
+      next_node = true;
+      // End case
       end_of_case:
-        break;
+            break;
   }
 
   // Servo actions

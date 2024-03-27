@@ -147,7 +147,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '3', 'l', false, 'y' };
+struct block current_block = { 'e', '4', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -349,7 +349,8 @@ bool line_follow_bool;
 bool new_action;
 bool next_node;
 bool line_dist;
-bool secon_line;
+bool second_line;
+bool last_line_state;
 
 
 ///////////////////////////////
