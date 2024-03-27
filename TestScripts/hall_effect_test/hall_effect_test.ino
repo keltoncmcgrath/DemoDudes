@@ -1,5 +1,7 @@
 int pin = A9;
-long val;
+int val;
+int last_val = 0;
+float alpha = 0.05;
 
 void setup() {
   Serial.begin(9600);
@@ -7,13 +9,15 @@ void setup() {
 
 void loop() {
   for(int i=0; i<100; i++){
-    val += analogRead(pin);
+    val = alpha*analogRead(pin) + (1-alpha)*last_val;
+    last_val = val;
   }
-  val /= 100;
+  Serial.println(val);
 
-  if(val < 510 || val > 520){
-    Serial.println("Ramp Down");
-  }
+  // if(val < 510 || val > 520){
+  //   Serial.println("Ramp Down");
+  // }
 
   val = 0;
+  last_val = 0;
 }

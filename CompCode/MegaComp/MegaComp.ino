@@ -339,7 +339,7 @@ bool stop = false;
 
 // Mag Vars
 float mag_val;
-int mag_thresh = 600;
+int mag_ss = 517;
 
 // Event Bools
 bool final_stage;
