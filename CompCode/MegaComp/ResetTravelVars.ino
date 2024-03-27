@@ -7,7 +7,6 @@ void ResetTravelVars(void) {
   theta2_des = 0;
   encoder1.write(0);
   encoder2.write(0);
-  // Initialize Straight Line Variables
   omega1_des = theta1_final / time_final;
   omega2_des = theta2_final / time_final;
 }

@@ -4,8 +4,8 @@ void Arc() {
   delta_T = t - t_old;
   counts1 = encoder1.read();
   counts2 = encoder2.read();
-  theta1 = float(counts1 * 2 * pi) / (gear_ratio * counts_per_rev);
-  theta2 = float(counts2 * 2 * pi) / (gear_ratio * counts_per_rev);
+  theta1 = float(counts1 * 2 * PI) / (gear_ratio * counts_per_rev);
+  theta2 = float(counts2 * 2 * PI) / (gear_ratio * counts_per_rev);
 
   // Calculate new desired thetas
   theta1_des += omega1_des * delta_T;

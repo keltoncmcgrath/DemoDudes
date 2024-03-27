@@ -65,7 +65,7 @@ void TravelToLoc(void) {
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           // Prepare to turn to face
           if (!final_stage) {
-            turn_angle_final = pi / 2;
+            turn_angle_final = PI / 2;
             time_final = turn_time;
             theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
             theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
@@ -93,7 +93,7 @@ void TravelToLoc(void) {
             ResetTravelVars();
             line_follow_speed = 50;
             // Add home directions to LL
-            directions.AddNode('t', pi/2, turn_time);
+            directions.AddNode('t', PI/2, turn_time);
             if(current_block.pos == '1'){
               directions.AddNode('d', guide1, 4, 0, 'a', arm_collect_angle, 2);
             }
@@ -103,7 +103,7 @@ void TravelToLoc(void) {
             else if(current_block.pos == '3'){
               directions.AddNode('d', guide3, 5, 0, 'a', arm_collect_angle, 2);
             }
-            directions.AddNode('t', pi/2, turn_time);
+            directions.AddNode('t', PI/2, turn_time);
             directions.AddNode('d', -3, 2);
             state = 'e';
             for(int i=0; i<4; i++){
@@ -190,7 +190,7 @@ void TravelToLoc(void) {
         // Prepare for turning
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
-          turn_angle_final = pi / 2;
+          turn_angle_final = PI / 2;
           time_final = turn_time;
           theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
           theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
@@ -205,7 +205,7 @@ void TravelToLoc(void) {
         ReadEncoderDist();
         if (dist_traveled >= dist_final) {
           md.setSpeeds(0, 0);
-          turn_angle_final = pi / 2;
+          turn_angle_final = PI / 2;
           time_final = turn_time;
           theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
           theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
@@ -295,7 +295,7 @@ void TravelToLoc(void) {
           md.setSpeeds(0, 0);
           // Prepare to turn to travel to pos
           if (!final_stage && !final_final_stage) {
-            turn_angle_final = -pi / 2;
+            turn_angle_final = -PI / 2;
             time_final = 2;
             theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
             theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
@@ -313,7 +313,7 @@ void TravelToLoc(void) {
               arm_t_final = 2;
             }
             // Travel vals
-            turn_angle_final = -pi / 2;
+            turn_angle_final = -PI / 2;
             time_final = 2;
             theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
             theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
@@ -390,7 +390,7 @@ void TravelToLoc(void) {
         StraightLine();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
-          turn_angle_final = -pi / 2;
+          turn_angle_final = -PI / 2;
           time_final = turn_time;
           theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
           theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
