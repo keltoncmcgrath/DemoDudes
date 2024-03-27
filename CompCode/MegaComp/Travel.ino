@@ -19,7 +19,20 @@ void Travel(void) {
       StraightLine();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta1_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
+        digitalWrite(right_turn_pin, LOW);
+        digitalWrite(left_turn_pin, LOW);
         next_node = true;
+      }
+      break;
+      // Hazards
+      if (dist_final < 0) {
+        if (int(t) % 2 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+          digitalWrite(left_turn_pin, HIGH);
+        } else {
+          digitalWrite(right_turn_pin, LOW);
+          digitalWrite(left_turn_pin, LOW);
+        }
       }
       break;
 
@@ -28,6 +41,11 @@ void Travel(void) {
       if (new_action) {
         turn_angle_final = directions.head->final_val[0];
         time_final = directions.head->duration[0];
+        if (abs(turn_angle_final) == PI / 2) {
+          wheel_dist_turn = 20.5;
+        } else {
+          wheel_dist_turn = 19.9;
+        }
         theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
         theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
         ResetTravelVars();
@@ -38,7 +56,23 @@ void Travel(void) {
       Turn();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
+        digitalWrite(right_turn_pin, LOW);
+        digitalWrite(left_turn_pin, LOW);
         next_node = true;
+      }
+      // Blinker
+      if (turn_angle_final > 0) {
+        if (int(t) % 2 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+        } else {
+          digitalWrite(right_turn_pin, LOW);
+        }
+      } else if (turn_angle_final < 0) {
+        if (int(t) % 2 == 0) {
+          digitalWrite(left_turn_pin, HIGH);
+        } else {
+          digitalWrite(left_turn_pin, LOW);
+        }
       }
       break;
 
@@ -58,7 +92,23 @@ void Travel(void) {
       Turn();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
+        digitalWrite(right_turn_pin, LOW);
+        digitalWrite(left_turn_pin, LOW);
         next_node = true;
+      }
+      // Blinkers
+      if (theta1_final > theta2_final) {
+        if (int(t) % 2 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+        } else {
+          digitalWrite(right_turn_pin, LOW);
+        }
+      } else {
+        if (int(t) % 2 == 0) {
+          digitalWrite(left_turn_pin, HIGH);
+        } else {
+          digitalWrite(left_turn_pin, LOW);
+        }
       }
       break;
 
@@ -141,14 +191,14 @@ void Travel(void) {
       }
       // Over black line
       last_line_state = false;
-      if (line_speed > 0 && current_block.face == 'e' && !second_line) {
+      if (line_speed > 0 && (current_block.face == 'e' || current_block.pos == '3') && !second_line) {
         goto end_of_case;
       }
       md.setSpeeds(0, 0);
       next_node = true;
-      // End case
-      end_of_case:
-            break;
+// End case
+end_of_case:
+      break;
   }
 
   // Servo actions

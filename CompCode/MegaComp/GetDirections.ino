@@ -10,7 +10,7 @@ void GetDirections(void) {
         directions.AddTailNode('d', dist_final, 4, 0, 'a', arm_max_angle, 3);
       } else if (current_block.pos == '2') {
         dist_final = guide2 - arc_radius - (wheel_dist_arc / 2);
-        directions.AddTailNode('d', dist_final, 4.5, 0, 'a', arm_max_angle, 3);
+        directions.AddTailNode('k', 300);
       } else if (current_block.pos == '3') {
         dist_final = guide3 - arc_radius - (wheel_dist_arc / 2);
         directions.AddTailNode('d', dist_final, 5, 0, 'a', arm_max_angle, 3);
@@ -60,7 +60,7 @@ void GetDirections(void) {
       if (current_block.pos == '1') {
         directions.AddTailNode('d', guide1, 3);
       } else if (current_block.pos == '2') {
-        directions.AddTailNode('d', guide2, 3.5);
+        directions.AddTailNode('k', 300);
       } else if (current_block.pos == '3') {
         directions.AddTailNode('d', guide3, 4);
       }

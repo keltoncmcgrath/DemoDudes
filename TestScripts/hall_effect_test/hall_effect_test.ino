@@ -1,7 +1,7 @@
 int pin = A9;
 long val;
+
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(9600);
 }
 

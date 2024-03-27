@@ -122,6 +122,8 @@ int blue_pin = 33;
 int green_pin = 34;
 int red_pin = 35;
 const uint8_t ir_pins[] = { 24, 25, 26, 27, 28, 29, 30, 31 };
+int right_turn_pin;
+int left_turn_pin;
 
 // Analog
 int dist_pin = A8;
@@ -147,7 +149,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'e', '4', 'l', false, 'y' };
+struct block current_block = { 's', '1', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -213,14 +215,14 @@ float KP = 500;
 int straight_kp = 125;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;      // cm
-float wheel_dist_arc = 20;     // cm
-float wheel_dist_turn = 20.8;  // cm
-float turn_time = 2;           // s
-float dist_final;              // cm
-float turn_angle_final;        // rad
-float arc_radius;              // cm
-float arc_angle_final;         // rad
+float wheel_radius = 3.5;        // cm
+float wheel_dist_arc = 20.35;    // cm
+float wheel_dist_turn;           // cm
+float turn_time = 2;             // s
+float dist_final;                // cm
+float turn_angle_final;          // rad
+float arc_radius;                // cm
+float arc_angle_final;           // rad
 float time_final;
 char turn_dir;
 char travel_dir;
@@ -377,12 +379,12 @@ void setup() {
   qtr.setSensorPins(ir_pins, ir_sensor_count);
 
   // Set Color Sensor Pins
-  pinMode(blue_pin, OUTPUT);
-  digitalWrite(blue_pin, HIGH);
-  pinMode(red_pin, OUTPUT);
-  digitalWrite(red_pin, HIGH);
-  pinMode(green_pin, OUTPUT);
-  digitalWrite(green_pin, HIGH);
+  pinMode(blue_pin, OUTPUT);          digitalWrite(blue_pin, HIGH);
+  pinMode(red_pin, OUTPUT);           digitalWrite(red_pin, HIGH);
+  pinMode(green_pin, OUTPUT);         digitalWrite(green_pin, HIGH);
+
+  // Setup turn LEDs
+  pinMode(right_turn_pin, OUTPUT);    pinMode(left_turn_pin, OUTPUT);
 
   // Check for Start Command and Read Block Info
   Serial.println("Ready For Signal...");

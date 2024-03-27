@@ -126,13 +126,13 @@ float speed2;
 float KP = 300;
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float dist_final = 40;          // cm
-float turn_angle_final = pi;    // rad
-float arc_radius = 0.8;          // cm
-float arc_angle_final = pi/2;     // rad
-float time_final = 2;         // s
-float wheel_radius = 3.5;       // cm 
-float wheel_dist = 19;       // cm
+float dist_final = 40;         // cm
+float turn_angle_final = PI/2;   // rad
+float arc_radius = 0.8;        // cm
+float arc_angle_final = pi/2;  // rad
+float time_final = 2;          // s
+float wheel_radius = 3.5;      // cm 
+float wheel_dist = 20.8;       // cm
 
 //Initialzing encoder objects
 Encoder encoder1(encoder1_pinA,encoder1_pinB);
