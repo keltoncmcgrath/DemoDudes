@@ -66,7 +66,7 @@ void Travel(void) {
     case 'l':
       // Reset Values
       if (new_action) {
-        if (line_dist && last_state!='a') {
+        if (line_dist && last_state != 'a') {
           line_follow_speed = 50;
         } else {
           line_follow_speed = 250;
@@ -97,7 +97,7 @@ void Travel(void) {
     // Distance Sensor Straight Line
     case 'r':
       if (new_action) {
-        if(last_state != 'e'){
+        if (last_state != 'e') {
           line_speed = 300;
         } else {
           line_speed = 50;
@@ -110,7 +110,7 @@ void Travel(void) {
       }
       DistSense();
       StraightRange();
-      if (dist_actual <= dist_final){
+      if (dist_actual <= dist_final) {
         md.setSpeeds(0, 0);
         next_node = true;
       }
@@ -127,16 +127,13 @@ void Travel(void) {
       }
       StraightRange();
       qtr.read(ir_values);
-      for(int i=0; i<ir_sensor_count; i++){
-        if(ir_values[i] <2000){
-          break;
-        } else {
-          md.setSpeeds(0, 0);
-          next_node = true;
+      for (int i = 0; i < ir_sensor_count; i++) {
+        if(ir_values[i] < 2000){
+          goto end_of_case;
         }
       }
-      break;
-
+      end_of_case:
+        break;
   }
 
   // Servo actions
@@ -148,12 +145,12 @@ void Travel(void) {
         arm_t_final = directions.head->duration[1];
         arm_angle_start = arm_servo.read();
         new_action = false;
-        if (directions.head->action[0] == '\0'){
+        if (directions.head->action[0] == '\0') {
           ResetTravelVars();
         }
       }
       ArmServo();
-      if (arm_servo.read()==arm_angle_final && directions.head->action[0]=='\0') {
+      if (arm_servo.read() == arm_angle_final && directions.head->action[0] == '\0') {
         next_node = true;
       }
       break;
@@ -165,12 +162,12 @@ void Travel(void) {
         shov_t_final = directions.head->duration[1];
         shov_angle_start = shovel_servo.read();
         new_action = false;
-        if (directions.head->action[0] == '\0'){
+        if (directions.head->action[0] == '\0') {
           ResetTravelVars();
         }
       }
       ShovelServo();
-      if (shovel_servo.read()==shov_angle_final && directions.head->action[0] == '\0') {
+      if (shovel_servo.read() == shov_angle_final && directions.head->action[0] == '\0') {
         next_node = true;
       }
       break;
@@ -180,7 +177,7 @@ void Travel(void) {
   if (next_node) {
     directions.DeleteNode();
     if (directions.head == nullptr) {
-      switch(last_state){
+      switch (last_state) {
         case 'a':
           state = 'b';
           break;

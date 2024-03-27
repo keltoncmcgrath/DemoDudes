@@ -349,6 +349,7 @@ bool line_follow_bool;
 bool new_action;
 bool next_node;
 bool line_dist;
+bool secon_line;
 
 
 ///////////////////////////////
