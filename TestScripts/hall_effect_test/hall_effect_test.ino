@@ -14,10 +14,6 @@ void loop() {
   }
   Serial.println(val);
 
-  // if(val < 510 || val > 520){
-  //   Serial.println("Ramp Down");
-  // }
-
   val = 0;
   last_val = 0;
 }

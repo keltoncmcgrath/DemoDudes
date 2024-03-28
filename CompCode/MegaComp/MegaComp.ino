@@ -336,7 +336,7 @@ float dump_dist_upper = 13;  // cm
 float dump_dist_lower = 11;  // cm
 float dist_collect = 14;     // cm
 float dist_actual = 1000;    // cm
-float dist_to_wall = 15;
+float dist_to_wall = 12;
 int num_dist_vals = 50;
 float dist_val = 0;
 float dist_desired;
@@ -346,7 +346,7 @@ bool stop = false;
 
 // Mag Vars
 float alpha = 0.05;
-int mag_thresh = 10;
+int mag_thresh = 0;
 int mag_val;
 int mag_val_last;
 int mag_ss;
@@ -420,8 +420,6 @@ void setup() {
 ///--------- LOOP ---------///
 //////////////////////////////
 void loop() {
-  if (state != 'd') {
-  }
   switch (state) {
     // Initiate Dispenser Travel
     case 'a':
@@ -448,15 +446,14 @@ void loop() {
     // Color Sense
     case 'c':
       t = (millis() - t_start) / 1000;
+      // Detect if Ramp is Down
       HallEffect();
-      Serial.print(mag_val);
-      Serial.print('\t');
-      Serial.println(mag_ss);
-      if(mag_val > mag_ss + mag_thresh || mag_val < mag_ss - mag_thresh){
+      if(mag_val >= mag_ss + mag_thresh || mag_val <= mag_ss - mag_thresh){
         ramp_down = true;
-      } else {
+      } else if(!ramp_down) {
         state = 'b';
       }
+      // Sense Color and change state
       if(current_block.color == '\0'){
         ColorSense();
       } else if (ramp_down) {  //current_block.color != '\0'
@@ -469,6 +466,7 @@ void loop() {
         Serial.print('\t');
         Serial.println(current_block.color);
         GetDirections();
+        ramp_down = false;
         new_action = true;
         last_state = state;
         state = 'd';
@@ -494,6 +492,8 @@ void loop() {
       state = 'd';
       break;
 
+
+    // Get Directions Home
     case 'f':
       GetDirectionsHome();
       new_action = true;
