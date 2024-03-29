@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'w', '6', 'u', false, 'y' };
+struct block current_block = { 'n', '3', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -218,14 +218,14 @@ struct block blue[8] = {
 };
 
 // Trajectory Vars
-float KP = 500;
+float KP = 600;
 int straight_kp = 125;
 int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 3.5;      // cm
 float wheel_dist_arc = 20.35;  // cm
 float wheel_dist_turn;         // cm
-float turn_time = 2;           // s
+float turn_time = 1.5;           // s
 float dist_final;              // cm
 float turn_angle_final;        // rad
 float arc_radius;              // cm
@@ -270,7 +270,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 25;
-int arm_collect_angle = 73;
+int arm_collect_angle = 75;
 int arm_low_dump_angle = 75;
 float arm_angle_des;
 int arm_angle_start;
@@ -480,11 +480,6 @@ void loop() {
 
     // Travel
     case 'd':
-      if (last_state == 'e'){
-        Serial.print(dist_actual);
-        Serial.print('\t');
-        Serial.println(dist_final);
-      }
       Travel();
       break;
 

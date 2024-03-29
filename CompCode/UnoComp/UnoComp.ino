@@ -6,7 +6,7 @@ SoftwareSerial mySerial(2, 3);  //TX & RX
 
 // Data and Variables
 int flag = 33;          //33 corresponds to an exclamation point serving as a good flag variable for block data
-int num_blocks; 
+int num_blocks;
 
 
 void setup() {

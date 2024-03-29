@@ -7,19 +7,20 @@ void GetDirections(void) {
       directions.AddTailNode('o', PI / 2, turn_time, arc_radius);
       if (current_block.pos == '1') {
         dist_final = guide1 - arc_radius - (wheel_dist_arc / 2);
-        directions.AddTailNode('d', dist_final, 4, 0, 'a', arm_max_angle, 3);
+        directions.AddTailNode('d', dist_final, 2.5, 0, 'a', arm_max_angle, 3);
       } else if (current_block.pos == '2') {
         dist_final = guide2 - arc_radius - (wheel_dist_arc / 2);
-        directions.AddTailNode('k', 300);
+        directions.AddTailNode('k', 300, 0, 0, 'a', arm_max_angle, 2);
+        directions.AddTailNode('d', 6, 1);
       } else if (current_block.pos == '3') {
-        dist_final = guide3 - arc_radius - (wheel_dist_arc / 2);
-        directions.AddTailNode('d', dist_final, 5, 0, 'a', arm_max_angle, 3);
+        dist_final = guide3 - arc_radius - (wheel_dist_arc / 2) - 0.5;
+        directions.AddTailNode('d', dist_final, 3, 0, 'a', arm_max_angle, 3);
       }
       directions.AddTailNode('t', PI / 2, turn_time);
       if (current_block.elev == 'l') {
-        directions.AddTailNode('d', -6, 2, 0, 'a', arm_collect_angle, 2);
-      } else if (current_block.elev == 'l') {
-        directions.AddTailNode('d', -4, 2);
+        directions.AddTailNode('d', -4, 1, 0, 'a', arm_collect_angle, 1);
+      } else if (current_block.elev == 'u') {
+        directions.AddTailNode('d', -6, 0.5);
       }
       break;
 
@@ -55,15 +56,18 @@ void GetDirections(void) {
       directions.AddTailNode('r', dist_to_wall, 0, 0, 'a', arm_max_angle, 2);
       directions.AddTailNode('t', -PI / 2, turn_time);
       if (current_block.pos == '1') {
-        directions.AddTailNode('d', guide1, 3);
+        directions.AddTailNode('d', guide1+1, 3);
       } else if (current_block.pos == '2') {
         directions.AddTailNode('k', 300);
+        directions.AddTailNode('d', 6, 1);
       } else if (current_block.pos == '3') {
         directions.AddTailNode('d', guide3, 4);
       }
       directions.AddTailNode('t', -PI / 2, turn_time);
       if(current_block.elev == 'l'){
-        directions.AddTailNode('d', -4, 2, 0, 'a', arm_collect_angle, 2);
+        directions.AddTailNode('d', -6, 1, 0, 'a', arm_collect_angle, 2);
+      } else if (current_block.elev == 'u'){
+        directions.AddTailNode('d', -1, 1);
       }
       break;
 

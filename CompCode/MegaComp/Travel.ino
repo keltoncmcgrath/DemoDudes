@@ -82,8 +82,13 @@ void Travel(void) {
         arc_angle_final = directions.head->final_val[0];
         time_final = directions.head->duration[0];
         arc_radius = directions.head->radius;
-        theta1_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
-        theta2_final = arc_angle_final * arc_radius / wheel_radius;
+        if (arc_angle_final > 0){
+          theta1_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
+          theta2_final = arc_angle_final * arc_radius / wheel_radius;
+        } else if (arc_angle_final < 0){
+          theta1_final = arc_angle_final * arc_radius / wheel_radius;
+          theta2_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
+        }
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
           new_action = false;
@@ -140,7 +145,7 @@ void Travel(void) {
         Serial.print(dist_traveled);
         Serial.print('\t');
         Serial.println(dist_final);
-        if (dist_traveled >= dist_final) {
+        if (abs(dist_traveled) >= abs(dist_final)) {
           md.setSpeeds(0, 0);
           next_node = true;
         }
