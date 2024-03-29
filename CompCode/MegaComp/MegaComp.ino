@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '3', 'l', false, 'y' };
+struct block current_block = { 'w', '5', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -268,10 +268,10 @@ Encoder encoder1(encoder1_pinA, encoder1_pinB);
 Encoder encoder2(encoder2_pinA, encoder2_pinB);
 
 // Arm Servo Vars
-int servo_home = 93;
-int arm_max_angle = 25;
-int arm_collect_angle = 75;
-int arm_low_dump_angle = 75;
+int servo_home = 65;  // 93 for working shovel and arm
+int arm_max_angle = 20;
+int arm_collect_angle = 77;
+int arm_low_dump_angle = 70;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -280,8 +280,8 @@ float arm_tol = 0.1;
 
 // Shovel Servo Vars
 int shov_max_angle = 150;
-int shov_dump_angle = 180;
-int shov_collect_angle = 75;
+int shov_dump_angle = 152;
+int shov_collect_angle = 55;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -332,20 +332,22 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dump_dist_upper = 14;  // cm
-float dump_dist_lower = 12;  // cm
+float dist_alpha = 0.01;
+float dump_dist_upper = 15;  // cm
+float dump_dist_lower = 12.5;  // cm
 float dist_collect = 14;     // cm
 float dist_actual = 1000;    // cm
 float dist_to_wall = 11;
-int num_dist_vals = 50;
+int num_dist_vals = 100;
 float dist_val = 0;
+float last_dist_val = 0;
 float dist_desired;
 float a = exp(7.453976699);
 float b = -0.907499336;
 bool stop = false;
 
 // Mag Vars
-float alpha = 0.05;
+float mag_alpha = 0.05;
 int mag_thresh = 0;
 int mag_val;
 int mag_val_last;
@@ -403,6 +405,7 @@ void setup() {
   pinMode(left_turn_pin, OUTPUT);
 
   // Check for Start Command and Read Block Info
+  shovel_servo.write(servo_home);
   Serial.println("Ready For Signal...");
   while (true) {
     if (Serial2.available()) {

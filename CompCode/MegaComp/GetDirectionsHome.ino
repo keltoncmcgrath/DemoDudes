@@ -4,8 +4,8 @@ void GetDirectionsHome(void) {
       line_dist = false;
       arc_radius = 4;
       if (current_block.elev == 'l') {
-        directions.AddTailNode('d', -10, 1, 0, 'a', arm_max_angle, 1);
-        directions.AddTailNode('d', -10, 1);
+        directions.AddTailNode('d', -10, 1 , 0, 'a', arm_max_angle, 1.5);
+        directions.AddTailNode('d', 10, 1);
       } else if (current_block.elev == 'u') {
         directions.AddTailNode('d', 5, 0.5);
       }

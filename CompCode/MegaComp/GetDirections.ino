@@ -77,19 +77,19 @@ void GetDirections(void) {
       directions.AddTailNode('t', PI, turn_time);
       if (current_block.pos == '4') {
         if (current_block.elev == 'l') {
-          directions.AddTailNode('l', guide4-north_guide, 0, 0, 'a', arm_collect_angle, 2);
+          directions.AddTailNode('l', guide4-north_guide+1, 0, 0, 'a', arm_low_dump_angle, 2);
         } else if (current_block.elev == 'u') {
-          directions.AddTailNode('l', guide4-north_guide, 0, 0, 'a', arm_max_angle, 2);
+          directions.AddTailNode('l', guide4-north_guide+1, 0, 0, 'a', arm_max_angle, 2);
         }
       } else if (current_block.pos == '5') {
         if (current_block.elev == 'l') {
-          directions.AddTailNode('l', guide5-north_guide, 0, 0, 'a', arm_collect_angle, 2);
+          directions.AddTailNode('l', guide5-north_guide-6, 0, 0, 'a', arm_low_dump_angle, 2);
         } else if (current_block.elev == 'u') {
-          directions.AddTailNode('l', guide5-north_guide, 0, 0, 'a', arm_max_angle, 2);
+          directions.AddTailNode('l', guide5-north_guide-6, 0, 0, 'a', arm_max_angle, 2);
         }
       } else if (current_block.pos == '6') {
         if (current_block.elev == 'l') {
-          directions.AddTailNode('d', guide6-north_guide, 4, 0, 'a', arm_collect_angle, 2);
+          directions.AddTailNode('d', guide6-north_guide, 4, 0, 'a', arm_low_dump_angle, 2);
         } else if (current_block.elev == 'u') {
           directions.AddTailNode('d', guide6-north_guide, 4, 0, 'a', arm_max_angle, 2);
         }

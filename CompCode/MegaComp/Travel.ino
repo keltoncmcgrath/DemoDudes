@@ -122,7 +122,7 @@ void Travel(void) {
       // Reset Values
       if (new_action) {
         if (line_dist && last_state != 'a') {
-          line_follow_speed = 50;
+          line_follow_speed = 100;
         } else {
           line_follow_speed = 300;
         }
@@ -158,7 +158,7 @@ void Travel(void) {
         if (last_state != 'e') {
           line_speed = 300;
         } else {
-          line_speed = 50;
+          line_speed = 100;
         }
         dist_final = directions.head->final_val[0];
         ResetTravelVars();

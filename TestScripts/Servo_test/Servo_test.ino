@@ -12,6 +12,7 @@ void setup() {
 }
 
 void loop() {
-  shovel_servo.write(93);
-  arm_servo.write(93);
+  // Serial.println(shovel_servo.read());
+  shovel_servo.write(152);
+  arm_servo.write(25);
 }
