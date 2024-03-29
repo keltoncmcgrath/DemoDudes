@@ -119,7 +119,7 @@ void Travel(void) {
         if (line_dist && last_state != 'a') {
           line_follow_speed = 50;
         } else {
-          line_follow_speed = 250;
+          line_follow_speed = 300;
         }
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
@@ -137,6 +137,9 @@ void Travel(void) {
         }
       } else {
         ReadEncoderDist();
+        Serial.print(dist_traveled);
+        Serial.print('\t');
+        Serial.println(dist_final);
         if (dist_traveled >= dist_final) {
           md.setSpeeds(0, 0);
           next_node = true;

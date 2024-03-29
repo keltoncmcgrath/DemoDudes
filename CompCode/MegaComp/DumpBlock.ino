@@ -5,6 +5,7 @@ void DumpBlock(void) {
     case '3':
     case '4':
     case '6':
+      line_dist = true;
       if (current_block.elev == 'l') {
         directions.AddTailNode('r', dump_dist_lower, 0, 0, 's', servo_home, 1);
       } else if (current_block.elev == 'u') {
@@ -17,6 +18,7 @@ void DumpBlock(void) {
     // Block placed on black line
     case '2':
     case '5':
+      line_dist = true;
       if (current_block.elev == 'l') {
         line_dist = true;
         directions.AddTailNode('l', dump_dist_lower, 0, 0, 's', servo_home, 1);

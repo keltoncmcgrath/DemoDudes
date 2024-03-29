@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 's', '1', 'l', false, 'y' };
+struct block current_block = { 'w', '6', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -251,11 +251,11 @@ int m2s;
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
 float north_guide = 34.5;   // cm
-float guide1 = 55;          // cm
+float guide1 = 56;          // cm
 float guide2 = 61.5;        // cm
 float guide3 = 70;          // cm
-float guide4 = 55;          // cm, measure dist later
-float guide5 = 61.5;        // cm, measure dist later
+float guide4 = 51;          // cm, measure dist later
+float guide5 = 67;          // cm, measure dist later
 float guide6 = 70;          // cm, measure dist later
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
@@ -332,11 +332,11 @@ float num = 0;
 float den = 0;
 
 // Range Finder Vars
-float dump_dist_upper = 13;  // cm
-float dump_dist_lower = 11;  // cm
+float dump_dist_upper = 14;  // cm
+float dump_dist_lower = 12;  // cm
 float dist_collect = 14;     // cm
 float dist_actual = 1000;    // cm
-float dist_to_wall = 12;
+float dist_to_wall = 11;
 int num_dist_vals = 50;
 float dist_val = 0;
 float dist_desired;
@@ -480,6 +480,11 @@ void loop() {
 
     // Travel
     case 'd':
+      if (last_state == 'e'){
+        Serial.print(dist_actual);
+        Serial.print('\t');
+        Serial.println(dist_final);
+      }
       Travel();
       break;
 
