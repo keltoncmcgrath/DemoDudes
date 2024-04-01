@@ -86,13 +86,14 @@ bool stop = false;
 float mag_val;
 
 // Color Sensor Variables
+float color_alpha = 0.01;
 bool is_color = false;
-int red_sum = 0; 
-int green_sum = 0;
-int blue_sum = 0;
-int red_val;
-int green_val;
-int blue_val;
+long red_sum = 0; 
+long green_sum = 0;
+long blue_sum = 0;
+long red_val, last_red_val = 0;
+long green_val, last_green_val = 0;
+long blue_val, last_blue_val = 0;
 float red_avg[3];
 float green_avg[3];
 float blue_avg[3];
@@ -410,23 +411,34 @@ void MagSense(){
 }
 
 void ColorSense(){
-  // Reading Red Light 
-  digitalWrite(red_pin, LOW);
-  delay(color_delay_time);
-  red_val = analogRead(photo_trans_pin);
-  digitalWrite(red_pin, HIGH);
+  for(int i=0; i<100; i++){
+    // Reading Red Light 
+    digitalWrite(red_pin, LOW);
+    delay(color_delay_time);
+    // red_val = color_alpha*analogRead(photo_trans_pin) + (1-color_alpha)*last_red_val;
+    red_val += analogRead(photo_trans_pin);
+    digitalWrite(red_pin, HIGH);
+    last_red_val = red_val;
 
-  // Reading Green Light
-  digitalWrite(green_pin, LOW);
-  delay(color_delay_time);
-  green_val = analogRead(photo_trans_pin);
-  digitalWrite(green_pin, HIGH);
+    // Reading Green Light
+    digitalWrite(green_pin, LOW);
+    delay(color_delay_time);
+    // green_val = color_alpha*analogRead(photo_trans_pin) + (1-color_alpha)*last_green_val;
+    green_val += analogRead(photo_trans_pin);
+    digitalWrite(green_pin, HIGH);
+    last_green_val = green_val;
 
-  // Reading Blue Light
-  digitalWrite(blue_pin, LOW);
-  delay(color_delay_time);
-  blue_val = analogRead(photo_trans_pin);
-  digitalWrite(blue_pin,HIGH);
+    // Reading Blue Light
+    digitalWrite(blue_pin, LOW);
+    delay(color_delay_time);
+    // blue_val = color_alpha*analogRead(photo_trans_pin) + (1-color_alpha)*last_blue_val;
+    blue_val += analogRead(photo_trans_pin);
+    digitalWrite(blue_pin,HIGH);
+    last_blue_val = blue_val;
+  }
+  red_val /= color_samples;
+  green_val /= color_samples;
+  blue_val /= color_samples;
   Serial.print(red_val);
   Serial.print('\t');
   Serial.print(green_val);
@@ -453,13 +465,11 @@ void ColorSense(){
   }
   if(!is_color){
     Serial.println("Block Color Not Found");
-    Serial.print(red_val);
-    Serial.print('\t');
-    Serial.print(green_val);
-    Serial.print('\t');
-    Serial.println(blue_val);
   }
   is_color = false;
+  red_val, last_red_val = 0;
+  green_val, last_green_val = 0;
+  blue_val, last_blue_val = 0;
 }
 
 void ColorCalibration(){
@@ -479,6 +489,8 @@ void ColorCalibration(){
       digitalWrite(red_pin, LOW);
       delay(color_delay_time);
       red_val = analogRead(photo_trans_pin);
+      Serial.print(analogRead(photo_trans_pin));
+      Serial.print('\t');
       red_calibration_vals[i] = red_val;
       red_sum += red_val;
       digitalWrite(red_pin, HIGH);
@@ -486,6 +498,7 @@ void ColorCalibration(){
       digitalWrite(green_pin, LOW);
       delay(color_delay_time);
       green_val = analogRead(photo_trans_pin);
+      Serial.println(analogRead(photo_trans_pin));
       green_calibration_vals[i] = green_val;
       green_sum += green_val;
       digitalWrite(green_pin, HIGH);
@@ -521,14 +534,14 @@ void ColorCalibration(){
     // Find Ranges of Values for Each Block
     for(int i=0; i<3; i++){
       // Red
-      color_ranges[i][0][0] = red_avg[i]-4*red_std[i];
-      color_ranges[i][0][1] = red_avg[i]+4*red_std[i];
+      color_ranges[i][0][0] = red_avg[i]-2.5*red_std[i];
+      color_ranges[i][0][1] = red_avg[i]+2.5*red_std[i];
       // Green
-      color_ranges[i][1][0] = green_avg[i]-4*green_std[i];
-      color_ranges[i][1][1] = green_avg[i]+4*green_std[i];
+      color_ranges[i][1][0] = green_avg[i]-2.5*green_std[i];
+      color_ranges[i][1][1] = green_avg[i]+2.5*green_std[i];
       // Blue
-      color_ranges[i][2][0] = blue_avg[i]-4*blue_std[i];
-      color_ranges[i][2][1] = blue_avg[i]+4*blue_std[i];
+      color_ranges[i][2][0] = blue_avg[i]-2.5*blue_std[i];
+      color_ranges[i][2][1] = blue_avg[i]+2.5*blue_std[i];
       
     }
   }

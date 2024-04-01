@@ -30,7 +30,7 @@ void GetDirections(void) {
       line_dist = false;
       directions.AddTailNode('o', PI / 2, turn_time, arc_radius);
       if (current_block.elev == 'l') {
-        directions.AddTailNode('k', 300, 0, 0, 'a', arm_collect_angle, 3);
+        directions.AddTailNode('k', 300, 0, 0, 'a', arm_low_dump_angle, 3);
       } else if (current_block.elev == 'u') {
         directions.AddTailNode('k', 300, 0, 0, 'a', arm_max_angle, 3);
       }

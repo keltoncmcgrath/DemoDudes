@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'w', '5', 'u', false, 'y' };
+struct block current_block = { 'e', '5', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -292,12 +292,12 @@ float shov_tol = 0.1;
 int color_delay_time = 10;
 int block_wait_time = 5;
 bool is_color = false;
-int red_sum = 0;
-int green_sum = 0;
-int blue_sum = 0;
-int red_val;
-int green_val;
-int blue_val;
+long red_sum = 0;
+long green_sum = 0;
+long blue_sum = 0;
+long red_val;
+long green_val;
+long blue_val;
 float red_avg[3];
 float green_avg[3];
 float blue_avg[3];
@@ -312,9 +312,9 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
 int color_ranges[3][3][2] = {
-  { { 261, 328 }, { 8, 53 }, { -5, 19 } },
-  { { 340, 370 }, { 330, 365 }, { 15, 50 } },
-  { { -4, 24 }, { 14, 63 }, { 12, 63 } }
+  { { 203, 236 },   { 10, 29 },   { 0, 9 } },
+  { { 283, 380 }, { 286, 380 },  { 8, 27 } },
+  {    { 1, 14 },   { 22, 43 }, { 19, 44 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -428,7 +428,7 @@ void loop() {
     case 'a':
       HallEffect();
       mag_ss = mag_val;
-      // current_block.Reset();
+      current_block.Reset();
       directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 2);
       line_dist = true;
       new_action = true;
@@ -460,7 +460,7 @@ void loop() {
       if(current_block.color == '\0'){
         ColorSense();
       } else if (ramp_down) {  //current_block.color != '\0'
-        // DetermineBlockLoc();
+        DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
         Serial.print(current_block.pos);
@@ -472,7 +472,9 @@ void loop() {
         ramp_down = false;
         new_action = true;
         last_state = state;
-        state = 'd';
+        // state = 'd';
+        current_block.Reset();
+        state = 'c';
       }
       // // Else collect another block
       // else if (t > block_wait_time) {   //if (t > block_wait_time)

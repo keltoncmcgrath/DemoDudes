@@ -121,7 +121,7 @@ void Travel(void) {
     case 'l':
       // Reset Values
       if (new_action) {
-        if (line_dist && last_state != 'a') {
+        if (line_dist && last_state != 'a' && last_state != 'f') {
           line_follow_speed = 100;
         } else {
           line_follow_speed = 300;
