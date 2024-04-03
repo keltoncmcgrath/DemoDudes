@@ -2,10 +2,10 @@
 #include <Encoder.h>
 
 DualTB9051FTGMotorShieldUnoMega myMotorDriver;
-Encoder myEncoder1(21, 20);
-Encoder myEncoder2(19, 18);
+Encoder myEncoder1(19, 18);
+Encoder myEncoder2(20, 21);
 
-double GearRatio = 70;
+double GearRatio = 131;
 double EncoderCountsPerRev = 64;
 
 unsigned long t_ms = 0;
