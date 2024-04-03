@@ -9,8 +9,8 @@ void DetermineBlockLoc(void) {
           current_block.elev = red1[i].elev;
           red1[i].placed = true;
           break;
-        }
-      }
+        } // end if
+      } // end for
     } else {
       for (int i = 0; i < (sizeof(red2) / sizeof(struct block)); i++) {
         if (!red2[i].placed) {
@@ -19,10 +19,10 @@ void DetermineBlockLoc(void) {
           current_block.elev = red2[i].elev;
           red2[i].placed = true;
           break;
-        }
-      }
-    }
-  }
+        } // end if
+      } // end for
+    } // end else
+  } // end if
 
   // Yellow Blocks
   else if (current_block.color == 'y') {  // If block is yellow
@@ -59,8 +59,8 @@ void DetermineBlockLoc(void) {
           current_block.elev = blue[i].elev;
           blue[i].placed = true;
           break;
-        }
-      }
-    }
-  }
-}
+        } // end if
+      } // end for
+    } // end if
+  } // end else if
+} // end func
