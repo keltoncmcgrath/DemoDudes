@@ -16,7 +16,7 @@ void Travel(void) {
           new_action = false;
         }
       }
-      StraightLine();
+      TimedDrive();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta1_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
@@ -53,7 +53,7 @@ void Travel(void) {
           new_action = false;
         }
       }
-      Turn();
+      TimedDrive();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
@@ -94,7 +94,7 @@ void Travel(void) {
           new_action = false;
         }
       }
-      Turn();
+      TimedDrive();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);

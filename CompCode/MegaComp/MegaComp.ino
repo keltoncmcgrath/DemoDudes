@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'e', '5', 'l', false, 'y' };
+struct block current_block = { 'n', '1', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -217,35 +217,37 @@ struct block blue[8] = {
   { 'e', '5', 'u', false }
 };
 
-// Trajectory Vars
-float KP = 600;
-int straight_kp = 125;
+// Control Vars
+float KP = 95.7;
+float KI = 900;
+float KD = 1.78;
+float error1, d_error1, integral_error1;
+float error2, d_error2, integral_error2;
+// int straight_kp = 125;
+int m1s, m2s;
+float V1, V2;
+
+// Travel Vars
+float dist_traveled;
+float dist_final;
+float turn_angle_final;        // rad
+float arc_radius;              // cm
+float arc_angle_final;         // rad
+float time_final;
+float theta1, theta1_des, theta1_final, theta1_old;
+float theta2, theta2_des, theta2_final, theta2_old;
+float omega1, omega1_des;
+float omega2, omega2_des;
+long counts1;
+long counts2;
+
+// Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 3.5;      // cm
 float wheel_dist_arc = 20.35;  // cm
 float wheel_dist_turn;         // cm
-float turn_time = 1.5;           // s
-float dist_final;              // cm
-float turn_angle_final;        // rad
-float arc_radius;              // cm
-float arc_angle_final;         // rad
-float time_final;
-char turn_dir;
-char travel_dir;
-float theta1;
-float theta2;
-float theta1_final;
-float theta2_final;
-float theta1_des;
-float theta2_des;
-float omega1_des;
-float omega2_des;
-long counts1;
-long counts2;
-float dist_traveled;
-int m1s;
-int m2s;
+float turn_time = 1.5;         // s
 
 // Travel Variables
 float east_guide = 122.5;   // cm
@@ -268,7 +270,7 @@ Encoder encoder1(encoder1_pinA, encoder1_pinB);
 Encoder encoder2(encoder2_pinA, encoder2_pinB);
 
 // Arm Servo Vars
-int servo_home = 65;  // 93 for working shovel and arm
+int servo_home = 93;
 int arm_max_angle = 20;
 int arm_collect_angle = 77;
 int arm_low_dump_angle = 70;
@@ -280,8 +282,8 @@ float arm_tol = 0.1;
 
 // Shovel Servo Vars
 int shov_max_angle = 150;
-int shov_dump_angle = 152;
-int shov_collect_angle = 55;
+int shov_dump_angle = 180;
+int shov_collect_angle = 73;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -353,7 +355,6 @@ int mag_val;
 int mag_val_last;
 int mag_ss;
 
-
 // Event Bools
 bool final_stage;
 bool final_final_stage;
@@ -405,7 +406,6 @@ void setup() {
   pinMode(left_turn_pin, OUTPUT);
 
   // Check for Start Command and Read Block Info
-  shovel_servo.write(servo_home);
   Serial.println("Ready For Signal...");
   while (true) {
     if (Serial2.available()) {
@@ -428,7 +428,7 @@ void loop() {
     case 'a':
       HallEffect();
       mag_ss = mag_val;
-      current_block.Reset();
+      // current_block.Reset();
       directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 2);
       line_dist = true;
       new_action = true;
@@ -458,9 +458,9 @@ void loop() {
       }
       // Sense Color and change state
       if(current_block.color == '\0'){
-        ColorSense();
+        // ColorSense();
       } else if (ramp_down) {  //current_block.color != '\0'
-        DetermineBlockLoc();
+        // DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
         Serial.print(current_block.pos);
@@ -472,9 +472,7 @@ void loop() {
         ramp_down = false;
         new_action = true;
         last_state = state;
-        // state = 'd';
-        current_block.Reset();
-        state = 'c';
+        state = 'd';
       }
       // // Else collect another block
       // else if (t > block_wait_time) {   //if (t > block_wait_time)

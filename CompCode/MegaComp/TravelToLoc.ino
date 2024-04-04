@@ -5,7 +5,7 @@ void TravelToLoc(void) {
     case 'n':
       // Turn to align with face
       if (turn_bool) {
-        Turn();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
           // Prepare for travel
@@ -61,7 +61,7 @@ void TravelToLoc(void) {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
         }
-        StraightLine();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           // Prepare to turn to face
           if (!final_stage) {
@@ -119,7 +119,7 @@ void TravelToLoc(void) {
 
     case 'e':
       if (turn_bool) {
-        Turn();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
           // Prepare for travel
@@ -186,7 +186,7 @@ void TravelToLoc(void) {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
         }
-        StraightLine();
+        TimedDrive();
         // Prepare for turning
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
@@ -224,7 +224,7 @@ void TravelToLoc(void) {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
         }
-        Turn();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
           // Prepare for straight travel to face
@@ -290,7 +290,7 @@ void TravelToLoc(void) {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
         }
-        StraightLine();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
           // Prepare to turn to travel to pos
@@ -329,7 +329,7 @@ void TravelToLoc(void) {
     case 'w':
       // Turn
       if (turn_bool) {
-        Turn();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
           // Prepare to travel to block pos
@@ -387,7 +387,7 @@ void TravelToLoc(void) {
         if (arm_servo.read() != arm_angle_final) {
           ArmServo();
         }
-        StraightLine();
+        TimedDrive();
         if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
           md.setSpeeds(0, 0);
           turn_angle_final = -PI / 2;
