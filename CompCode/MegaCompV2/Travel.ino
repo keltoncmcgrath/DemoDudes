@@ -86,8 +86,8 @@ void Travel(void) {
           theta1_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
         } else if (arc_angle_final < 0) {  // Arc Left
-          theta1_final = arc_angle_final * arc_radius / wheel_radius;
-          theta2_final = arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
+          theta1_final = -arc_angle_final * arc_radius / wheel_radius;
+          theta2_final = -arc_angle_final * (arc_radius + wheel_dist_arc) / wheel_radius;
         }
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
