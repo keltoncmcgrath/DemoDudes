@@ -30,7 +30,6 @@ void TimedDrive(void) {
   d_error2 = omega2_des - omega2;
   integral_error2 += error2 * delta_T;
   integral_error2 = constrain(integral_error2, -10. / KI, 10. / KI);
-  
 
   // Control laws
   V1 = KP * error1 + KD * d_error1 + KI * integral_error1;

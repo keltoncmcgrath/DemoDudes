@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '1', 'l', false, 'y' };
+struct block current_block = { 'e', '4', 'u', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -221,6 +221,7 @@ struct block blue[8] = {
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
+// float KD = 5.5;
 float error1, d_error1, integral_error1;
 float error2, d_error2, integral_error2;
 // int straight_kp = 125;
@@ -244,21 +245,20 @@ long counts2;
 // Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;      // cm
-float wheel_dist_arc = 20.35;  // cm
-float wheel_dist_turn;         // cm
-float turn_time = 1.5;         // s
+float wheel_radius = 3.5;    // cm
+float wheel_dist = 19;       // cm
+float turn_time = 1.5;       // s
 
 // Travel Variables
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
 float north_guide = 34.5;   // cm
-float guide1 = 56;          // cm
-float guide2 = 61.5;        // cm
-float guide3 = 70;          // cm
-float guide4 = 51;          // cm, measure dist later
+float guide1 = 54;          // cm
+float guide2 = 59.5;        // cm
+float guide3 = 66;          // cm
+float guide4 = 52;          // cm, measure dist later
 float guide5 = 67;          // cm, measure dist later
-float guide6 = 70;          // cm, measure dist later
+float guide6 = 69;          // cm, measure dist later
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
 int line_speed;
@@ -272,7 +272,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 20;
-int arm_collect_angle = 77;
+int arm_collect_angle = 90;
 int arm_low_dump_angle = 70;
 float arm_angle_des;
 int arm_angle_start;
@@ -282,8 +282,9 @@ float arm_tol = 0.1;
 
 // Shovel Servo Vars
 int shov_max_angle = 150;
-int shov_dump_angle = 180;
-int shov_collect_angle = 73;
+int shov_low_dump_angle = 70;
+int shov_dump_angle = 0;
+int shov_collect_angle = 120;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -308,37 +309,39 @@ float green_std[3] = { 0, 0, 0 };
 float blue_std[3] = { 0, 0, 0 };
 
 // Color Calibration Vars
-const int color_samples = 100;
+const int color_samples = 10;
 int red_calibration_vals[color_samples];
 int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
 int color_ranges[3][3][2] = {
-  { { 203, 236 },   { 10, 29 },   { 0, 9 } },
-  { { 283, 380 }, { 286, 380 },  { 8, 27 } },
-  {    { 1, 14 },   { 22, 43 }, { 19, 44 } }
+  { { 614, 687 },   { 36, 95 },    { 4, 53 } },
+  { { 837, 910 }, { 627, 700 },  { 47, 108 } },
+  {   { 25, 82 },  { 71, 134 }, { 113, 180 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 300;
-int ir_bias[] = { 144, 93, 93, 93, 136, 93, 98, 119 };
+int kp = 250; // 200
+int ki = 500;
+int kd = 4;
+float ir_error, ir_error_last, ir_d_error, ir_integral_error;
+int ir_bias[] = { 140, 94, 128, 134, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
-float ir_dist_desired = 2.8;                                           // cm
+float ir_dist_desired = 2.4; //2.8                                     // cm
 float ir_dist_actual;
-float ir_error;
 bool all_black;
 float num = 0;
 float den = 0;
 
 // Range Finder Vars
 float dist_alpha = 0.01;
-float dump_dist_upper = 15;  // cm
-float dump_dist_lower = 12.5;  // cm
-float dist_collect = 14;     // cm
-float dist_actual = 1000;    // cm
+float dump_dist_upper = 15.5;  // cm
+float dump_dist_lower = 11;    // cm
+float dist_collect = 12;       // cm
+float dist_actual = 1000;      // cm
 float dist_to_wall = 11;
 int num_dist_vals = 100;
 float dist_val = 0;
@@ -429,7 +432,7 @@ void loop() {
     case 'a':
       HallEffect();
       mag_ss = mag_val;
-      // current_block.Reset();
+      current_block.Reset();
       directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 2);
       line_dist = true;
       new_action = true;
@@ -459,9 +462,9 @@ void loop() {
       }
       // Sense Color and change state
       if(current_block.color == '\0'){
-        // ColorSense();
+        ColorSense();
       } else if (ramp_down) {  //current_block.color != '\0'
-        // DetermineBlockLoc();
+        DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
         Serial.print(current_block.pos);
@@ -475,10 +478,10 @@ void loop() {
         last_state = state;
         state = 'd';
       }
-      // // Else collect another block
-      // else if (t > block_wait_time) {   //if (t > block_wait_time)
-      //   state = 'b';
-      // }
+      // Else collect another block
+      if (t > block_wait_time) {
+        state = 'b';
+      }
       break;
 
 

@@ -12,13 +12,13 @@ void TravelToLoc(void) {
           if (!final_stage) {
             // Set straight travel variables according to pos
             if (current_block.pos == '1') {
-              dist_final = guide1 - arc_radius - (wheel_dist_arc / 2);
+              dist_final = guide1 - arc_radius - (wheel_dist / 2);
               time_final = 4;
             } else if (current_block.pos == '2') {
-              dist_final = guide2 - arc_radius - (wheel_dist_arc / 2);
+              dist_final = guide2 - arc_radius - (wheel_dist / 2);
               time_final = 4.5;
             } else if (current_block.pos == '3') {
-              dist_final = guide3 - arc_radius - (wheel_dist_arc / 2);
+              dist_final = guide3 - arc_radius - (wheel_dist / 2);
               time_final = 5;
             }
             // Travel Vars
@@ -67,8 +67,8 @@ void TravelToLoc(void) {
           if (!final_stage) {
             turn_angle_final = PI / 2;
             time_final = turn_time;
-            theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-            theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+            theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+            theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
             final_stage = true;
             ResetTravelVars();
             turn_bool = true;
@@ -125,7 +125,7 @@ void TravelToLoc(void) {
           // Prepare for travel
           if (!final_stage && !final_final_stage) {
             // Travel vars
-            dist_final = east_guide - arc_radius - (wheel_dist_arc / 2);
+            dist_final = east_guide - arc_radius - (wheel_dist / 2);
             time_final = 6;
             theta1_final = dist_final / wheel_radius;
             theta2_final = dist_final / wheel_radius;
@@ -147,11 +147,11 @@ void TravelToLoc(void) {
           else if (final_stage && !final_final_stage) {
             // Set line follow distance and vars
             if (current_block.pos == '4') {
-              dist_final = guide4 - arc_radius - (wheel_dist_arc / 2);
+              dist_final = guide4 - arc_radius - (wheel_dist / 2);
             } else if (current_block.pos = '5') {
-              dist_final = guide5 - arc_radius - (wheel_dist_arc / 2);
+              dist_final = guide5 - arc_radius - (wheel_dist / 2);
             } else if (current_block.pos = '6') {
-              dist_final = guide6 - arc_radius - (wheel_dist_arc / 2);
+              dist_final = guide6 - arc_radius - (wheel_dist / 2);
             }
             ResetTravelVars();
             turn_bool = false;
@@ -192,8 +192,8 @@ void TravelToLoc(void) {
           md.setSpeeds(0, 0);
           turn_angle_final = PI / 2;
           time_final = turn_time;
-          theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-          theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+          theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
           ResetTravelVars();
           turn_bool = true;
           straight_bool = false;
@@ -207,8 +207,8 @@ void TravelToLoc(void) {
           md.setSpeeds(0, 0);
           turn_angle_final = PI / 2;
           time_final = turn_time;
-          theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-          theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+          theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
           final_stage = false;
           final_final_stage = true;
           ResetTravelVars();
@@ -297,8 +297,8 @@ void TravelToLoc(void) {
           if (!final_stage && !final_final_stage) {
             turn_angle_final = -PI / 2;
             time_final = 2;
-            theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-            theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+            theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+            theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
             final_stage = true;
             ResetTravelVars();
             turn_bool = true;
@@ -315,8 +315,8 @@ void TravelToLoc(void) {
             // Travel vals
             turn_angle_final = -PI / 2;
             time_final = 2;
-            theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-            theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+            theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+            theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
             final_final_stage = true;
             ResetTravelVars();
             turn_bool = true;
@@ -392,8 +392,8 @@ void TravelToLoc(void) {
           md.setSpeeds(0, 0);
           turn_angle_final = -PI / 2;
           time_final = turn_time;
-          theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-          theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+          theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+          theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
           final_stage = true;
           ResetTravelVars();
           turn_bool = true;

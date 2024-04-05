@@ -7,7 +7,7 @@ void DumpBlock(void) {
     case '6':
       line_dist = true;
       if (current_block.elev == 'l') {
-        directions.AddTailNode('r', dump_dist_lower, 0, 0, 's', servo_home, 1);
+        directions.AddTailNode('r', dump_dist_lower, 0, 0, 's', shov_low_dump_angle, 1);
       } else if (current_block.elev == 'u') {
         directions.AddTailNode('r', dump_dist_upper, 0);
         directions.AddTailNode('\0', 0, 0, 0, 's', shov_dump_angle, 2);
@@ -21,7 +21,7 @@ void DumpBlock(void) {
       line_dist = true;
       if (current_block.elev == 'l') {
         line_dist = true;
-        directions.AddTailNode('l', dump_dist_lower, 0, 0, 's', servo_home, 1);
+        directions.AddTailNode('l', dump_dist_lower, 0, 0, 's', shov_low_dump_angle, 1);
       } else if (current_block.elev == 'u') {
         directions.AddTailNode('l', dump_dist_upper, 0);
         directions.AddTailNode('\0', 0, 0, 0, 's', shov_dump_angle, 2);

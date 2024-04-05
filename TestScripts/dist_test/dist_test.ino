@@ -21,5 +21,7 @@ void loop() {
   }
   dist_actual = pow(dist_val/a, 1/b);
   dist_val = 0;
-  Serial.println(dist_actual);
+  if(dist_actual < 20){
+    Serial.println(dist_actual);
+  }
 }

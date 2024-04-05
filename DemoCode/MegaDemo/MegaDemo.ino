@@ -101,7 +101,7 @@ float red_std[3] = {0, 0, 0};
 float green_std[3] = {0, 0, 0};
 float blue_std[3] = {0, 0, 0};
 int color_delay_time = 10;
-const int color_samples = 100;
+const int color_samples = 1000;
 int red_calibration_vals[color_samples];
 int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
@@ -411,7 +411,7 @@ void MagSense(){
 }
 
 void ColorSense(){
-  for(int i=0; i<100; i++){
+  for(int i=0; i<color_samples; i++){
     // Reading Red Light 
     digitalWrite(red_pin, LOW);
     delay(color_delay_time);
@@ -489,8 +489,6 @@ void ColorCalibration(){
       digitalWrite(red_pin, LOW);
       delay(color_delay_time);
       red_val = analogRead(photo_trans_pin);
-      Serial.print(analogRead(photo_trans_pin));
-      Serial.print('\t');
       red_calibration_vals[i] = red_val;
       red_sum += red_val;
       digitalWrite(red_pin, HIGH);
@@ -498,7 +496,6 @@ void ColorCalibration(){
       digitalWrite(green_pin, LOW);
       delay(color_delay_time);
       green_val = analogRead(photo_trans_pin);
-      Serial.println(analogRead(photo_trans_pin));
       green_calibration_vals[i] = green_val;
       green_sum += green_val;
       digitalWrite(green_pin, HIGH);
@@ -534,14 +531,14 @@ void ColorCalibration(){
     // Find Ranges of Values for Each Block
     for(int i=0; i<3; i++){
       // Red
-      color_ranges[i][0][0] = red_avg[i]-2.5*red_std[i];
-      color_ranges[i][0][1] = red_avg[i]+2.5*red_std[i];
+      color_ranges[i][0][0] = red_avg[i]-4*red_std[i];
+      color_ranges[i][0][1] = red_avg[i]+4*red_std[i];
       // Green
-      color_ranges[i][1][0] = green_avg[i]-2.5*green_std[i];
-      color_ranges[i][1][1] = green_avg[i]+2.5*green_std[i];
+      color_ranges[i][1][0] = green_avg[i]-4*green_std[i];
+      color_ranges[i][1][1] = green_avg[i]+4*green_std[i];
       // Blue
-      color_ranges[i][2][0] = blue_avg[i]-2.5*blue_std[i];
-      color_ranges[i][2][1] = blue_avg[i]+2.5*blue_std[i];
+      color_ranges[i][2][0] = blue_avg[i]-4*blue_std[i];
+      color_ranges[i][2][1] = blue_avg[i]+4*blue_std[i];
       
     }
   }
