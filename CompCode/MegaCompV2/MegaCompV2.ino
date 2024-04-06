@@ -285,8 +285,8 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Vars
-int shov_max_angle = 150;
-int shov_low_dump_angle = 70;
+int shov_max_angle = 20;
+int shov_low_dump_angle = 90;
 int shov_dump_angle = 0;
 int shov_collect_angle = 120;
 float shov_angle_des;
@@ -396,6 +396,7 @@ void setup() {
   // Attatch Pins to Servo Objects
   arm_servo.attach(arm_servo_pin);
   shovel_servo.attach(shovel_servo_pin);
+  shovel_servo.write(shov_max_angle);
 
   // Setup IR Array
   qtr.setTypeRC();
@@ -419,11 +420,13 @@ void setup() {
     if (Serial2.available()) {
       rc = Serial2.read();
       if (rc == flag) {
+        shovel_servo.write(servo_home);
         ReadBlockInfo();
         break;
       }
     }
   }
+  delay(100);
 }
 
 
