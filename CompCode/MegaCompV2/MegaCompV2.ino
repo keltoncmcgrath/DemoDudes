@@ -235,12 +235,13 @@ float turn_angle_final;        // rad
 float arc_radius;              // cm
 float arc_angle_final;         // rad
 float time_final;
-float theta1, theta1_des, theta1_final, theta1_old;
-float theta2, theta2_des, theta2_final, theta2_old;
+float theta1, theta1_des, theta1_desf, theta1_final, theta1_old;
+float theta2, theta2_des, theta2_desf, theta2_final, theta2_old;
 float omega1, omega1_des;
 float omega2, omega2_des;
 long counts1;
 long counts2;
+float theta_alpha = 0.1;
 
 // Travel Constants
 int counts_per_rev = 64;
@@ -248,6 +249,9 @@ int gear_ratio = 131;
 float wheel_radius = 3.5;    // cm
 float wheel_dist = 19;       // cm
 float turn_time = 1.5;       // s
+float arc_time_big = 3;      // s
+float arc_time_little = 2.5;
+float ir_to_wheel = 6;
 
 // Travel Variables
 float east_guide = 122.5;   // cm
@@ -257,7 +261,7 @@ float guide1 = 54;          // cm
 float guide2 = 59.5;        // cm
 float guide3 = 66;          // cm
 float guide4 = 52;          // cm, measure dist later
-float guide5 = 67;          // cm, measure dist later
+float guide5 = 61;          // cm, measure dist later
 float guide6 = 69;          // cm, measure dist later
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
@@ -339,7 +343,7 @@ float den = 0;
 // Range Finder Vars
 float dist_alpha = 0.01;
 float dump_dist_upper = 15.5;  // cm
-float dump_dist_lower = 11;    // cm
+float dump_dist_lower = 10.9;  // cm
 float dist_collect = 12;       // cm
 float dist_actual = 1000;      // cm
 float dist_to_wall = 11;

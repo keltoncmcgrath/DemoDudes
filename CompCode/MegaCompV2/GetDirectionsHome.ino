@@ -1,6 +1,6 @@
 void GetDirectionsHome(void) {
   // Go to the home dispenser
-  if(current_block.face != 'e' && current_block.pos != '3' && (current_block.face != 's' && current_block.pos != '2')){
+  if(current_block.face == 'w' || current_block.pos == '1' || (current_block.face == 'n' && current_block.pos == '2')){
     home_dispense = true;
     switch (current_block.face) {
       case 'n':
@@ -14,8 +14,8 @@ void GetDirectionsHome(void) {
         }
         directions.AddTailNode('t', PI / 2, turn_time);
         directions.AddTailNode('k', 300, 0, 0, 'a', servo_home, 2);
-        directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + 6, 1);
-        directions.AddTailNode('o', -PI / 2, turn_time+1.5, arc_radius);
+        directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 1);
+        directions.AddTailNode('o', -PI / 2, arc_time_big, arc_radius);
         directions.AddTailNode('d', -15, 1);
         break;
 
@@ -35,7 +35,7 @@ void GetDirectionsHome(void) {
 
       case 'w':
         directions.AddTailNode('k', -300);
-        directions.AddTailNode('d', 5, 1);
+        directions.AddTailNode('d', ir_to_wheel, 1);
         directions.AddTailNode('t', -PI / 2, turn_time);
         break;
     } // end switch
@@ -57,8 +57,8 @@ void GetDirectionsHome(void) {
         }
         directions.AddTailNode('t', -PI / 2, turn_time);
         directions.AddTailNode('k', 300, 0, 0, 'a', servo_home, 2);
-        directions.AddTailNode('d', -arc_radius + wheel_dist / 2 + 6, 1);
-        directions.AddTailNode('o', PI / 2, turn_time+1.5, arc_radius);
+        directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 1);
+        directions.AddTailNode('o', PI / 2, arc_time_big, arc_radius);
         directions.AddTailNode('d', -15, 1);
         break;
 
@@ -66,7 +66,7 @@ void GetDirectionsHome(void) {
       case 'e':
         line_dist = true;
         directions.AddTailNode('k', -300, 0, 0, 'a', servo_home, 2);
-        directions.AddTailNode('d', 5, 1);
+        directions.AddTailNode('d', ir_to_wheel, 1);
         directions.AddTailNode('t', PI / 2, turn_time);
         break;
 
@@ -75,7 +75,7 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('d', -8, 2);
         directions.AddTailNode('t', PI / 2, turn_time);
         directions.AddTailNode('k', 300, 0, 0, 'a', servo_home, 2);
-        directions.AddTailNode('d', 5, 1);
+        directions.AddTailNode('d', ir_to_wheel, 1);
         directions.AddTailNode('t', -PI / 2, turn_time);
         break;
     }// end switch

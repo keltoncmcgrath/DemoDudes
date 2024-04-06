@@ -113,13 +113,13 @@ void Travel(void) {
     case 'l':
       // Reset Values
       if (new_action) {
-        if (line_dist && last_state != 'a' && last_state != 'f') {
+        dist_final = directions.head->final_val[0];
+        ResetTravelVars();
+        if (line_dist && last_state != 'a' && last_state != 'f' && dist_final != dist_to_wall) {
           line_follow_speed = 100;
         } else {
           line_follow_speed = 300;
         }
-        dist_final = directions.head->final_val[0];
-        ResetTravelVars();
         if (directions.head->action[1] == '\0') {
           new_action = false;
         }

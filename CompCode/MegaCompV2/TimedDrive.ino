@@ -16,17 +16,19 @@ void TimedDrive(void) {
   if (abs(theta2_des) >= abs(theta2_final)) {
     theta2_des = theta2_final;
   }
+  theta1_desf = theta_alpha*theta1_des + (1-theta_alpha)*theta1_desf;
+  theta2_desf = theta_alpha*theta2_des + (1-theta_alpha)*theta2_desf;
 
   // Calculate omega
   omega1 = (theta1 - theta1_old) / delta_T;
   omega2 = (theta2 - theta2_old) / delta_T;
 
   // Compute errors
-  error1 = theta1_des - theta1;
+  error1 = theta1_desf - theta1;
   d_error1 = omega1_des - omega1;
   integral_error1 += error1 * delta_T;
   integral_error1 = constrain(integral_error1, -10. / KI, 10. / KI);
-  error2 = theta2_des - theta2;
+  error2 = theta2_desf - theta2;
   d_error2 = omega2_des - omega2;
   integral_error2 += error2 * delta_T;
   integral_error2 = constrain(integral_error2, -10. / KI, 10. / KI);
