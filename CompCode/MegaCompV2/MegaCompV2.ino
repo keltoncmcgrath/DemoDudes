@@ -218,7 +218,7 @@ struct block blue[8] = {
 };
 
 // Control Vars
-float dump_KP = 10;
+float dump_KP = 7;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
@@ -266,7 +266,7 @@ float guide5 = 61;          // cm, measure dist later
 float guide6 = 68;          // cm, measure dist later
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
-int line_follow_base;
+int line_base = 100;
 int line_speed;
 
 // Encoder Vars

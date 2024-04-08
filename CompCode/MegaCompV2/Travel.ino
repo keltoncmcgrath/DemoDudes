@@ -116,7 +116,7 @@ void Travel(void) {
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
         if (last_state == 'e') {
-          line_follow_base = 100;
+          line_follow_speed = 300;
         } else {
           line_follow_speed = 300;
         }
@@ -124,20 +124,22 @@ void Travel(void) {
           new_action = false;
         }
       }
-      if (line_dist && last_state == 'e') {  // Control speed based on distance from chassis
-          line_follow_speed = line_follow_base + dump_KP*(dist_final - dist_actual);
-          line_follow_speed = constrain(line_follow_speed, 300, line_follow_base);
-      }
       // Follow Line
       LineFollow();
-      if (line_dist) {
+      if (line_dist) {    // Follow line until range finder trips
         DistSense();
-        Serial.println(dist_actual);
+        if (last_state == 'e') {  // Control speed based on distance from chassis
+          line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
+          line_follow_speed = constrain(line_follow_speed, line_base, 300);
+          Serial.print(line_follow_speed);
+          Serial.print('\t');
+          Serial.println(dist_actual - dist_final);
+        }
         if (dist_actual <= dist_final) {
           md.setSpeeds(0, 0);
           next_node = true;
         }
-      } else {
+      } else {    // Follow line for set distance
         ReadEncoderDist();
         if (abs(dist_traveled) >= abs(dist_final)) {
           md.setSpeeds(0, 0);
@@ -152,7 +154,7 @@ void Travel(void) {
         if (last_state != 'e') {
           line_speed = 300;
         } else {
-          line_speed = 100;
+          line_speed = 300;
         }
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
@@ -161,7 +163,13 @@ void Travel(void) {
         }
       }
       DistSense();
-      Serial.println(dist_actual);
+      if (last_state == 'e') {  // Control speed based on distance from chassis
+        line_speed = line_base + dump_KP * (dist_actual - dist_final);
+        line_speed = constrain(line_speed, line_base, 300);
+        Serial.print(line_speed);
+        Serial.print('\t');
+        Serial.println(dist_actual - dist_final);
+      }
       StraightRange();
       if (dist_actual <= dist_final) {
         md.setSpeeds(0, 0);
@@ -201,8 +209,8 @@ void Travel(void) {
       }
       md.setSpeeds(0, 0);
       next_node = true;
-// End case
-end_of_case:
+      // End case
+      end_of_case:
       break;
   }
 
