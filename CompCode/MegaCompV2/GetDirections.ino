@@ -15,6 +15,7 @@ void GetDirections(void) {
             directions.AddTailNode('d', dist_final, 2.5, 0);
           }
         } else if (current_block.pos == '2') {
+          Serial.println("Here we go...");
           dist_final = guide2 - arc_radius - (wheel_dist / 2);
           if (current_block.elev == 'l') {
             directions.AddTailNode('k', 300, 0, 0, 's', shov_low_dump_angle, 2);
