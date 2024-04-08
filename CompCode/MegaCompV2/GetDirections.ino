@@ -77,27 +77,27 @@ void GetDirections(void) {
       case 'w':
         line_dist = false;
         if(current_block.elev == 'l'){
-          directions.AddTailNode('t', PI, turn_time+1, 0, 'a', arm_low_dump_angle, '1');
+          directions.AddTailNode('t', PI, turn_time+1, 0, 'a', arm_low_dump_angle, 1);
         } else if (current_block.elev == 'u'){
-          directions.AddTailNode('t', PI, turn_time+1, 0, 'a', arm_max_angle, '1');
+          directions.AddTailNode('t', PI, turn_time+1, 0, 'a', arm_max_angle, 1);
         }
         if (current_block.pos == '4') {
           if (current_block.elev == 'l') {
             directions.AddTailNode('l', guide4-north_guide, 0, 0, 's', shov_low_dump_angle, 2);
           } else if (current_block.elev == 'u') {
-            directions.AddTailNode('l', guide4-north_guide);
+            directions.AddTailNode('l', guide4-north_guide, 0, 0, 'a', arm_max_angle, 2);
           }
         } else if (current_block.pos == '5') {
           if (current_block.elev == 'l') {
             directions.AddTailNode('l', guide5-north_guide, 0, 0, 's', shov_low_dump_angle, 2);
           } else if (current_block.elev == 'u') {
-            directions.AddTailNode('l', guide5-north_guide);
+            directions.AddTailNode('l', guide5-north_guide, 0, 0, 'a', arm_max_angle, 2);
           }
         } else if (current_block.pos == '6') {
           if (current_block.elev == 'l') {
             directions.AddTailNode('d', guide6-north_guide, 4, 0, 's', shov_low_dump_angle, 2);
           } else if (current_block.elev == 'u') {
-            directions.AddTailNode('d', guide6-north_guide, 4);
+            directions.AddTailNode('d', guide6-north_guide, 4, 0, 'a', arm_max_angle, 2);
           }
         }
         directions.AddTailNode('t', -PI / 2, turn_time);

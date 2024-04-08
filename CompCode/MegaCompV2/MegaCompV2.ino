@@ -257,7 +257,7 @@ float ir_to_wheel = 6;
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
 float north_guide = 34.5;   // cm
-float guide1 = 54;          // cm
+float guide1 = 56;          // cm
 float guide2 = 59.5;        // cm
 float guide3 = 66;          // cm
 float guide4 = 52;          // cm, measure dist later
@@ -426,7 +426,7 @@ void setup() {
       }
     }
   }
-  delay(100);
+  delay(300);
 }
 
 
@@ -440,7 +440,7 @@ void loop() {
       HallEffect();
       mag_ss = mag_val;
       current_block.Reset();
-      directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 2);
+      directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 1);
       line_dist = true;
       new_action = true;
       last_state = state;
