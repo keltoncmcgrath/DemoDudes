@@ -133,7 +133,9 @@ void Travel(void) {
           line_follow_speed = constrain(line_follow_speed, line_base, 300);
           Serial.print(line_follow_speed);
           Serial.print('\t');
-          Serial.println(dist_actual - dist_final);
+          Serial.print(dist_actual - dist_final);
+          Serial.print('\t');
+          Serial.println(dist_actual);
         }
         if (dist_actual <= dist_final) {
           md.setSpeeds(0, 0);

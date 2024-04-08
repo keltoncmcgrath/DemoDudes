@@ -34,7 +34,7 @@ void GetDirections(void) {
         }
         directions.AddTailNode('t', PI / 2, turn_time);
         if (current_block.elev == 'l') {
-          directions.AddTailNode('d', -4, 1, 0, 'a', arm_low_dump_angle, 1);
+          directions.AddTailNode('d', -8, 1, 0, 'a', arm_low_dump_angle, 1);
         } else if (current_block.elev == 'u') {
           // directions.AddTailNode('d', -6, 0.5);
         }
