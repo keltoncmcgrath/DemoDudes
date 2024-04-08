@@ -46,7 +46,7 @@ void Travel(void) {
         }
       }
       TimedDrive();
-      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && md.getM1CurrentMilliamps() == 0 && md.getM2CurrentMilliamps() == 0) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);

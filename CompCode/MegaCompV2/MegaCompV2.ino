@@ -257,12 +257,12 @@ float ir_to_wheel = 6;
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
 float north_guide = 34.5;   // cm
-float guide1 = 56;          // cm
+float guide1 = 55;          // cm
 float guide2 = 59.5;        // cm
 float guide3 = 66;          // cm
 float guide4 = 52;          // cm, measure dist later
 float guide5 = 61;          // cm, measure dist later
-float guide6 = 69;          // cm, measure dist later
+float guide6 = 68;          // cm, measure dist later
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
 int line_speed;
@@ -286,7 +286,7 @@ float arm_tol = 0.1;
 
 // Shovel Servo Vars
 int shov_max_angle = 20;
-int shov_low_dump_angle = 90;
+int shov_low_dump_angle = 73;
 int shov_dump_angle = 0;
 int shov_collect_angle = 120;
 float shov_angle_des;

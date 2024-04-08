@@ -6,17 +6,30 @@ void GetDirections(void) {
       // North Face
       case 'n':
         arc_radius = 0.8;
-        directions.AddTailNode('o', PI / 2, arc_time_little, arc_radius);
+        directions.AddTailNode('o', PI / 2, arc_time_little, arc_radius, 'a', arm_max_angle, 2);
         if (current_block.pos == '1') {
           dist_final = guide1 - arc_radius - (wheel_dist / 2);
-          directions.AddTailNode('d', dist_final, 2.5, 0, 'a', arm_max_angle, 3);
+          if (current_block.elev == 'l') {
+            directions.AddTailNode('d', dist_final, 2.5, 0, 's', shov_low_dump_angle, 2);
+          } else if (current_block.elev == 'u') {
+            directions.AddTailNode('d', dist_final, 2.5, 0);
+          }
         } else if (current_block.pos == '2') {
           dist_final = guide2 - arc_radius - (wheel_dist / 2);
-          directions.AddTailNode('k', 300, 0, 0, 'a', arm_max_angle, 2);
-          directions.AddTailNode('d', ir_to_wheel, 1);
+          if (current_block.elev == 'l') {
+            directions.AddTailNode('k', 300, 0, 0, 's', shov_low_dump_angle, 2);
+            directions.AddTailNode('d', ir_to_wheel, 1);
+          } else if (current_block.elev == 'u') {
+            directions.AddTailNode('k', 300);
+            directions.AddTailNode('d', ir_to_wheel, 1);
+          }
         } else if (current_block.pos == '3') {
           dist_final = guide3 - arc_radius - (wheel_dist / 2) - 0.5;
-          directions.AddTailNode('d', dist_final, 3, 0, 'a', arm_max_angle, 3);
+          if (current_block.elev == 'l') {
+            directions.AddTailNode('d', dist_final, 3, 0, 's', shov_low_dump_angle, 2);
+          } else if (current_block.elev == 'u') {
+            directions.AddTailNode('d', dist_final, 3, 0);
+          }
         }
         directions.AddTailNode('t', PI / 2, turn_time);
         if (current_block.elev == 'l') {
