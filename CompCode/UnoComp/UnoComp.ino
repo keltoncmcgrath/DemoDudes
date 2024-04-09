@@ -19,7 +19,7 @@ void setup() {
   Serial.println(F("How Many Blocks on Chassis?"));
   while (true) {                          // Wait for user input of number of blocks (atoi if read as char)
     if (Serial.available() == 2) {        //The first bit corresponds to the number inputed for the number of block and the second bit corresponds to the enter command
-      num_blocks = Serial.read() - '0';   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
+      num_blocks = Serial.read();   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
       Serial.read();                      //Reads the enter command again to remove it from the buffer
       break;
     }
