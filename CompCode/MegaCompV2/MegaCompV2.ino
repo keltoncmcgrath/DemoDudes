@@ -156,27 +156,41 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'n', '2', 'l', false, 'y' };
+struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
-struct block red1[10] = {
-  { 'w', '4', 'l', false },
-  { 'w', '5', 'l', false },
-  { 'w', '6', 'l', false },
-  { 'e', '4', 'l', false },
-  { 'e', '5', 'l', false },
-  { 'e', '6', 'l', false },
-  { 'n', '2', 'u', false },
-  { 'w', '5', 'u', false },
-  { 's', '2', 'u', false },
-  { 'e', '5', 'u', false }
+// struct block red1[10] = {
+//   { 'w', '4', 'l', false },
+//   { 'w', '6', 'l', false },
+//   { 'e', '4', 'l', false },
+//   { 'e', '6', 'l', false },
+//   { 'e', '5', 'l', false },
+//   { 'w', '5', 'l', false },
+//   { 'n', '2', 'u', false },
+//   { 'w', '5', 'u', false },
+//   { 's', '2', 'u', false },
+//   { 'e', '5', 'u', false }
+// };
+struct block red1[12] = {
+  // { 'e', '4', 'l', false },
+  // { 'e', '5', 'l', false },
+  // { 'e', '6', 'l', false },
+  // { 'e', '4', 'u', false },
+  // { 'e', '5', 'u', false },
+  // { 'e', '6', 'u', false },
+  // { 'n', '3', 'l', false },
+  // { 'n', '3', 'u', false },
+  { 's', '3', 'l', false },
+  { 's', '3', 'u', false },
+  { 's', '2', 'l', false },
+  { 's', '2', 'u', false }
 };
 struct block red2[10] = {
   { 'n', '1', 'l', false },
-  { 'n', '2', 'l', false },
   { 'n', '3', 'l', false },
   { 's', '1', 'l', false },
-  { 's', '2', 'l', false },
   { 's', '3', 'l', false },
+  { 's', '2', 'l', false },
+  { 'n', '2', 'l', false },
   { 'n', '2', 'u', false },
   { 'w', '5', 'u', false },
   { 's', '2', 'u', false },
@@ -184,11 +198,11 @@ struct block red2[10] = {
 };
 struct block yellow1[10] = {
   { 'n', '1', 'l', false },
-  { 'n', '2', 'l', false },
   { 'n', '3', 'l', false },
   { 's', '1', 'l', false },
-  { 's', '2', 'l', false },
   { 's', '3', 'l', false },
+  { 's', '2', 'l', false },
+  { 'n', '2', 'l', false },
   { 'n', '2', 'u', false },
   { 'w', '5', 'u', false },
   { 's', '2', 'u', false },
@@ -196,11 +210,11 @@ struct block yellow1[10] = {
 };
 struct block yellow2[10] = {
   { 'w', '4', 'l', false },
-  { 'w', '5', 'l', false },
   { 'w', '6', 'l', false },
   { 'e', '4', 'l', false },
-  { 'e', '5', 'l', false },
   { 'e', '6', 'l', false },
+  { 'e', '5', 'l', false },
+  { 'w', '5', 'l', false },
   { 'n', '2', 'u', false },
   { 'w', '5', 'u', false },
   { 's', '2', 'u', false },
@@ -218,7 +232,7 @@ struct block blue[8] = {
 };
 
 // Control Vars
-float dump_KP = 7;
+float dump_KP = 10;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
@@ -242,30 +256,30 @@ float omega1, omega1_des;
 float omega2, omega2_des;
 long counts1;
 long counts2;
-float theta_alpha = 0.05;
+float theta_alpha = 0.075;
 
 // Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 3.5;    // cm
 float wheel_dist = 19;       // cm
-float turn_time = 1.5;       // s
+float turn_time = 1.2;       // s
 float arc_time_big = 2.5;    // s
-float arc_time_little = 2;
-float ir_to_wheel = 6;
+float arc_time_little = 1.5;
+float ir_to_wheel = 5.5;
 
 // Travel Variables
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
-float north_guide = 34.5;   // cm
-float guide1 = 54;          // cm
+float north_guide = 32.5;   // cm
+float guide1 = 52.5;        // cm
 float guide2 = 59.5;        // cm
-float guide3 = 66;          // cm
-float guide4 = 52;          // cm, measure dist later
-float guide5 = 61;          // cm, measure dist later
-float guide6 = 68.5;        // cm, measure dist later
+float guide3 = 68.5;        // cm
+float guide4 = 50.5;        // cm
+float guide5 = 61;          // cm
+float guide6 = 67.5;        // cm
 float collect_dist = 5.5;   // cm
-int line_follow_speed = 300;
+int line_follow_speed = 350;
 int line_base = 100;
 int line_speed;
 
@@ -279,7 +293,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 int servo_home = 93;
 int arm_max_angle = 20;
 int arm_collect_angle = 85;
-int arm_low_dump_angle = 70;
+int arm_low_dump_angle = 75;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -288,7 +302,7 @@ float arm_tol = 0.1;
 
 // Shovel Servo Vars
 int shov_max_angle = 20;
-int shov_low_dump_angle = 73;
+int shov_low_dump_angle = 80;
 int shov_dump_angle = 0;
 int shov_collect_angle = 120;
 float shov_angle_des;
@@ -336,7 +350,7 @@ const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
-float ir_dist_desired = 2.8; //2.8                                     // cm
+float ir_dist_desired = 2.9; //2.8                                     // cm
 float ir_dist_actual, ir_dist_actualf;
 float ir_alpha = 0.5;
 bool all_black;
@@ -346,7 +360,7 @@ float den = 0;
 
 // Range Finder Vars
 float dist_alpha = 0.01;
-float dump_dist_upper = 15.5;  // cm
+float dump_dist_upper = 13.5;  // cm
 float dump_dist_lower = 10.9;  // cm
 float dist_collect = 12;       // cm
 float dist_actual = 1000;      // cm
@@ -432,6 +446,7 @@ void setup() {
     }
   }
   delay(300);
+  home_dispense = false;
 }
 
 
@@ -474,8 +489,8 @@ void loop() {
       }
       // Sense Color and change state
       if(current_block.color == '\0'){
-        ColorSense();
-        // current_block.color = 'y';
+        // ColorSense();
+        current_block.color = 'r';
       } else if (ramp_down) {  //current_block.color != '\0'
         DetermineBlockLoc();
         Serial.print(current_block.face);

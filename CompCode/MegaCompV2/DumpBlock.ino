@@ -10,8 +10,8 @@ void DumpBlock(void) {
         directions.AddTailNode('r', dump_dist_lower, 0, 0, 's', shov_low_dump_angle, 1);
       } else if (current_block.elev == 'u') {
         directions.AddTailNode('r', dump_dist_upper, 0);
-        directions.AddTailNode('\0', 0, 0, 0, 's', shov_dump_angle, 2);
-        directions.AddTailNode('\0', 0, 0, 0, 's', shov_collect_angle, 2);
+        directions.AddTailNode('\0', 0, 0, 0, 's', shov_dump_angle, 1);
+        directions.AddTailNode('\0', 0, 0, 0, 's', shov_collect_angle, 1);
       }
       break;
 
@@ -24,8 +24,8 @@ void DumpBlock(void) {
         directions.AddTailNode('l', dump_dist_lower, 0, 0, 's', shov_low_dump_angle, 1);
       } else if (current_block.elev == 'u') {
         directions.AddTailNode('l', dump_dist_upper, 0);
-        directions.AddTailNode('\0', 0, 0, 0, 's', shov_dump_angle, 2);
-        directions.AddTailNode('\0', 0, 0, 0, 's', shov_collect_angle, 2);
+        directions.AddTailNode('\0', 0, 0, 0, 's', shov_dump_angle, 1);
+        directions.AddTailNode('\0', 0, 0, 0, 's', shov_collect_angle, 1);
       }
       break;
   }
