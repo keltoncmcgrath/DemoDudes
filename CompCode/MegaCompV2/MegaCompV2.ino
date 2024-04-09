@@ -158,67 +158,51 @@ char block_color;
 bool use_first = true;
 struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
-// struct block red1[10] = {
-//   { 'w', '4', 'l', false },
-//   { 'w', '6', 'l', false },
-//   { 'e', '4', 'l', false },
-//   { 'e', '6', 'l', false },
-//   { 'e', '5', 'l', false },
-//   { 'w', '5', 'l', false },
-//   { 'n', '2', 'u', false },
-//   { 'w', '5', 'u', false },
-//   { 's', '2', 'u', false },
-//   { 'e', '5', 'u', false }
-// };
-struct block red1[12] = {
-  // { 'e', '4', 'l', false },
-  // { 'e', '5', 'l', false },
-  // { 'e', '6', 'l', false },
-  // { 'e', '4', 'u', false },
-  // { 'e', '5', 'u', false },
-  // { 'e', '6', 'u', false },
-  // { 'n', '3', 'l', false },
-  // { 'n', '3', 'u', false },
-  { 's', '3', 'l', false },
-  { 's', '3', 'u', false },
-  { 's', '2', 'l', false },
-  { 's', '2', 'u', false }
-};
-struct block red2[10] = {
-  { 'n', '1', 'l', false },
-  { 'n', '3', 'l', false },
-  { 's', '1', 'l', false },
-  { 's', '3', 'l', false },
-  { 's', '2', 'l', false },
-  { 'n', '2', 'l', false },
-  { 'n', '2', 'u', false },
-  { 'w', '5', 'u', false },
-  { 's', '2', 'u', false },
-  { 'e', '5', 'u', false }
-};
-struct block yellow1[10] = {
-  { 'n', '1', 'l', false },
-  { 'n', '3', 'l', false },
-  { 's', '1', 'l', false },
-  { 's', '3', 'l', false },
-  { 's', '2', 'l', false },
-  { 'n', '2', 'l', false },
-  { 'n', '2', 'u', false },
-  { 'w', '5', 'u', false },
-  { 's', '2', 'u', false },
-  { 'e', '5', 'u', false }
-};
-struct block yellow2[10] = {
+struct block red1[6] = {
   { 'w', '4', 'l', false },
+  { 'w', '5', 'l', false },
   { 'w', '6', 'l', false },
   { 'e', '4', 'l', false },
-  { 'e', '6', 'l', false },
   { 'e', '5', 'l', false },
+  { 'e', '6', 'l', false }
+};
+// struct block red1[12] = { // for testing
+//   { 'e', '4', 'l', false },
+//   { 'e', '5', 'l', false },
+//   { 'e', '6', 'l', false },
+//   { 'e', '4', 'u', false },
+//   { 'e', '5', 'u', false },
+//   { 'e', '6', 'u', false },
+//   { 'n', '3', 'l', false },
+//   { 'n', '3', 'u', false },
+//   { 's', '3', 'l', false },
+//   { 's', '3', 'u', false },
+//   { 's', '2', 'l', false },
+//   { 's', '2', 'u', false }
+// };
+struct block red2[6] = {
+  { 'n', '1', 'l', false },
+  { 'n', '2', 'l', false },
+  { 's', '1', 'l', false },
+  { 's', '2', 'l', false },
+  { 's', '3', 'l', false },
+  { 'n', '3', 'l', false }
+};
+struct block yellow1[6] = {
+  { 'n', '1', 'l', false },
+  { 'n', '2', 'l', false },
+  { 's', '1', 'l', false },
+  { 's', '2', 'l', false },
+  { 's', '3', 'l', false },
+  { 'n', '3', 'l', false }
+};
+struct block yellow2[6] = {
+  { 'w', '4', 'l', false },
   { 'w', '5', 'l', false },
-  { 'n', '2', 'u', false },
-  { 'w', '5', 'u', false },
-  { 's', '2', 'u', false },
-  { 'e', '5', 'u', false }
+  { 'w', '6', 'l', false },
+  { 'e', '4', 'l', false },
+  { 'e', '5', 'l', false },
+  { 'e', '6', 'l', false }
 };
 struct block blue[8] = {
   { 'n', '1', 'u', false },
