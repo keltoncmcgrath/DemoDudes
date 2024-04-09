@@ -276,7 +276,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 20;
-int arm_collect_angle = 85;
+int arm_collect_angle = 80;
 int arm_low_dump_angle = 75;
 float arm_angle_des;
 int arm_angle_start;
@@ -426,11 +426,10 @@ void setup() {
         shovel_servo.write(servo_home);
         ReadBlockInfo();
         break;
-      }
-    }
-  }
-  delay(300);
-  home_dispense = false;
+      } // end if
+    } // end if
+  } // end while
+  delay(200);
 }
 
 
@@ -444,7 +443,7 @@ void loop() {
       HallEffect();
       mag_ss = mag_val;
       current_block.Reset();
-      directions.AddTailNode('l', dist_collect, 0, 0, 'a', arm_collect_angle, 1);
+      directions.AddTailNode('l', dist_collect, 0, 0, 'a', servo_home, 2);
       line_dist = true;
       new_action = true;
       last_state = state;
@@ -473,8 +472,8 @@ void loop() {
       }
       // Sense Color and change state
       if(current_block.color == '\0'){
-        // ColorSense();
-        current_block.color = 'r';
+        ColorSense();
+        // current_block.color = 'r';
       } else if (ramp_down) {  //current_block.color != '\0'
         DetermineBlockLoc();
         Serial.print(current_block.face);

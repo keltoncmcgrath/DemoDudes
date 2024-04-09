@@ -13,5 +13,5 @@ void setup() {
 
 void loop() {
   shovel_servo.write(120);
-  arm_servo.write(80);
+  arm_servo.write(93);
 }

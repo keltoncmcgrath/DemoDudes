@@ -225,12 +225,16 @@ void Travel(void) {
         arm_t_final = directions.head->duration[1];
         arm_angle_start = arm_servo.read();
         new_action = false;
+        Serial.print(t);
+        Serial.print('\t');
+        Serial.println(arm_angle_des);
         if (directions.head->action[0] == '\0') {
           ResetTravelVars();
         }
       }
-      ArmServo();
-      if (arm_servo.read() == arm_angle_final && directions.head->action[0] == '\0') {
+      if (arm_servo.read() != arm_angle_final) {
+        ArmServo();
+      } else if (arm_servo.read() == arm_angle_final && directions.head->action[0] == '\0') {
         next_node = true;
       }
       break;
@@ -246,8 +250,9 @@ void Travel(void) {
           ResetTravelVars();
         }
       }
-      ShovelServo();
-      if (shovel_servo.read() == shov_angle_final && directions.head->action[0] == '\0') {
+      if (shovel_servo.read() != shov_angle_final) {
+        ShovelServo();
+      } else if (shovel_servo.read() == shov_angle_final && directions.head->action[0] == '\0') {
         next_node = true;
       }
       break;
