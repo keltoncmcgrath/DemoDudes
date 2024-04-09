@@ -160,11 +160,11 @@ struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
 struct block red1[6] = {
   { 'w', '4', 'l', false },
-  { 'w', '5', 'l', false },
-  { 'w', '6', 'l', false },
   { 'e', '4', 'l', false },
-  { 'e', '5', 'l', false },
-  { 'e', '6', 'l', false }
+  { 'w', '6', 'l', false },
+  { 'e', '6', 'l', false },
+  { 'w', '5', 'l', false },
+  { 'e', '5', 'l', false }
 };
 // struct block red1[12] = { // for testing
 //   { 'e', '4', 'l', false },
@@ -182,27 +182,27 @@ struct block red1[6] = {
 // };
 struct block red2[6] = {
   { 'n', '1', 'l', false },
-  { 'n', '2', 'l', false },
   { 's', '1', 'l', false },
-  { 's', '2', 'l', false },
+  { 'n', '3', 'l', false },
   { 's', '3', 'l', false },
-  { 'n', '3', 'l', false }
+  { 'n', '2', 'l', false },
+  { 's', '2', 'l', false }
 };
 struct block yellow1[6] = {
   { 'n', '1', 'l', false },
-  { 'n', '2', 'l', false },
   { 's', '1', 'l', false },
-  { 's', '2', 'l', false },
+  { 'n', '3', 'l', false },
   { 's', '3', 'l', false },
-  { 'n', '3', 'l', false }
+  { 'n', '2', 'l', false },
+  { 's', '2', 'l', false }
 };
 struct block yellow2[6] = {
   { 'w', '4', 'l', false },
-  { 'w', '5', 'l', false },
-  { 'w', '6', 'l', false },
   { 'e', '4', 'l', false },
-  { 'e', '5', 'l', false },
-  { 'e', '6', 'l', false }
+  { 'w', '6', 'l', false },
+  { 'e', '6', 'l', false },
+  { 'w', '5', 'l', false },
+  { 'e', '5', 'l', false }
 };
 struct block blue[8] = {
   { 'n', '1', 'u', false },
@@ -248,20 +248,21 @@ int gear_ratio = 131;
 float wheel_radius = 3.5;    // cm
 float wheel_dist = 19;       // cm
 float turn_time = 1.2;       // s
-float arc_time_big = 2.5;    // s
-float arc_time_little = 1.5;
+float arc_time_big = 2.75;    // s
+float arc_time_little = 2.25;
 float ir_to_wheel = 5.5;
 
 // Travel Variables
-float east_guide = 122.5;   // cm
+float east_guide = 122;   // cm
 float south_guide = 68.58;  // cm
-float north_guide = 32.5;   // cm
-float guide1 = 52.5;        // cm
-float guide2 = 59.5;        // cm
-float guide3 = 68.5;        // cm
-float guide4 = 50.5;        // cm
-float guide5 = 61;          // cm
+float north_guide = 33.5;   // cm
+float guide1 = 53;        // cm
+float guide2 = 61;        // cm
+float guide3 = 69;        // cm
+float guide4 = 52;        // cm
+float guide5 = 59.5;          // cm
 float guide6 = 67.5;        // cm
+float next_pos_dist = 8;    // cm
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 350;
 int line_base = 100;
@@ -276,7 +277,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 20;
-int arm_collect_angle = 80;
+int arm_collect_angle = 85;
 int arm_low_dump_angle = 75;
 float arm_angle_des;
 int arm_angle_start;
@@ -297,7 +298,7 @@ float shov_tol = 0.1;
 
 // Color Sensor Vars
 int color_delay_time = 10;
-int block_wait_time = 5;
+int block_wait_time = 3;
 bool is_color = false;
 long red_sum = 0;
 long green_sum = 0;
@@ -491,7 +492,8 @@ void loop() {
       }
       // Else collect another block
       if (t > block_wait_time) {
-        state = 'b';
+        current_block.color = 'y';
+        // state = 'b';
       }
       break;
 

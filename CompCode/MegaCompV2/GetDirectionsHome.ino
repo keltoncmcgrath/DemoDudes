@@ -14,13 +14,13 @@ void GetDirectionsHome(void) {
         }
         directions.AddTailNode('t', PI / 2, turn_time);
         directions.AddTailNode('k', 350, 0, 0, 'a', servo_home, 2);
-        directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 0.5);
+        directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 1);
         directions.AddTailNode('o', -PI / 2, arc_time_big, arc_radius);
         directions.AddTailNode('d', -20, 1);
         break;
 
       case 's':
-        directions.AddTailNode('d', -8, 2);
+        directions.AddTailNode('d', -8, 1);
         directions.AddTailNode('t', -PI / 2, turn_time);
         if (current_block.pos == '1') {
           directions.AddTailNode('d', guide1, 3, 0, 'a', servo_home, 2);

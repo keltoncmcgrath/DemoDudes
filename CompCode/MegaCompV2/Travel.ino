@@ -75,11 +75,11 @@ void Travel(void) {
         time_final = directions.head->duration[0];
         arc_radius = directions.head->radius;
         if (arc_angle_final > 0) {  // Arc Right
-          theta1_final = arc_angle_final * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist + 0.2) / wheel_radius;
+          theta1_final = arc_angle_final * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist + 0.3) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
         } else if (arc_angle_final < 0) {  // Arc Left
           theta1_final = abs(arc_angle_final) * arc_radius / wheel_radius;
-          theta2_final = abs(arc_angle_final) * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist + 0.2) / wheel_radius;
+          theta2_final = abs(arc_angle_final) * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist + 0.3) / wheel_radius;
         }
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
