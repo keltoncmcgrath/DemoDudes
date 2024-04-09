@@ -319,9 +319,9 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][3];
 int color_ranges[3][3][2] = {
-  { { 614, 687 },   { 36, 95 },    { 4, 53 } },
-  { { 837, 910 }, { 627, 700 },  { 47, 108 } },
-  {   { 25, 82 },  { 71, 134 }, { 113, 180 } }
+  { { 604, 689 },   { 30, 98 },    { 1, 53 } },
+  { { 826, 910 }, { 611, 700 },  { 36, 108 } },
+  {   { 18, 88 },  { 70, 140 }, { 113, 199 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -329,7 +329,7 @@ int kp = 200; // 250, 500, 4
 // int ki = 1000;
 int kd = 5;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
-int ir_bias[] = { 140, 94, 128, 134, 140, 140, 140, 140 };
+int ir_bias[] = { 140, 94, 130, 124, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_unbiased[ir_sensor_count];
