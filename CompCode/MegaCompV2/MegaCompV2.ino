@@ -156,7 +156,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'e', '4', 'u', false, 'y' };
+struct block current_block = { 'n', '2', 'l', false, 'y' };
 struct block read_block;
 struct block red1[10] = {
   { 'w', '4', 'l', false },
@@ -242,7 +242,7 @@ float omega1, omega1_des;
 float omega2, omega2_des;
 long counts1;
 long counts2;
-float theta_alpha = 0.1;
+float theta_alpha = 0.05;
 
 // Travel Constants
 int counts_per_rev = 64;
@@ -250,20 +250,20 @@ int gear_ratio = 131;
 float wheel_radius = 3.5;    // cm
 float wheel_dist = 19;       // cm
 float turn_time = 1.5;       // s
-float arc_time_big = 3;      // s
-float arc_time_little = 2.5;
+float arc_time_big = 2.5;    // s
+float arc_time_little = 2;
 float ir_to_wheel = 6;
 
 // Travel Variables
 float east_guide = 122.5;   // cm
 float south_guide = 68.58;  // cm
 float north_guide = 34.5;   // cm
-float guide1 = 55;          // cm
-float guide2 = 58.5;        // cm
+float guide1 = 54;          // cm
+float guide2 = 59.5;        // cm
 float guide3 = 66;          // cm
 float guide4 = 52;          // cm, measure dist later
 float guide5 = 61;          // cm, measure dist later
-float guide6 = 68;          // cm, measure dist later
+float guide6 = 68.5;        // cm, measure dist later
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 300;
 int line_base = 100;
@@ -278,7 +278,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 20;
-int arm_collect_angle = 90;
+int arm_collect_angle = 85;
 int arm_low_dump_angle = 70;
 float arm_angle_des;
 int arm_angle_start;
@@ -327,18 +327,20 @@ int color_ranges[3][3][2] = {
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 250; // 200
-int ki = 500;
-int kd = 4;
+int kp = 200; // 250, 500, 4
+// int ki = 1000;
+int kd = 5;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
 int ir_bias[] = { 140, 94, 128, 134, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
-float ir_dist_desired = 2.4; //2.8                                     // cm
-float ir_dist_actual;
+float ir_dist_desired = 2.8; //2.8                                     // cm
+float ir_dist_actual, ir_dist_actualf;
+float ir_alpha = 0.5;
 bool all_black;
+int black_count = 0;
 float num = 0;
 float den = 0;
 
@@ -422,6 +424,7 @@ void setup() {
     if (Serial2.available()) {
       rc = Serial2.read();
       if (rc == flag) {
+        Serial.println("START");
         shovel_servo.write(servo_home);
         ReadBlockInfo();
         break;
@@ -471,8 +474,8 @@ void loop() {
       }
       // Sense Color and change state
       if(current_block.color == '\0'){
-        // ColorSense();
-        current_block.color = 'y';
+        ColorSense();
+        // current_block.color = 'y';
       } else if (ramp_down) {  //current_block.color != '\0'
         DetermineBlockLoc();
         Serial.print(current_block.face);

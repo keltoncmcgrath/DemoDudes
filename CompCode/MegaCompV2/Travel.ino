@@ -75,11 +75,11 @@ void Travel(void) {
         time_final = directions.head->duration[0];
         arc_radius = directions.head->radius;
         if (arc_angle_final > 0) {  // Arc Right
-          theta1_final = arc_angle_final * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist) / wheel_radius;
+          theta1_final = arc_angle_final * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist + 0.5) / wheel_radius;
           theta2_final = arc_angle_final * arc_radius / wheel_radius;
         } else if (arc_angle_final < 0) {  // Arc Left
           theta1_final = abs(arc_angle_final) * arc_radius / wheel_radius;
-          theta2_final = abs(arc_angle_final) * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist) / wheel_radius;
+          theta2_final = abs(arc_angle_final) * (arc_radius / abs(arc_radius)) * (abs(arc_radius) + wheel_dist + 0.5) / wheel_radius;
         }
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
@@ -115,18 +115,14 @@ void Travel(void) {
       if (new_action) {
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
-        if (last_state == 'e') {
-          line_follow_speed = 300;
-        } else {
-          line_follow_speed = 300;
-        }
+        line_follow_speed = 300;
         if (directions.head->action[1] == '\0') {
           new_action = false;
         }
       }
       // Follow Line
       LineFollow();
-      if (line_dist) {    // Follow line until range finder trips
+      if (line_dist) {  // Follow line until range finder trips
         DistSense();
         if (last_state == 'e') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
@@ -141,7 +137,7 @@ void Travel(void) {
           md.setSpeeds(0, 0);
           next_node = true;
         }
-      } else {    // Follow line for set distance
+      } else {  // Follow line for set distance
         ReadEncoderDist();
         if (abs(dist_traveled) >= abs(dist_final)) {
           md.setSpeeds(0, 0);

@@ -16,7 +16,7 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('k', 300, 0, 0, 'a', servo_home, 2);
         directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 1);
         directions.AddTailNode('o', -PI / 2, arc_time_big, arc_radius);
-        directions.AddTailNode('d', -15, 1);
+        directions.AddTailNode('d', -15, 1.2);
         break;
 
       case 's':

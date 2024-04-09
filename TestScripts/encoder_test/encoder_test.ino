@@ -1,4 +1,7 @@
 #include <Encoder.h>
+#include <DualTB9051FTGMotorShieldUnoMega.h>
+DualTB9051FTGMotorShieldUnoMega md;
+
 int encoder1_pinA = 19;
 int encoder1_pinB = 18;
 int encoder2_pinA = 20;
@@ -12,10 +15,13 @@ int counts2;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  md.init();
+  md.enableDrivers();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  md.setSpeeds(100, 100);
   counts1 = encoder1.read();
   counts2 = encoder2.read();
   Serial.print(counts1);

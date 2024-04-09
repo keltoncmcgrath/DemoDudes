@@ -155,7 +155,7 @@ void GetDirections(void) {
         }
         if (current_block.pos == '4') {
           if (current_block.elev == 'l') {
-            directions.AddTailNode('l', guide4-north_guide, 0, 0, 's', shov_low_dump_angle, 2);
+            directions.AddTailNode('l', guide4-north_guide+1, 0, 0, 's', shov_low_dump_angle, 2);
           } else if (current_block.elev == 'u') {
             directions.AddTailNode('l', guide4-north_guide);
           }
@@ -218,7 +218,7 @@ void GetDirections(void) {
           dist_final = guide4 - north_guide + arc_radius;
           directions.AddTailNode('l', dist_final);
         } else if (current_block.pos == '5') {
-          dist_final = guide5 - north_guide + arc_radius;
+          dist_final = guide5 - north_guide + arc_radius + 2;
           directions.AddTailNode('l', dist_final);
         } else if (current_block.pos == '6') {
           dist_final = guide6 - north_guide + arc_radius;
