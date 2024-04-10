@@ -158,6 +158,12 @@ char block_color;
 bool use_first = true;
 struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
+// struct block red1[4] = {
+//   { 'e', '4', 'l', false },
+//   { 'e', '4', 'u', false },
+//   { 'e', '6', 'l', false },
+//   { 'e', '6', 'u', false }
+// };
 struct block red1[6] = {
   { 'w', '4', 'l', false },
   { 'e', '4', 'l', false },
@@ -277,7 +283,7 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 20;
-int arm_collect_angle = 85;
+int arm_collect_angle = 75;
 int arm_low_dump_angle = 75;
 float arm_angle_des;
 int arm_angle_start;
@@ -399,7 +405,7 @@ void setup() {
   // Attatch Pins to Servo Objects
   arm_servo.attach(arm_servo_pin);
   shovel_servo.attach(shovel_servo_pin);
-  shovel_servo.write(shov_max_angle);
+  // shovel_servo.write(shov_max_angle);
 
   // Setup IR Array
   qtr.setTypeRC();
@@ -473,8 +479,8 @@ void loop() {
       }
       // Sense Color and change state
       if(current_block.color == '\0'){
-        ColorSense();
-        // current_block.color = 'r';
+        // ColorSense();
+        current_block.color = 'r';
       } else if (ramp_down) {  //current_block.color != '\0'
         DetermineBlockLoc();
         Serial.print(current_block.face);

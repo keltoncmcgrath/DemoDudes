@@ -111,15 +111,16 @@ void Travel(void) {
 
     // Line follow
     case 'l':
-      // Reset Values
+      // Initialize action
       if (new_action) {
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
-        line_follow_speed = 300;
+        // line_follow_speed = 300;
         if (directions.head->action[1] == '\0') {
           new_action = false;
         }
       }
+
       // Follow Line
       LineFollow();
       if (line_dist) {  // Follow line until range finder trips
@@ -127,11 +128,6 @@ void Travel(void) {
         if (last_state == 'e') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 300);
-          Serial.print(line_follow_speed);
-          Serial.print('\t');
-          Serial.print(dist_actual - dist_final);
-          Serial.print('\t');
-          Serial.println(dist_actual);
         }
         if (dist_actual <= dist_final) {
           md.setSpeeds(0, 0);
@@ -166,9 +162,6 @@ void Travel(void) {
       if (last_state == 'e') {  // Control speed based on distance from chassis
         line_speed = line_base + dump_KP * (dist_actual - dist_final);
         line_speed = constrain(line_speed, line_base, 300);
-        Serial.print(line_speed);
-        Serial.print('\t');
-        Serial.println(dist_actual - dist_final);
       }
       StraightRange();
       if (dist_actual <= dist_final) {
@@ -214,6 +207,32 @@ void Travel(void) {
       // End case
       end_of_case:
       break;
+
+    // Travel to Line Junction
+    case 'j':
+      // Initialize Action
+      if (new_action) {
+        line_follow_speed = directions.head->final_val[0];
+        ResetTravelVars();
+        if (directions.head->action[1] == '\0') {
+          new_action = false;
+        } // end if
+      } // end if
+
+      // Action
+      LineFollow();
+      for (int i=0; i<ir_sensor_count; i++) {
+        if(ir_values[i] > 500) {
+          black_count += 1;
+        } // end if
+      } // end for
+      if(black_count >= ir_sensor_count / 2){
+        md.setSpeeds(0, 0);
+        line_follow_speed = 350;
+        next_node = true;
+      } // end if
+      black_count = 0;
+      break;
   }
 
   // Servo actions
@@ -225,9 +244,6 @@ void Travel(void) {
         arm_t_final = directions.head->duration[1];
         arm_angle_start = arm_servo.read();
         new_action = false;
-        Serial.print(t);
-        Serial.print('\t');
-        Serial.println(arm_angle_des);
         if (directions.head->action[0] == '\0') {
           ResetTravelVars();
         }

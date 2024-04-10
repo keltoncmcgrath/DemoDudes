@@ -3,6 +3,7 @@ void GetDirectionsHome(void) {
   if(current_block.face == 'w' || current_block.pos == '1' || (current_block.face == 'n' && current_block.pos == '2')){
     home_dispense = true;
     switch (current_block.face) {
+      // North Face
       case 'n':
         line_dist = false;
         arc_radius = -2;
@@ -19,6 +20,7 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('d', -20, 1);
         break;
 
+      // South Face
       case 's':
         directions.AddTailNode('d', -8, 1);
         directions.AddTailNode('t', -PI / 2, turn_time);
@@ -33,6 +35,7 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('d', north_guide, 2);
         break;
 
+      // West Face
       case 'w':
         directions.AddTailNode('k', -350);
         directions.AddTailNode('d', ir_to_wheel, 0.5);
