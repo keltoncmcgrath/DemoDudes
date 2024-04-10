@@ -115,7 +115,6 @@ void Travel(void) {
       if (new_action) {
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
-        // line_follow_speed = 300;
         if (directions.head->action[1] == '\0') {
           new_action = false;
         }
@@ -124,13 +123,14 @@ void Travel(void) {
       // Follow Line
       LineFollow();
       if (line_dist) {  // Follow line until range finder trips
-        DistSense();
+        DistSenseRight();
         if (last_state == 'e') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 300);
         }
         if (dist_actual <= dist_final) {
           md.setSpeeds(0, 0);
+          line_follow_speed = 350;
           next_node = true;
         }
       } else {  // Follow line for set distance
@@ -138,7 +138,8 @@ void Travel(void) {
         if (abs(dist_traveled) >= abs(dist_final)) {
           md.setSpeeds(0, 0);
           dump_dist_upper = 13;
-          line_follow_speed = 300;
+          dump_dist_lower = 10.9;
+          line_follow_speed = 350;
           next_node = true;
         }
       }
@@ -147,18 +148,18 @@ void Travel(void) {
     // Distance Sensor Straight Line
     case 'r':
       if (new_action) {
-        if (last_state != 'e') {
-          line_speed = 300;
-        } else {
-          line_speed = 300;
-        }
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
           new_action = false;
         }
       }
-      DistSense();
+      // Read from left or right range finder
+      if (dist_right) {
+        DistSenseRight();
+      } else {
+        DistSenseLeft();
+      }
       if (last_state == 'e') {  // Control speed based on distance from chassis
         line_speed = line_base + dump_KP * (dist_actual - dist_final);
         line_speed = constrain(line_speed, line_base, 300);
@@ -166,6 +167,7 @@ void Travel(void) {
       StraightRange();
       if (dist_actual <= dist_final) {
         md.setSpeeds(0, 0);
+        line_speed = 350;
         dump_dist_lower = 10.9;
         dump_dist_upper = 13;
         next_node = true;

@@ -37,7 +37,7 @@ void GetDirectionsHome(void) {
 
       // West Face
       case 'w':
-        directions.AddTailNode('k', -350);
+        directions.AddTailNode('k', -350, 0, 0, 'a', servo_home, 2);
         directions.AddTailNode('d', ir_to_wheel, 0.5);
         directions.AddTailNode('t', -PI / 2, turn_time);
         break;

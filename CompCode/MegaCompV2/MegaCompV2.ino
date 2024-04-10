@@ -129,12 +129,13 @@ int blue_pin = 33;
 int green_pin = 34;
 int red_pin = 35;
 const uint8_t ir_pins[] = { 24, 25, 26, 27, 28, 29, 30, 31 };
-int right_turn_pin;
-int left_turn_pin;
+int right_turn_pin = 37;
+int left_turn_pin = 36;
 
 // Analog
-int dist_pin = A8;
-int mag_pin = A9;
+int mag_pin = A0;
+int dist_pin_right = A8;
+int dist_pin_left = A9;
 int photo_trans_pin = A10;
 
 
@@ -158,20 +159,22 @@ char block_color;
 bool use_first = true;
 struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
-// struct block red1[4] = {
-//   { 'e', '4', 'l', false },
-//   { 'e', '4', 'u', false },
-//   { 'e', '6', 'l', false },
-//   { 'e', '6', 'u', false }
-// };
 struct block red1[6] = {
   { 'w', '4', 'l', false },
-  { 'e', '4', 'l', false },
-  { 'w', '6', 'l', false },
-  { 'e', '6', 'l', false },
+  { 'w', '4', 'u', false },
   { 'w', '5', 'l', false },
-  { 'e', '5', 'l', false }
+  { 'w', '5', 'u', false },
+  { 'w', '6', 'l', false },
+  { 'w', '6', 'u', false }
 };
+// struct block red1[6] = {
+//   { 'w', '4', 'l', false },
+//   { 'e', '4', 'l', false },
+//   { 'w', '6', 'l', false },
+//   { 'e', '6', 'l', false },
+//   { 'w', '5', 'l', false },
+//   { 'e', '5', 'l', false }
+// };
 // struct block red1[12] = { // for testing
 //   { 'e', '4', 'l', false },
 //   { 'e', '5', 'l', false },
@@ -222,14 +225,12 @@ struct block blue[8] = {
 };
 
 // Control Vars
-float dump_KP = 10;
+float dump_KP = 20;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
-// float KD = 5.5;
 float error1, d_error1, integral_error1;
 float error2, d_error2, integral_error2;
-// int straight_kp = 125;
 int m1s, m2s;
 float V1, V2;
 
@@ -257,6 +258,7 @@ float turn_time = 1.2;       // s
 float arc_time_big = 2.75;    // s
 float arc_time_little = 2.25;
 float ir_to_wheel = 5.5;
+float ir_to_wheel_time = 0.5;
 
 // Travel Variables
 float east_guide = 122;   // cm
@@ -360,8 +362,10 @@ int num_dist_vals = 100;
 float dist_val = 0;
 float last_dist_val = 0;
 float dist_desired;
-float a = exp(7.453976699);
-float b = -0.907499336;
+float a1 = exp(7.453976699);
+float b1 = -0.907499336;
+float a2 = exp(7.869624);
+float b2 = -1.05102;
 bool stop = false;
 
 // Mag Vars
@@ -385,6 +389,7 @@ bool second_line;
 bool last_line_state;
 bool ramp_down;
 bool home_dispense = true;
+bool dist_right;
 
 
 ///////////////////////////////
@@ -392,7 +397,7 @@ bool home_dispense = true;
 ///////////////////////////////
 void setup() {
   // Begin Serial Comms
-  Serial.begin(9600);
+  Serial.begin(250000);
   Serial2.begin(9600);
   while (!Serial && !Serial2) {
     ;  // Wait until connected
@@ -424,19 +429,19 @@ void setup() {
   pinMode(left_turn_pin, OUTPUT);
 
   // Check for Start Command and Read Block Info
-  Serial.println("Ready For Signal...");
-  while (true) {
-    if (Serial2.available()) {
-      rc = Serial2.read();
-      if (rc == flag) {
-        Serial.println("START");
-        shovel_servo.write(servo_home);
-        ReadBlockInfo();
-        break;
-      } // end if
-    } // end if
-  } // end while
-  delay(200);
+  // Serial.println("Ready For Signal...");
+  // while (true) {
+  //   if (Serial2.available()) {
+  //     rc = Serial2.read();
+  //     if (rc == flag) {
+  //       Serial.println("START");
+  //       shovel_servo.write(servo_home);
+  //       ReadBlockInfo();
+  //       break;
+  //     } // end if
+  //   } // end if
+  // } // end while
+  // delay(200);
 }
 
 
@@ -470,6 +475,7 @@ void loop() {
     // Color Sense
     case 'c':
       t = (millis() - t_start) / 1000;
+
       // Detect if Ramp is Down
       HallEffect();
       if(mag_val >= mag_ss + mag_thresh || mag_val <= mag_ss - mag_thresh){
@@ -477,6 +483,7 @@ void loop() {
       } else if(!ramp_down) {
         state = 'b';
       }
+
       // Sense Color and change state
       if(current_block.color == '\0'){
         // ColorSense();
