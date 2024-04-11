@@ -21,7 +21,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  md.setSpeeds(100, 100);
   counts1 = encoder1.read();
   counts2 = encoder2.read();
   Serial.print(counts1);

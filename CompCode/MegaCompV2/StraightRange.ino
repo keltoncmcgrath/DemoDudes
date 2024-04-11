@@ -1,5 +1,6 @@
 void StraightRange(void) {
   // Update varaibles
+  t = (millis() - t_start) / 1000;
   counts1 = encoder1.read();
   counts2 = encoder2.read();
   theta1 = float(counts1 * 2 * PI) / (gear_ratio * counts_per_rev);

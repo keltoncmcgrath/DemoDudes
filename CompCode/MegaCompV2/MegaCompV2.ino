@@ -134,8 +134,8 @@ int left_turn_pin = 36;
 
 // Analog
 int mag_pin = A0;
-int dist_pin_right = A8;
-int dist_pin_left = A9;
+int dist_pin_right = A9;
+int dist_pin_left = A8;
 int photo_trans_pin = A10;
 
 
@@ -162,7 +162,7 @@ struct block read_block;
 struct block red1[6] = {
   { 'w', '4', 'l', false },
   { 'w', '4', 'u', false },
-  { 'w', '5', 'l', false },
+  { 'w', '5', 'l', false }, 
   { 'w', '5', 'u', false },
   { 'w', '6', 'l', false },
   { 'w', '6', 'u', false }
@@ -225,7 +225,7 @@ struct block blue[8] = {
 };
 
 // Control Vars
-float dump_KP = 20;
+float dump_KP = 30;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
@@ -353,14 +353,14 @@ float den = 0;
 
 // Range Finder Vars
 float dist_alpha = 0.01;
-float dump_dist_upper = 13.5;  // cm
-float dump_dist_lower = 10.9;  // cm
-float dist_collect = 12;       // cm
-float dist_actual = 1000;      // cm
+float dist_actual_alpha = 0.5;
+float dump_dist_upper = 13.5;
+float dump_dist_lower = 10.9;
+float dist_collect = 10.8;
+float dist_actual, dist_actualf;
 float dist_to_wall = 11;
 int num_dist_vals = 100;
-float dist_val = 0;
-float last_dist_val = 0;
+float dist_val, dist_valf = 0;
 float dist_desired;
 float a1 = exp(7.453976699);
 float b1 = -0.907499336;

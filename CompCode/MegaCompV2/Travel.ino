@@ -13,23 +13,23 @@ void Travel(void) {
           new_action = false;
         }
       }
+      // Hazards
+      if (dist_final < 0) {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+          digitalWrite(left_turn_pin, HIGH);
+        } else if (int(t*100) % 25 == 0) {
+          digitalWrite(right_turn_pin, LOW);
+          digitalWrite(left_turn_pin, LOW);
+        }
+      }
+      // Action
       TimedDrive();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta1_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
         next_node = true;
-      }
-      break;
-      // Hazards
-      if (dist_final < 0) {
-        if (int(t) % 2 == 0) {
-          digitalWrite(right_turn_pin, HIGH);
-          digitalWrite(left_turn_pin, HIGH);
-        } else {
-          digitalWrite(right_turn_pin, LOW);
-          digitalWrite(left_turn_pin, LOW);
-        }
       }
       break;
 
@@ -45,26 +45,29 @@ void Travel(void) {
           new_action = false;
         }
       }
+
+      // Blinker
+      if (turn_angle_final > 0) {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+        } else if( int(t*100) % 25 == 0) {
+          digitalWrite(right_turn_pin, LOW);
+        }
+      } else if (turn_angle_final < 0) {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(left_turn_pin, HIGH);
+        } else if (int(t*100) % 25 == 0) {
+          digitalWrite(left_turn_pin, LOW);
+        }
+      }
+
+      // Action
       TimedDrive();
       if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && md.getM1CurrentMilliamps() == 0 && md.getM2CurrentMilliamps() == 0) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
         next_node = true;
-      }
-      // Blinker
-      if (turn_angle_final > 0) {
-        if (int(t) % 2 == 0) {
-          digitalWrite(right_turn_pin, HIGH);
-        } else {
-          digitalWrite(right_turn_pin, LOW);
-        }
-      } else if (turn_angle_final < 0) {
-        if (int(t) % 2 == 0) {
-          digitalWrite(left_turn_pin, HIGH);
-        } else {
-          digitalWrite(left_turn_pin, LOW);
-        }
       }
       break;
 
@@ -86,26 +89,29 @@ void Travel(void) {
           new_action = false;
         }
       }
+
+      // Blinkers
+      if (theta1_final > theta2_final) {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+        } else if (int(t*100) % 25 == 0) {
+          digitalWrite(right_turn_pin, LOW);
+        }
+      } else {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(left_turn_pin, HIGH);
+        } else if (int(t*100) % 25 == 0) {
+          digitalWrite(left_turn_pin, LOW);
+        }
+      }
+      
+      // Action
       TimedDrive();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
         next_node = true;
-      }
-      // Blinkers
-      if (theta1_final > theta2_final) {
-        if (int(t) % 2 == 0) {
-          digitalWrite(right_turn_pin, HIGH);
-        } else {
-          digitalWrite(right_turn_pin, LOW);
-        }
-      } else {
-        if (int(t) % 2 == 0) {
-          digitalWrite(left_turn_pin, HIGH);
-        } else {
-          digitalWrite(left_turn_pin, LOW);
-        }
       }
       break;
 
@@ -124,11 +130,11 @@ void Travel(void) {
       LineFollow();
       if (line_dist) {  // Follow line until range finder trips
         DistSenseRight();
-        if (last_state == 'e') {  // Control speed based on distance from chassis
+        if (last_state == 'e' || last_state == 'a') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 300);
         }
-        if (dist_actual <= dist_final) {
+        if (t > 0.1 && dist_actualf <= dist_final) {
           md.setSpeeds(0, 0);
           line_follow_speed = 350;
           next_node = true;
@@ -185,6 +191,19 @@ void Travel(void) {
           new_action = false;
         }
       }
+
+      // Hazards
+      if (line_speed < 0) {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+          digitalWrite(left_turn_pin, HIGH);
+        } else if (int(t*100) % 25 == 0) {
+          digitalWrite(right_turn_pin, LOW);
+          digitalWrite(left_turn_pin, LOW);
+        }
+      }
+
+      // Action
       StraightRange();
       qtr.read(ir_values);
       for (int i = 0; i < ir_sensor_count; i++) {
@@ -197,6 +216,7 @@ void Travel(void) {
           goto end_of_case;
         }
       }
+
       // Over black line
       last_line_state = false;
       if (home_dispense && line_speed > 0 && current_block.face == 'e' && !second_line) {  // || current_block.pos == '3'
@@ -205,7 +225,10 @@ void Travel(void) {
         goto end_of_case;
       }
       md.setSpeeds(0, 0);
+      digitalWrite(right_turn_pin, LOW);
+      digitalWrite(left_turn_pin, LOW);
       next_node = true;
+
       // End case
       end_of_case:
       break;
@@ -220,6 +243,17 @@ void Travel(void) {
           new_action = false;
         } // end if
       } // end if
+
+      // Hazards
+      if (line_follow_speed < 0) {
+        if (int(t*100) % 50 == 0) {
+          digitalWrite(right_turn_pin, HIGH);
+          digitalWrite(left_turn_pin, HIGH);
+        } else if (int(t*100) % 25 == 0) {
+          digitalWrite(right_turn_pin, LOW);
+          digitalWrite(left_turn_pin, LOW);
+        }
+      }
 
       // Action
       LineFollow();
