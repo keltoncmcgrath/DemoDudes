@@ -305,15 +305,18 @@ float shov_t_final = 1;
 float shov_tol = 0.1;
 
 // Color Sensor Vars
+int color_samples_sense = 10;
+float color_alpha = 0.01;
+float color_sense_alpha = 0.5;
 int color_delay_time = 10;
-int block_wait_time = 3;
+int block_wait_time = 2;
 bool is_color = false;
 long red_sum = 0;
 long green_sum = 0;
 long blue_sum = 0;
-long red_val;
-long green_val;
-long blue_val;
+long red_val, red_valf;
+long green_val, green_valf;
+long blue_val, blue_valf;
 float red_avg[3];
 float green_avg[3];
 float blue_avg[3];
@@ -326,11 +329,12 @@ const int color_samples = 10;
 int red_calibration_vals[color_samples];
 int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
-int color_vals[color_samples][3];
-int color_ranges[3][3][2] = {
-  { { 604, 689 },   { 30, 98 },    { 1, 53 } },
-  { { 826, 910 }, { 611, 700 },  { 36, 108 } },
-  {   { 18, 88 },  { 70, 140 }, { 113, 199 } }
+int color_vals[color_samples][4];
+int color_ranges[4][3][2] = {
+  { { 594, 689 },   { 27, 98 },   { 2, 53 } },
+  { { 826, 910 }, { 623, 700 }, { 36, 109 } },
+  {   { 15, 88 },  { 59, 140 }, { 99, 199 } },
+  {   { 0, 113 },   { 0, 126 },  { 0, 115 } }
 };  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -356,7 +360,7 @@ float dist_alpha = 0.01;
 float dist_actual_alpha = 0.4;
 float dump_dist_upper = 15;
 float dump_dist_lower = 10.9;
-float dist_collect = 10.6;
+float dist_collect = 10.4;
 float dist_actual, dist_actualf;
 float dist_to_wall = 11;
 int num_dist_vals = 100;
@@ -486,10 +490,10 @@ void loop() {
       // }
 
       // Sense Color and change state
-      if(current_block.color == '\0'){
+      if(current_block.color == '\0' || current_block.color == 'x'){
         ColorSense();
         // current_block.color = 'r';
-      } else if (ramp_down) {  //current_block.color != '\0'
+      } else if (current_block.color != 'x') {
         DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
@@ -506,8 +510,12 @@ void loop() {
       }
       // Else collect another block
       if (t > block_wait_time) {
-        current_block.color = 'y';
-        // state = 'b';
+        if (current_block.color == '\0'){
+          current_block.color = 'y';
+        } else {
+          current_block.Reset();
+          state = 'b';
+        }
       }
       break;
 

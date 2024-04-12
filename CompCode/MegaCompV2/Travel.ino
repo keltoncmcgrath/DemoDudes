@@ -1,11 +1,4 @@
 void Travel(void) {
-  if(new_action) {
-    Serial.print(directions.head->action[0]);
-    Serial.print('\t');
-    Serial.print(directions.head->action[1]);
-    Serial.print('\t');
-    Serial.println(last_state);
-  }
   // Traveling actions
   switch (directions.head->action[0]) {
     // Drive straight for a distance
