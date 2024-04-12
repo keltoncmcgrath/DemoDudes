@@ -30,8 +30,14 @@ void LineFollow(void) {
   }
   // If half the sensros read black, at junction
   if (black_count < ir_sensor_count/2) {
-    m1s = line_follow_speed - kp*ir_error - kd*ir_d_error;// - ki*ir_integral_error;
-    m2s = line_follow_speed + kp*ir_error + kd*ir_d_error;// + ki*ir_integral_error;
+    if (line_follow_speed > 0) {
+      m1s = line_follow_speed - kp*ir_error - kd*ir_d_error;
+      m2s = line_follow_speed + kp*ir_error + kd*ir_d_error;
+    } else {
+      ir_error = -ir_error;
+      m1s = line_follow_speed + kp*ir_error + kd*ir_d_error;// -
+      m2s = line_follow_speed - kp*ir_error - kd*ir_d_error;// +
+    }
   }
   md.setSpeeds(m1s, m2s);
   ir_error_last = ir_error;
