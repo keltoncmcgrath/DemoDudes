@@ -159,14 +159,14 @@ char block_color;
 bool use_first = true;
 struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
-struct block red1[6] = {
-  { 'w', '4', 'l', false },
-  { 'w', '4', 'u', false },
-  { 'w', '5', 'l', false }, 
-  { 'w', '5', 'u', false },
-  { 'w', '6', 'l', false },
-  { 'w', '6', 'u', false }
-};
+// struct block red1[6] = {
+//   { 'e', '4', 'l', false },
+//   { 'e', '4', 'u', false },
+//   { 'e', '5', 'l', false },
+//   { 'e', '5', 'u', false },
+//   { 'e', '6', 'l', false },
+//   { 'e', '6', 'u', false }
+// };
 // struct block red1[6] = {
 //   { 'w', '4', 'l', false },
 //   { 'e', '4', 'l', false },
@@ -175,20 +175,20 @@ struct block red1[6] = {
 //   { 'w', '5', 'l', false },
 //   { 'e', '5', 'l', false }
 // };
-// struct block red1[12] = { // for testing
-//   { 'e', '4', 'l', false },
-//   { 'e', '5', 'l', false },
-//   { 'e', '6', 'l', false },
-//   { 'e', '4', 'u', false },
-//   { 'e', '5', 'u', false },
-//   { 'e', '6', 'u', false },
-//   { 'n', '3', 'l', false },
-//   { 'n', '3', 'u', false },
-//   { 's', '3', 'l', false },
-//   { 's', '3', 'u', false },
-//   { 's', '2', 'l', false },
-//   { 's', '2', 'u', false }
-// };
+struct block red1[12] = { // for testing
+  { 'e', '4', 'l', false },
+  { 'e', '5', 'l', false },
+  { 'e', '6', 'l', false },
+  { 'e', '4', 'u', false },
+  { 'e', '5', 'u', false },
+  { 'e', '6', 'u', false },
+  { 'n', '3', 'l', false },
+  { 'n', '3', 'u', false },
+  { 's', '3', 'l', false },
+  { 's', '3', 'u', false },
+  { 's', '2', 'l', false },
+  { 's', '2', 'u', false }
+};
 struct block red2[6] = {
   { 'n', '1', 'l', false },
   { 's', '1', 'l', false },
@@ -353,10 +353,10 @@ float den = 0;
 
 // Range Finder Vars
 float dist_alpha = 0.01;
-float dist_actual_alpha = 0.5;
-float dump_dist_upper = 13.5;
+float dist_actual_alpha = 0.4;
+float dump_dist_upper = 15;
 float dump_dist_lower = 10.9;
-float dist_collect = 10.8;
+float dist_collect = 10.6;
 float dist_actual, dist_actualf;
 float dist_to_wall = 11;
 int num_dist_vals = 100;
@@ -387,7 +387,7 @@ bool next_node;
 bool line_dist;
 bool second_line;
 bool last_line_state;
-bool ramp_down;
+bool ramp_down = true;
 bool home_dispense = true;
 bool dist_right;
 
@@ -452,10 +452,11 @@ void loop() {
   switch (state) {
     // Initiate Dispenser Travel
     case 'a':
-      HallEffect();
-      mag_ss = mag_val;
+      // HallEffect();
+      // mag_ss = mag_val;
       current_block.Reset();
       directions.AddTailNode('l', dist_collect, 0, 0, 'a', servo_home, 2);
+      dist_right = true;
       line_dist = true;
       new_action = true;
       last_state = state;
@@ -477,17 +478,17 @@ void loop() {
       t = (millis() - t_start) / 1000;
 
       // Detect if Ramp is Down
-      HallEffect();
-      if(mag_val >= mag_ss + mag_thresh || mag_val <= mag_ss - mag_thresh){
-        ramp_down = true;
-      } else if(!ramp_down) {
-        state = 'b';
-      }
+      // HallEffect();
+      // if(mag_val >= mag_ss + mag_thresh || mag_val <= mag_ss - mag_thresh){
+      //   ramp_down = true;
+      // } else if(!ramp_down) {
+      //   state = 'b';
+      // }
 
       // Sense Color and change state
       if(current_block.color == '\0'){
-        // ColorSense();
-        current_block.color = 'r';
+        ColorSense();
+        // current_block.color = 'r';
       } else if (ramp_down) {  //current_block.color != '\0'
         DetermineBlockLoc();
         Serial.print(current_block.face);
@@ -498,7 +499,7 @@ void loop() {
         Serial.print('\t');
         Serial.println(current_block.color);
         GetDirections();
-        ramp_down = false;
+        // ramp_down = false;
         new_action = true;
         last_state = state;
         state = 'd';

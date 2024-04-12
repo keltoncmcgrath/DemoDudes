@@ -1,4 +1,11 @@
 void Travel(void) {
+  if(new_action) {
+    Serial.print(directions.head->action[0]);
+    Serial.print('\t');
+    Serial.print(directions.head->action[1]);
+    Serial.print('\t');
+    Serial.println(last_state);
+  }
   // Traveling actions
   switch (directions.head->action[0]) {
     // Drive straight for a distance
@@ -132,7 +139,7 @@ void Travel(void) {
         DistSenseRight();
         if (last_state == 'e' || last_state == 'a') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
-          line_follow_speed = constrain(line_follow_speed, line_base, 300);
+          line_follow_speed = constrain(line_follow_speed, line_base, 350);
         }
         if (t > 0.1 && dist_actualf <= dist_final) {
           md.setSpeeds(0, 0);
