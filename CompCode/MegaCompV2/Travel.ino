@@ -15,10 +15,10 @@ void Travel(void) {
       }
       // Hazards
       if (dist_final < 0) {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(right_turn_pin, HIGH);
           digitalWrite(left_turn_pin, HIGH);
-        } else if (int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(right_turn_pin, LOW);
           digitalWrite(left_turn_pin, LOW);
         }
@@ -48,15 +48,15 @@ void Travel(void) {
 
       // Blinker
       if (turn_angle_final > 0) {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(right_turn_pin, HIGH);
-        } else if( int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(right_turn_pin, LOW);
         }
       } else if (turn_angle_final < 0) {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(left_turn_pin, HIGH);
-        } else if (int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(left_turn_pin, LOW);
         }
       }
@@ -92,19 +92,19 @@ void Travel(void) {
 
       // Blinkers
       if (theta1_final > theta2_final) {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(right_turn_pin, HIGH);
-        } else if (int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(right_turn_pin, LOW);
         }
       } else {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(left_turn_pin, HIGH);
-        } else if (int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(left_turn_pin, LOW);
         }
       }
-      
+
       // Action
       TimedDrive();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
@@ -134,7 +134,7 @@ void Travel(void) {
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 350);
         }
-        if (t > 0.1 && dist_actualf <= dist_final) {
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e'  && line_follow_speed < 150 && md.getM1CurrentMilliamps() > 100 && md.getM1CurrentMilliamps() > 100)) {
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;
@@ -171,7 +171,7 @@ void Travel(void) {
         line_speed = constrain(line_speed, line_base, line_follow_speed);
       }
       StraightRange();
-      if (dist_actual <= dist_final) {
+      if (dist_actual <= dist_final || (last_state == 'e' && line_speed < 150 && md.getM1CurrentMilliamps() > 100 && md.getM2CurrentMilliamps() > 100)) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
         dump_dist_lower = 10.9;
@@ -194,10 +194,10 @@ void Travel(void) {
 
       // Hazards
       if (line_speed < 0) {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(right_turn_pin, HIGH);
           digitalWrite(left_turn_pin, HIGH);
-        } else if (int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(right_turn_pin, LOW);
           digitalWrite(left_turn_pin, LOW);
         }
@@ -242,15 +242,15 @@ void Travel(void) {
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
           new_action = false;
-        } // end if
-      } // end if
+        }  // end if
+      }    // end if
 
       // Hazards
       if (line_follow_speed < 0) {
-        if (int(t*100) % 50 == 0) {
+        if (int(t * 100) % 50 == 0) {
           digitalWrite(right_turn_pin, HIGH);
           digitalWrite(left_turn_pin, HIGH);
-        } else if (int(t*100) % 25 == 0) {
+        } else if (int(t * 100) % 25 == 0) {
           digitalWrite(right_turn_pin, LOW);
           digitalWrite(left_turn_pin, LOW);
         }
@@ -258,16 +258,16 @@ void Travel(void) {
 
       // Action
       LineFollow();
-      for (int i=0; i<ir_sensor_count; i++) {
-        if(ir_values[i] > 500) {
+      for (int i = 0; i < ir_sensor_count; i++) {
+        if (ir_values[i] > 500) {
           black_count += 1;
-        } // end if
-      } // end for
-      if(black_count >= ir_sensor_count / 2){
+        }  // end if
+      }    // end for
+      if (black_count >= ir_sensor_count / 2) {
         md.setSpeeds(0, 0);
         line_follow_speed = line_speed;
         next_node = true;
-      } // end if
+      }  // end if
       black_count = 0;
       break;
   }
@@ -333,6 +333,8 @@ void Travel(void) {
         case 'f':
           state = 'a';
           break;
+        case 'g':
+          state = 'a';
       }
     }
     next_node = false;

@@ -3,6 +3,9 @@ void DetermineBlockLoc(void) {
   if (current_block.color == 'r') {
     if (use_first) {
       for (int i = 0; i < (sizeof(red1) / sizeof(struct block)); i++) {
+        Serial.print(i);
+        Serial.print('\t');
+        Serial.println(sizeof(red1) / sizeof(struct block));
         if (!red1[i].placed) {
           current_block.face = red1[i].face;
           current_block.pos = red1[i].pos;
@@ -34,8 +37,8 @@ void DetermineBlockLoc(void) {
           current_block.elev = yellow1[i].elev;
           yellow1[i].placed = true;
           break;
-        }
-      }
+        } // end if
+      } // end for
     } else {
       for (int i = 0; i < (sizeof(yellow2) / sizeof(struct block)); i++) {
         if (!yellow2[i].placed) {
@@ -44,10 +47,10 @@ void DetermineBlockLoc(void) {
           current_block.elev = yellow2[i].elev;
           yellow2[i].placed = true;
           break;
-        }
-      }
-    }
-  }
+        } // end if
+      } // end for
+    } // end if else
+  } // end else if
 
   // Blue Blocks
   else if (current_block.color == 'b') {  // If block is blue

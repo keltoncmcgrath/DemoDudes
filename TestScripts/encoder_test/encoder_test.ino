@@ -11,13 +11,14 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 
 int counts1;
 int counts2;
+int current1, current2;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   md.init();
   md.enableDrivers();
-  md.setSpeeds(50, 50);
+  md.setSpeeds(150, 150);
 }
 
 void loop() {
@@ -27,7 +28,9 @@ void loop() {
   // Serial.print(counts1);
   // Serial.print('\t');
   // Serial.println(counts2);
-  Serial.print(md.getM1CurrentMilliamps());
+  current1 = 0.1*md.getM1CurrentMilliamps() + 0.9*current1;
+  current2 = 0.1*md.getM2CurrentMilliamps() + 0.9*current2;
+  Serial.print(current1);
   Serial.print('\t');
-  Serial.println(md.getM2CurrentMilliamps());
+  Serial.println(current2);
 }

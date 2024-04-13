@@ -159,14 +159,14 @@ char block_color;
 bool use_first = true;
 struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
-// struct block red1[6] = {
-//   { 'e', '4', 'l', false },
-//   { 'e', '4', 'u', false },
-//   { 'e', '5', 'l', false },
-//   { 'e', '5', 'u', false },
-//   { 'e', '6', 'l', false },
-//   { 'e', '6', 'u', false }
-// };
+struct block red1[6] = {
+  { 'e', '4', 'l', true },
+  { 'e', '4', 'u', true },
+  { 'e', '5', 'l', true },
+  { 'e', '5', 'u', true },
+  { 'e', '6', 'l', true },
+  { 'e', '6', 'u', true }
+};
 // struct block red1[12] = { // for testing
 //   { 'e', '4', 'l', false },
 //   { 'e', '5', 'l', false },
@@ -181,14 +181,14 @@ struct block read_block;
 //   { 's', '2', 'l', false },
 //   { 's', '2', 'u', false }
 // };
-struct block red1[6] = {
-  { 'w', '4', 'l', false },
-  { 'e', '4', 'l', false },
-  { 'w', '6', 'l', false },
-  { 'e', '6', 'l', false },
-  { 'w', '5', 'l', false },
-  { 'e', '5', 'l', false }
-};
+// struct block red1[6] = {
+//   { 'w', '4', 'l', false },
+//   { 'e', '4', 'l', false },
+//   { 'w', '6', 'l', false },
+//   { 'e', '6', 'l', false },
+//   { 'w', '5', 'l', false },
+//   { 'e', '5', 'l', false }
+// };
 struct block red2[6] = {
   { 'n', '1', 'l', false },
   { 's', '1', 'l', false },
@@ -225,7 +225,7 @@ struct block blue[8] = {
 };
 
 // Control Vars
-float dump_KP = 50;
+float dump_KP = 30;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
@@ -273,7 +273,7 @@ float guide6 = 67.5;        // cm
 float next_pos_dist = 8;    // cm
 float collect_dist = 5.5;   // cm
 int line_follow_speed = 370;
-int line_base = 50;
+int line_base = 100;
 int line_speed = 375;
 
 // Encoder Vars
@@ -432,21 +432,21 @@ void setup() {
   pinMode(right_turn_pin, OUTPUT);
   pinMode(left_turn_pin, OUTPUT);
 
-  // Check for Start Command and Read Block Info
-  Serial.println("Ready For Signal...");
-  shovel_servo.write(shov_max_angle);
-  while (true) {
-    if (Serial2.available()) {
-      rc = Serial2.read();
-      if (rc == flag) {
-        Serial.println("START");
-        shovel_servo.write(servo_home);
-        ReadBlockInfo();
-        break;
-      } // end if
-    } // end if
-  } // end while
-  delay(200);
+  // // Check for Start Command and Read Block Info
+  // Serial.println("Ready For Signal...");
+  // shovel_servo.write(shov_max_angle);
+  // while (true) {
+  //   if (Serial2.available()) {
+  //     rc = Serial2.read();
+  //     if (rc == flag) {
+  //       Serial.println("START");
+  //       shovel_servo.write(servo_home);
+  //       ReadBlockInfo();
+  //       break;
+  //     } // end if
+  //   } // end if
+  // } // end while
+  // delay(200);
 }
 
 
@@ -502,11 +502,14 @@ void loop() {
         Serial.print(current_block.elev);
         Serial.print('\t');
         Serial.println(current_block.color);
-        GetDirections();
-        // ramp_down = false;
-        new_action = true;
-        last_state = state;
-        state = 'd';
+        if (current_block.face != '\0') {
+          GetDirections();
+          new_action = true;
+          last_state = state;
+          state = 'd';
+        } else {
+          state = 'g';
+        }
       }
       // Else collect another block
       if (t > block_wait_time) {
@@ -543,5 +546,12 @@ void loop() {
       last_state = state;
       state = 'd';
       break;
+      
+
+    case 'g':
+      DumpExtraBlock();
+      new_action = true;
+      last_state = state;
+      state = 'd';
   }
 }
