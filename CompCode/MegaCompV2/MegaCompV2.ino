@@ -167,27 +167,27 @@ struct block read_block;
 //   { 'e', '6', 'l', false },
 //   { 'e', '6', 'u', false }
 // };
-// struct block red1[6] = {
-//   { 'w', '4', 'l', false },
+// struct block red1[12] = { // for testing
 //   { 'e', '4', 'l', false },
-//   { 'w', '6', 'l', false },
+//   { 'e', '5', 'l', false },
 //   { 'e', '6', 'l', false },
-//   { 'w', '5', 'l', false },
-//   { 'e', '5', 'l', false }
+//   { 'e', '4', 'u', false },
+//   { 'e', '5', 'u', false },
+//   { 'e', '6', 'u', false },
+//   { 'n', '3', 'l', false },
+//   { 'n', '3', 'u', false },
+//   { 's', '3', 'l', false },
+//   { 's', '3', 'u', false },
+//   { 's', '2', 'l', false },
+//   { 's', '2', 'u', false }
 // };
-struct block red1[12] = { // for testing
+struct block red1[6] = {
+  { 'w', '4', 'l', false },
   { 'e', '4', 'l', false },
-  { 'e', '5', 'l', false },
+  { 'w', '6', 'l', false },
   { 'e', '6', 'l', false },
-  { 'e', '4', 'u', false },
-  { 'e', '5', 'u', false },
-  { 'e', '6', 'u', false },
-  { 'n', '3', 'l', false },
-  { 'n', '3', 'u', false },
-  { 's', '3', 'l', false },
-  { 's', '3', 'u', false },
-  { 's', '2', 'l', false },
-  { 's', '2', 'u', false }
+  { 'w', '5', 'l', false },
+  { 'e', '5', 'l', false }
 };
 struct block red2[6] = {
   { 'n', '1', 'l', false },
@@ -225,7 +225,7 @@ struct block blue[8] = {
 };
 
 // Control Vars
-float dump_KP = 30;
+float dump_KP = 50;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
@@ -254,11 +254,11 @@ int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 3.5;    // cm
 float wheel_dist = 19;       // cm
-float turn_time = 1.2;       // s
-float arc_time_big = 2.75;    // s
-float arc_time_little = 2.25;
+float turn_time = 1.1;       // s
+float arc_time_big = 2.5;    // s
+float arc_time_little = 2;
 float ir_to_wheel = 5.5;
-float ir_to_wheel_time = 0.5;
+float ir_to_wheel_time = 0.4;
 
 // Travel Variables
 float east_guide = 122;   // cm
@@ -272,9 +272,9 @@ float guide5 = 59.5;          // cm
 float guide6 = 67.5;        // cm
 float next_pos_dist = 8;    // cm
 float collect_dist = 5.5;   // cm
-int line_follow_speed = 350;
-int line_base = 100;
-int line_speed;
+int line_follow_speed = 370;
+int line_base = 50;
+int line_speed = 375;
 
 // Encoder Vars
 int encoder1_count;
@@ -433,19 +433,20 @@ void setup() {
   pinMode(left_turn_pin, OUTPUT);
 
   // Check for Start Command and Read Block Info
-  // Serial.println("Ready For Signal...");
-  // while (true) {
-  //   if (Serial2.available()) {
-  //     rc = Serial2.read();
-  //     if (rc == flag) {
-  //       Serial.println("START");
-  //       shovel_servo.write(servo_home);
-  //       ReadBlockInfo();
-  //       break;
-  //     } // end if
-  //   } // end if
-  // } // end while
-  // delay(200);
+  Serial.println("Ready For Signal...");
+  shovel_servo.write(shov_max_angle);
+  while (true) {
+    if (Serial2.available()) {
+      rc = Serial2.read();
+      if (rc == flag) {
+        Serial.println("START");
+        shovel_servo.write(servo_home);
+        ReadBlockInfo();
+        break;
+      } // end if
+    } // end if
+  } // end while
+  delay(200);
 }
 
 
@@ -490,10 +491,9 @@ void loop() {
       // }
 
       // Sense Color and change state
-      if(current_block.color == '\0' || current_block.color == 'x'){
+      if(current_block.color == '\0' || current_block.color == 'x') {
         ColorSense();
-        // current_block.color = 'r';
-      } else if (current_block.color != 'x') {
+      } else {
         DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
@@ -512,8 +512,9 @@ void loop() {
       if (t > block_wait_time) {
         if (current_block.color == '\0'){
           current_block.color = 'y';
-        } else {
+        } else if (current_block.color == 'x') {
           current_block.Reset();
+          last_state = 'a';
           state = 'b';
         }
       }

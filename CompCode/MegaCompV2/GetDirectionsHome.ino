@@ -22,7 +22,7 @@ void GetDirectionsHome(void) {
 
       // South Face
       case 's':
-        directions.AddTailNode('d', -2, 1);
+        directions.AddTailNode('d', -6, 0.5);
         directions.AddTailNode('t', -PI / 2, turn_time);
         if (current_block.pos == '1') {
           directions.AddTailNode('d', guide1, 3, 0, 'a', servo_home, 2);
@@ -75,7 +75,7 @@ void GetDirectionsHome(void) {
 
       // South face
       case 's':
-        directions.AddTailNode('d', -2, 1);
+        directions.AddTailNode('d', -6, 0.5);
         directions.AddTailNode('t', PI / 2, turn_time);
         directions.AddTailNode('k', 350, 0, 0, 'a', servo_home, 2);
         directions.AddTailNode('d', ir_to_wheel, 0.5);

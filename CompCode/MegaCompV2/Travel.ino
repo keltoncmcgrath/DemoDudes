@@ -136,7 +136,7 @@ void Travel(void) {
         }
         if (t > 0.1 && dist_actualf <= dist_final) {
           md.setSpeeds(0, 0);
-          line_follow_speed = 350;
+          line_follow_speed = line_speed;
           next_node = true;
         }
       } else {  // Follow line for set distance
@@ -145,7 +145,7 @@ void Travel(void) {
           md.setSpeeds(0, 0);
           dump_dist_upper = 13;
           dump_dist_lower = 10.9;
-          line_follow_speed = 350;
+          line_follow_speed = line_speed;
           next_node = true;
         }
       }
@@ -168,12 +168,12 @@ void Travel(void) {
       }
       if (last_state == 'e') {  // Control speed based on distance from chassis
         line_speed = line_base + dump_KP * (dist_actual - dist_final);
-        line_speed = constrain(line_speed, line_base, 300);
+        line_speed = constrain(line_speed, line_base, line_follow_speed);
       }
       StraightRange();
       if (dist_actual <= dist_final) {
         md.setSpeeds(0, 0);
-        line_speed = 350;
+        line_speed = line_follow_speed;
         dump_dist_lower = 10.9;
         dump_dist_upper = 13;
         next_node = true;
@@ -227,6 +227,7 @@ void Travel(void) {
       md.setSpeeds(0, 0);
       digitalWrite(right_turn_pin, LOW);
       digitalWrite(left_turn_pin, LOW);
+      line_speed = line_follow_speed;
       next_node = true;
 
       // End case
@@ -264,7 +265,7 @@ void Travel(void) {
       } // end for
       if(black_count >= ir_sensor_count / 2){
         md.setSpeeds(0, 0);
-        line_follow_speed = 350;
+        line_follow_speed = line_speed;
         next_node = true;
       } // end if
       black_count = 0;

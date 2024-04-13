@@ -17,13 +17,17 @@ void setup() {
   Serial.begin(9600);
   md.init();
   md.enableDrivers();
+  md.setSpeeds(50, 50);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   counts1 = encoder1.read();
   counts2 = encoder2.read();
-  Serial.print(counts1);
+  // Serial.print(counts1);
+  // Serial.print('\t');
+  // Serial.println(counts2);
+  Serial.print(md.getM1CurrentMilliamps());
   Serial.print('\t');
-  Serial.println(counts2);
+  Serial.println(md.getM2CurrentMilliamps());
 }
