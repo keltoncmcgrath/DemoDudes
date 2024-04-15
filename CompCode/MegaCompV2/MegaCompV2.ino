@@ -254,8 +254,8 @@ float theta_alpha = 0.075;
 // Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;    // cm
-float wheel_dist = 19;       // cm
+float wheel_radius = 4.1;    // cm
+float wheel_dist = 18.8;     // cm
 float turn_time = 1.1;       // s
 float arc_time_big = 2.5;    // s
 float arc_time_little = 2;
@@ -433,10 +433,6 @@ void setup() {
   //   } // end if
   // } // end while
   // delay(200);
-  state = 'c';
-  current_block.Reset();
-  home_dispense = false;
-  use_first = true;
 }
 
 
@@ -481,8 +477,6 @@ void loop() {
         Serial.print(current_block.elev);
         Serial.print('\t');
         Serial.println(current_block.color);
-        delay(2000);
-        current_block.Reset();
         if (current_block.face != '\0') {
           GetDirections();
           new_action = true;
@@ -496,14 +490,12 @@ void loop() {
       if (t > block_wait_time) {
         if (current_block.color == '\0'){
           current_block.color = 'y';
-          current_block.Reset();
         } else if (current_block.color == 'x') {
           current_block.Reset();
           last_state = 'a';
           state = 'b';
         }
       }
-      state = 'c';
       break;
 
 

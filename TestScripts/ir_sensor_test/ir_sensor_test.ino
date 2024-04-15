@@ -2,7 +2,7 @@
 
 QTRSensors qtr;
 
-const uint8_t ir_pins[] = {24, 25, 26, 27, 28, 29, 30, 31};
+const uint8_t ir_pins[] = {24, 25, 26, 28, 27, 29, 30, 31};
 
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count] = {0, 0, 0, 0, 0, 0, 0, 0};
