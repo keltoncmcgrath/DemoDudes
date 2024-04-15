@@ -35,11 +35,23 @@ void DetermineBlockLoc(void) {
             current_block.elev = yellow1[i].elev;
             yellow1[i].placed = true;
             break;
+          } else if (!yellow1[i].placed && yellow1[i].pos == '1') {
+            current_block.face = yellow1[i].face;
+            current_block.pos = yellow1[i].pos;
+            current_block.elev = yellow1[i].elev;
+            yellow1[i].placed = true;
+            break;
           } // end if
         } // end for
       } else if (!home_dispense) { // Pick east face blocks if at opponent dispenser
         for (int i = 0; i < (sizeof(yellow1) / sizeof(struct block)); i++) {
           if (!yellow1[i].placed && yellow1[i].face == 'e'){
+            current_block.face = yellow1[i].face;
+            current_block.pos = yellow1[i].pos;
+            current_block.elev = yellow1[i].elev;
+            yellow1[i].placed = true;
+            break;
+          } else if (!yellow1[i].placed && yellow1[i].pos == '3') {
             current_block.face = yellow1[i].face;
             current_block.pos = yellow1[i].pos;
             current_block.elev = yellow1[i].elev;
@@ -68,6 +80,12 @@ void DetermineBlockLoc(void) {
             current_block.elev = yellow2[i].elev;
             yellow2[i].placed = true;
             break;
+          } else if (!yellow1[i].placed && yellow1[i].pos == '1') {
+            current_block.face = yellow1[i].face;
+            current_block.pos = yellow1[i].pos;
+            current_block.elev = yellow1[i].elev;
+            yellow1[i].placed = true;
+            break;
           } // end if
         } // end for
       } else if (!home_dispense) { // Pick east face blocks if at opponent dispenser
@@ -77,6 +95,12 @@ void DetermineBlockLoc(void) {
             current_block.pos = yellow2[i].pos;
             current_block.elev = yellow2[i].elev;
             yellow2[i].placed = true;
+            break;
+          } else if (!yellow1[i].placed && yellow1[i].pos == '1') {
+            current_block.face = yellow1[i].face;
+            current_block.pos = yellow1[i].pos;
+            current_block.elev = yellow1[i].elev;
+            yellow1[i].placed = true;
             break;
           } // end if
         } // end for

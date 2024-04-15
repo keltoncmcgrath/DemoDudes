@@ -16,7 +16,6 @@ Servo shovel_servo;
 //////////////////////////////
 ///------ STRUCTURES ------///
 //////////////////////////////
-
 struct block {
   char face;
   char pos;
@@ -112,7 +111,7 @@ public:
     temp->next = nullptr;
   }
 } directions;
-
+ 
 
 //////////////////////////////
 ///--- PIN DECLARATIONS ---///
@@ -203,10 +202,10 @@ struct block yellow1[10] = {
   { 's', '3', 'l', false },
   { 'n', '2', 'l', false },
   { 's', '2', 'l', false },
-  { 'w', '4', 'u', false },
-  { 'e', '4', 'u', false },
-  { 'w', '6', 'u', false },
-  { 'e', '6', 'u', false }
+  { 'w', '5', 'u', false },
+  { 'e', '5', 'u', false },
+  { 'n', '2', 'u', false },
+  { 's', '2', 'u', false }
 };
 struct block yellow2[10] = {
   { 'w', '4', 'l', false },
@@ -215,16 +214,16 @@ struct block yellow2[10] = {
   { 'e', '6', 'l', false },
   { 'w', '5', 'l', false },
   { 'e', '5', 'l', false },
-  { 'w', '4', 'u', false },
-  { 'e', '4', 'u', false },
-  { 'w', '6', 'u', false },
-  { 'e', '6', 'u', false }
-};
-struct block blue[4] = {
   { 'w', '5', 'u', false },
   { 'e', '5', 'u', false },
   { 'n', '2', 'u', false },
   { 's', '2', 'u', false }
+};
+struct block blue[4] = {
+  { 'w', '4', 'u', false },
+  { 'w', '6', 'u', false },
+  { 'e', '4', 'u', false },
+  { 'e', '6', 'u', false }
 };
 
 // Control Vars
@@ -434,6 +433,10 @@ void setup() {
   //   } // end if
   // } // end while
   // delay(200);
+  state = 'c';
+  current_block.Reset();
+  home_dispense = false;
+  use_first = true;
 }
 
 
@@ -478,6 +481,8 @@ void loop() {
         Serial.print(current_block.elev);
         Serial.print('\t');
         Serial.println(current_block.color);
+        delay(2000);
+        current_block.Reset();
         if (current_block.face != '\0') {
           GetDirections();
           new_action = true;
@@ -491,12 +496,14 @@ void loop() {
       if (t > block_wait_time) {
         if (current_block.color == '\0'){
           current_block.color = 'y';
+          current_block.Reset();
         } else if (current_block.color == 'x') {
           current_block.Reset();
           last_state = 'a';
           state = 'b';
         }
       }
+      state = 'c';
       break;
 
 
