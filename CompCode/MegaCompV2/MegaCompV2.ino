@@ -67,7 +67,7 @@ public:
     head = head->next;
     delete temp;
   }
-  // Add new node at end of LL
+  // Add new node at tail end of LL
   void AddTailNode(char action1, float final1, float duration1 = 0, float radius1 = 0, char action2 = '\0', float final2 = 0, float duration2 = 0) {
     // Construct node to be added
     struct node *temp = new node;
@@ -94,7 +94,7 @@ public:
     // Insert new node
     last->next = temp;
   }
-  // Delete node at end of LL
+  // Delete node at tail end of LL
   void DeleteTailNode() {
     struct node *temp = head;
     // Delete current node if it's the last
@@ -133,7 +133,6 @@ int right_turn_pin = 37;
 int left_turn_pin = 36;
 
 // Analog
-int mag_pin = A0;
 int dist_pin_right = A9;
 int dist_pin_left = A8;
 int photo_trans_pin = A10;
@@ -159,15 +158,15 @@ char block_color;
 bool use_first = true;
 struct block current_block = { 'w', '6', 'l', false, 'y' };
 struct block read_block;
-struct block red1[6] = {
-  { 'e', '4', 'l', true },
-  { 'e', '4', 'u', true },
-  { 'e', '5', 'l', true },
-  { 'e', '5', 'u', true },
-  { 'e', '6', 'l', true },
-  { 'e', '6', 'u', true }
-};
-// struct block red1[12] = { // for testing
+// struct block red1[6] = {
+//   { 'e', '4', 'l', true },
+//   { 'e', '4', 'u', true },
+//   { 'e', '5', 'l', true },
+//   { 'e', '5', 'u', true },
+//   { 'e', '6', 'l', true },
+//   { 'e', '6', 'u', true }
+// };
+// struct block red1[12] = {
 //   { 'e', '4', 'l', false },
 //   { 'e', '5', 'l', false },
 //   { 'e', '6', 'l', false },
@@ -181,14 +180,14 @@ struct block red1[6] = {
 //   { 's', '2', 'l', false },
 //   { 's', '2', 'u', false }
 // };
-// struct block red1[6] = {
-//   { 'w', '4', 'l', false },
-//   { 'e', '4', 'l', false },
-//   { 'w', '6', 'l', false },
-//   { 'e', '6', 'l', false },
-//   { 'w', '5', 'l', false },
-//   { 'e', '5', 'l', false }
-// };
+struct block red1[6] = {
+  { 'w', '4', 'l', false },
+  { 'e', '4', 'l', false },
+  { 'w', '6', 'l', false },
+  { 'e', '6', 'l', false },
+  { 'w', '5', 'l', false },
+  { 'e', '5', 'l', false }
+};
 struct block red2[6] = {
   { 'n', '1', 'l', false },
   { 's', '1', 'l', false },
@@ -197,31 +196,35 @@ struct block red2[6] = {
   { 'n', '2', 'l', false },
   { 's', '2', 'l', false }
 };
-struct block yellow1[6] = {
+struct block yellow1[10] = {
   { 'n', '1', 'l', false },
   { 's', '1', 'l', false },
   { 'n', '3', 'l', false },
   { 's', '3', 'l', false },
   { 'n', '2', 'l', false },
-  { 's', '2', 'l', false }
+  { 's', '2', 'l', false },
+  { 'w', '4', 'u', false },
+  { 'e', '4', 'u', false },
+  { 'w', '6', 'u', false },
+  { 'e', '6', 'u', false }
 };
-struct block yellow2[6] = {
+struct block yellow2[10] = {
   { 'w', '4', 'l', false },
   { 'e', '4', 'l', false },
   { 'w', '6', 'l', false },
   { 'e', '6', 'l', false },
   { 'w', '5', 'l', false },
-  { 'e', '5', 'l', false }
+  { 'e', '5', 'l', false },
+  { 'w', '4', 'u', false },
+  { 'e', '4', 'u', false },
+  { 'w', '6', 'u', false },
+  { 'e', '6', 'u', false }
 };
-struct block blue[8] = {
-  { 'n', '1', 'u', false },
-  { 'n', '3', 'u', false },
-  { 's', '1', 'u', false },
-  { 's', '3', 'u', false },
-  { 'n', '2', 'u', false },
+struct block blue[4] = {
   { 'w', '5', 'u', false },
-  { 's', '2', 'u', false },
-  { 'e', '5', 'u', false }
+  { 'e', '5', 'u', false },
+  { 'n', '2', 'u', false },
+  { 's', '2', 'u', false }
 };
 
 // Control Vars
@@ -260,15 +263,15 @@ float arc_time_little = 2;
 float ir_to_wheel = 5.5;
 float ir_to_wheel_time = 0.4;
 
-// Travel Variables
-float east_guide = 122;   // cm
+// Travel Vals
+float east_guide = 122;     // cm
 float south_guide = 68.58;  // cm
 float north_guide = 33.5;   // cm
-float guide1 = 53;        // cm
-float guide2 = 61;        // cm
-float guide3 = 69;        // cm
-float guide4 = 52;        // cm
-float guide5 = 59.5;          // cm
+float guide1 = 53;          // cm
+float guide2 = 61;          // cm
+float guide3 = 69;          // cm
+float guide4 = 52;          // cm
+float guide5 = 59.5;        // cm
 float guide6 = 67.5;        // cm
 float next_pos_dist = 8;    // cm
 float collect_dist = 5.5;   // cm
@@ -372,20 +375,7 @@ float a2 = exp(7.869624);
 float b2 = -1.05102;
 bool stop = false;
 
-// Mag Vars
-float mag_alpha = 0.05;
-int mag_thresh = 0;
-int mag_val;
-int mag_val_last;
-int mag_ss;
-
 // Event Bools
-bool final_stage;
-bool final_final_stage;
-bool turn_bool;
-bool straight_bool;
-bool servo_bool;
-bool line_follow_bool;
 bool new_action;
 bool next_node;
 bool line_dist;
@@ -421,12 +411,9 @@ void setup() {
   qtr.setSensorPins(ir_pins, ir_sensor_count);
 
   // Set Color Sensor Pins
-  pinMode(blue_pin, OUTPUT);
-  digitalWrite(blue_pin, HIGH);
-  pinMode(red_pin, OUTPUT);
-  digitalWrite(red_pin, HIGH);
-  pinMode(green_pin, OUTPUT);
-  digitalWrite(green_pin, HIGH);
+  pinMode(blue_pin, OUTPUT), digitalWrite(blue_pin, HIGH);
+  pinMode(red_pin, OUTPUT), digitalWrite(red_pin, HIGH);
+  pinMode(green_pin, OUTPUT), digitalWrite(green_pin, HIGH);
 
   // Setup turn LEDs
   pinMode(right_turn_pin, OUTPUT);
@@ -457,10 +444,8 @@ void loop() {
   switch (state) {
     // Initiate Dispenser Travel
     case 'a':
-      // HallEffect();
-      // mag_ss = mag_val;
       current_block.Reset();
-      directions.AddTailNode('l', dist_collect, 0, 0, 'a', servo_home, 2);
+      directions.AddTailNode('l', dist_collect, line_follow_speed, 0, 'a', servo_home, 2);
       dist_right = true;
       line_dist = true;
       new_action = true;
@@ -481,15 +466,6 @@ void loop() {
     // Color Sense
     case 'c':
       t = (millis() - t_start) / 1000;
-
-      // Detect if Ramp is Down
-      // HallEffect();
-      // if(mag_val >= mag_ss + mag_thresh || mag_val <= mag_ss - mag_thresh){
-      //   ramp_down = true;
-      // } else if(!ramp_down) {
-      //   state = 'b';
-      // }
-
       // Sense Color and change state
       if(current_block.color == '\0' || current_block.color == 'x') {
         ColorSense();
@@ -547,7 +523,7 @@ void loop() {
       state = 'd';
       break;
       
-
+    // Dispose of Current Block
     case 'g':
       DumpExtraBlock();
       new_action = true;

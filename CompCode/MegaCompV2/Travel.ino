@@ -120,6 +120,7 @@ void Travel(void) {
       // Initialize action
       if (new_action) {
         dist_final = directions.head->final_val[0];
+        line_follow_speed = directions.head->duration[0];
         ResetTravelVars();
         if (directions.head->action[1] == '\0') {
           new_action = false;

@@ -17,12 +17,11 @@ void GetDirections(void) {
           directions.AddTailNode('d', -next_pos_dist + ir_to_wheel, ir_to_wheel_time-0.2);
         } else if (current_block.pos == '2') {
           dist_right = true;
-          dist_final = guide2 - arc_radius - (wheel_dist / 2);
           if (current_block.elev == 'l') {
-            directions.AddTailNode('k', 350, 0, 0, 's', shov_low_dump_angle, 2);
+            directions.AddTailNode('k', line_follow_speed, 0, 0, 's', shov_low_dump_angle, 2);
             directions.AddTailNode('d', ir_to_wheel-0.5, ir_to_wheel_time);
           } else if (current_block.elev == 'u') {
-            directions.AddTailNode('k', 350);
+            directions.AddTailNode('k', line_follow_speed);
             directions.AddTailNode('d', ir_to_wheel, ir_to_wheel_time);
           }
         } else if (current_block.pos == '3') {
@@ -51,9 +50,9 @@ void GetDirections(void) {
         line_dist = false;
         directions.AddTailNode('o', PI / 2, arc_time_little, arc_radius);
         if (current_block.elev == 'l') {
-          directions.AddTailNode('k', 350, 0, 0, 'a', arm_low_dump_angle, 3);
+          directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', arm_low_dump_angle, 3);
         } else if (current_block.elev == 'u') {
-          directions.AddTailNode('k', 350, 0, 0, 'a', arm_max_angle, 3);
+          directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', arm_max_angle, 3);
         }
         directions.AddTailNode('d', ir_to_wheel, ir_to_wheel_time);
         directions.AddTailNode('t', PI / 2, turn_time);
@@ -76,7 +75,6 @@ void GetDirections(void) {
 
       // South Face
       case 's':
-        line_speed = 300;
         directions.AddTailNode('t', PI, turn_time + 1);
         directions.AddTailNode('r', dist_to_wall, 0, 0, 'a', arm_max_angle, 2);
         directions.AddTailNode('t', -PI / 2, turn_time);
@@ -157,11 +155,11 @@ void GetDirections(void) {
         directions.AddTailNode('o', -PI / 2, arc_time_little+0.5, arc_radius, 'a', arm_max_angle, 2);
         if (current_block.pos == '1') {
           dist_right = false;
-          directions.AddTailNode('k', 350);
+          directions.AddTailNode('k', line_follow_speed);
           directions.AddTailNode('d', ir_to_wheel + next_pos_dist, ir_to_wheel_time+0.3);
         } else if (current_block.pos == '2') {
           dist_right = true;
-          directions.AddTailNode('k', 350, 0, 0, 'a', arm_max_angle, 2);
+          directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', arm_max_angle, 2);
           directions.AddTailNode('d', ir_to_wheel, ir_to_wheel_time);
         } else if (current_block.pos == '3') {
           dist_right = true;
@@ -211,9 +209,8 @@ void GetDirections(void) {
       // South Face
       case 's':
         line_dist = true;
-        line_speed = 300;
         directions.AddTailNode('t', -PI, turn_time + 1);
-        directions.AddTailNode('l', dist_to_wall, 0, 0, 'a', arm_max_angle, 2);
+        directions.AddTailNode('l', dist_to_wall, line_follow_speed, 0, 'a', arm_max_angle, 2);
         directions.AddTailNode('t', PI / 2, turn_time);
         if (current_block.pos == '1') {
           dump_dist_upper = 14;
@@ -261,9 +258,9 @@ void GetDirections(void) {
         line_dist = false;
         directions.AddTailNode('o', -PI / 2, arc_time_little+0.5, arc_radius);
         if (current_block.elev == 'l') {
-          directions.AddTailNode('k', 350, 0, 0, 'a', arm_low_dump_angle, 3);
+          directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', arm_low_dump_angle, 3);
         } else if (current_block.elev == 'u') {
-          directions.AddTailNode('k', 350, 0, 0, 'a', arm_max_angle, 3);
+          directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', arm_max_angle, 3);
         }
         directions.AddTailNode('d', ir_to_wheel, ir_to_wheel_time);
         directions.AddTailNode('t', -PI / 2, turn_time);
