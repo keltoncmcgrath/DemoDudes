@@ -25,7 +25,7 @@ char last_state;
 // Line Following Vars
 int kp = 200;
 int ki = 500;
-int kd = 4;
+int kd = 7;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
 int ir_bias[] = { 140, 94, 128, 134, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
@@ -39,7 +39,7 @@ float num = 0;
 float den = 0;
 int line_speed = 300;
 int m1s, m2s;
-const uint8_t ir_pins[] = { 24, 25, 26, 27, 28, 29, 30, 31 };
+const uint8_t ir_pins[] = { 24, 25, 26, 28, 27, 29, 30, 31 };
 
 void LineFollow(void) {
   // Read sensor values and take bias off
@@ -66,8 +66,8 @@ void LineFollow(void) {
   ir_integral_error = constrain(ir_integral_error, -400/ki, 400/ki);
   // m1s = line_follow_speed - kp * ir_error;
   // m2s = line_follow_speed + kp * ir_error;
-  m1s = line_speed - kp*ir_error - kd*ir_d_error - ki*ir_integral_error;
-  m2s = line_speed + kp*ir_error + kd*ir_d_error + ki*ir_integral_error;
+  m1s = line_speed - kp*ir_error - kd*ir_d_error; // - ki*ir_integral_error;
+  m2s = line_speed + kp*ir_error + kd*ir_d_error; // + ki*ir_integral_error;
   md.setSpeeds(m1s, m2s);
   ir_error_last = ir_error;
 }
@@ -85,6 +85,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println(m1s);
+  //Serial.println(m1s);
   LineFollow();
 }

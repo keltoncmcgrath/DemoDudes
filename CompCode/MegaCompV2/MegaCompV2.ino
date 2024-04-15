@@ -127,7 +127,7 @@ int limit_switch_pin = 32;
 int blue_pin = 33;
 int green_pin = 34;
 int red_pin = 35;
-const uint8_t ir_pins[] = { 24, 25, 26, 27, 28, 29, 30, 31 };
+const uint8_t ir_pins[] = { 24, 25, 26, 28, 27, 29, 30, 31 };
 int right_turn_pin = 37;
 int left_turn_pin = 36;
 
@@ -255,12 +255,13 @@ float theta_alpha = 0.075;
 int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 4.1;    // cm
-float wheel_dist = 18.8;     // cm
+float wheel_dist = 19;       // cm
 float turn_time = 1.1;       // s
 float arc_time_big = 2.5;    // s
 float arc_time_little = 2;
 float ir_to_wheel = 5.5;
 float ir_to_wheel_time = 0.4;
+int max_current = 300;
 
 // Travel Vals
 float east_guide = 122;     // cm
@@ -274,7 +275,7 @@ float guide5 = 59.5;        // cm
 float guide6 = 67.5;        // cm
 float next_pos_dist = 8;    // cm
 float collect_dist = 5.5;   // cm
-int line_follow_speed = 370;
+int line_follow_speed = 375;
 int line_base = 100;
 int line_speed = 375;
 
@@ -287,8 +288,8 @@ Encoder encoder2(encoder2_pinA, encoder2_pinB);
 // Arm Servo Vars
 int servo_home = 93;
 int arm_max_angle = 20;
-int arm_collect_angle = 75;
-int arm_low_dump_angle = 75;
+int arm_collect_angle = 80;
+int arm_low_dump_angle = 80;
 float arm_angle_des;
 int arm_angle_start;
 int arm_angle_final;
@@ -342,14 +343,14 @@ int color_ranges[4][3][2] = {
 // Line Following Vars
 int kp = 200; // 250, 500, 4
 // int ki = 1000;
-int kd = 5;
+int kd = 7;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
 int ir_bias[] = { 140, 94, 130, 124, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
-float ir_dist_desired = 2.9; //2.8                                     // cm
+float ir_dist_desired = 2.8;                                           // cm
 float ir_dist_actual, ir_dist_actualf;
 float ir_alpha = 0.5;
 bool all_black;
@@ -360,8 +361,12 @@ float den = 0;
 // Range Finder Vars
 float dist_alpha = 0.01;
 float dist_actual_alpha = 0.4;
-float dump_dist_upper = 15;
-float dump_dist_lower = 10.9;
+float dump_dist_upper = 13;
+float dump_dist_lower;
+// float dump_dist_lower_right = 11;
+float dump_dist_lower_right = 0;
+// float dump_dist_lower_left = 9.5;
+float dump_dist_lower_left = 0;
 float dist_collect = 10.4;
 float dist_actual, dist_actualf;
 float dist_to_wall = 11;

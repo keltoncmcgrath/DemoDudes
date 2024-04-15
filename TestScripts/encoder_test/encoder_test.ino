@@ -18,19 +18,19 @@ void setup() {
   Serial.begin(9600);
   md.init();
   md.enableDrivers();
-  md.setSpeeds(400, 400);
+  md.setSpeeds(375, 375);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   counts1 = encoder1.read();
   counts2 = encoder2.read();
-  Serial.print(counts1);
-  Serial.print('\t');
-  Serial.println(counts2);
+  // Serial.print(counts1);
+  // Serial.print('\t');
+  // Serial.println(counts2);
   current1 = 0.1*md.getM1CurrentMilliamps() + 0.9*current1;
   current2 = 0.1*md.getM2CurrentMilliamps() + 0.9*current2;
-  // Serial.print(current1);
-  // Serial.print('\t');
-  // Serial.println(current2);
+  Serial.print(current1);
+  Serial.print('\t');
+  Serial.println(current2);
 }

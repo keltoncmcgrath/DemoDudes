@@ -135,14 +135,14 @@ void Travel(void) {
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 350);
         }
-        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e'  && line_follow_speed < 150 && md.getM1CurrentMilliamps() > 100 && md.getM1CurrentMilliamps() > 100)) {
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e'  && line_follow_speed < 300 && md.getM1CurrentMilliamps() > max_current || md.getM1CurrentMilliamps() > max_current)) {
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;
         }
       } else {  // Follow line for set distance
         ReadEncoderDist();
-        if (abs(dist_traveled) >= abs(dist_final)) {
+        if (abs(dist_traveled) >= abs(dist_final)) { // || (last_state == 'b' && md.getM1CurrentMilliamps() > 60 && md.getM2CurrentMilliamps() > 60)
           md.setSpeeds(0, 0);
           dump_dist_upper = 13;
           dump_dist_lower = 10.9;
@@ -172,7 +172,7 @@ void Travel(void) {
         line_speed = constrain(line_speed, line_base, line_follow_speed);
       }
       StraightRange();
-      if (dist_actual <= dist_final || (last_state == 'e' && line_speed < 150 && md.getM1CurrentMilliamps() > 100 && md.getM2CurrentMilliamps() > 100)) {
+      if (dist_actual <= dist_final || (last_state == 'e' && line_speed < 150 && md.getM1CurrentMilliamps() > max_current && md.getM2CurrentMilliamps() > max_current)) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
         dump_dist_lower = 10.9;
