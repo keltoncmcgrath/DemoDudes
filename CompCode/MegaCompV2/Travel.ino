@@ -137,7 +137,7 @@ void Travel(void) {
         }
         m1_current = md.getM1CurrentMilliamps();
         m2_current = md.getM2CurrentMilliamps();
-        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+50 && (m1_current > max_current && m2_current > max_current))) {
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && (m1_current > max_current && m2_current > max_current))) {
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;
@@ -176,7 +176,20 @@ void Travel(void) {
       StraightRange();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+50 && (m1_current > max_current && m2_current > max_current))) {
+      // Serial.print(m1_current);
+      // Serial.print('\t');
+      // Serial.print(m1_current > max_current);
+      // Serial.print('\t');
+      // Serial.print(m2_current);
+      // Serial.print('\t');
+      // Serial.print(m2_current > max_current);
+      // Serial.print('\t');
+      // Serial.print(line_speed);
+      // Serial.print('\t');
+      // Serial.print(dist_final);
+      // Serial.print('\t');
+      // Serial.println(dist_actualf);
+      if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+100 && (m1_current > max_current && m2_current > max_current))) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
         dump_dist_upper = 13;

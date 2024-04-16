@@ -255,14 +255,14 @@ float theta_alpha = 0.075;
 // Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 4.2;    // cm
-float wheel_dist = 18.7;       // cm
-float turn_time = 1.1;       // s
-float arc_time_big = 2.5;    // s
-float arc_time_little = 2;
-float ir_to_wheel = 5.5;
-float ir_to_wheel_time = 0.4;
-int max_current = 150;
+float wheel_radius = 4.2;       // cm
+float wheel_dist = 18.7;        // cm
+float turn_time = 1.1;          // s
+float arc_time_big = 2.5;       // s
+float arc_time_little = 2;      // s
+float ir_to_wheel = 5.5;        // cm
+float ir_to_wheel_time = 0.4;   // s
+int max_current = 200;          // mA
 
 // Travel Vals
 float east_guide = 122;     // cm
@@ -339,12 +339,12 @@ int color_ranges[4][3][2] = {
   { { 826, 910 }, { 623, 700 }, { 36, 109 } },
   {   { 15, 88 },  { 59, 140 }, { 99, 199 } },
   {   { 0, 113 },   { 0, 126 },  { 0, 115 } }
-};  // Rows: ranges for each block (ryb)   Cols: Ranges for each LED (rgb)
+};  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 200; // 250, 500, 4
+int kp = 250; // 200?, 500, 4
 // int ki = 1000;
-int kd = 7;
+int kd = 4; // 7?
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
 int ir_bias[] = { 140, 94, 130, 124, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
@@ -430,7 +430,7 @@ void setup() {
   //     rc = Serial2.read();
   //     if (rc == flag) {
   //       Serial.println("START");
-  //       shovel_servo.write(servo_home);
+  //       shovel_servo.write(shov_low_dump_angle);
   //       ReadBlockInfo();
   //       break;
   //     } // end if
