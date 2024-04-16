@@ -111,15 +111,15 @@ void setup() {
   Serial.begin(9600);
   md.init();
   md.enableDrivers();
-  // // Turn
-  turn_angle_final = -PI;
+  // Turn
+  turn_angle_final = -PI/2;
   time_final = turn_time;
   theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
   theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
 
-  //Striaght
-  // dist_final = 15;
-  // time_final = 3;
+  // //Straight
+  // dist_final = 5.5;
+  // time_final = 0.3;
   // theta1_final = dist_final / wheel_radius;
   // theta2_final = dist_final / wheel_radius;
 

@@ -25,6 +25,8 @@ void Travel(void) {
       }
       // Action
       TimedDrive();
+      m1_current = md.getM1CurrentMilliamps();
+      m2_current = md.getM2CurrentMilliamps();
       if (abs(theta1_des) >= abs(theta1_final) && abs(theta1_des) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
@@ -133,7 +135,9 @@ void Travel(void) {
       m2_current = md.getM2CurrentMilliamps();
       Serial.print(m1_current);
       Serial.print('\t');
-      Serial.println(m2_current);
+      Serial.print(m2_current);
+      Serial.print('\t');
+      Serial.println(!line_dist);
       if (line_dist) {  // Follow line until range finder trips
         DistSenseRight();
         if (last_state == 'e' || last_state == 'a') {  // Control speed based on distance from chassis
@@ -147,7 +151,7 @@ void Travel(void) {
         }
       } else {  // Follow line for set distance
         ReadEncoderDist();
-        if ((abs(dist_traveled) >= abs(dist_final)) || (t > 0.1 && last_state == 'b' && m1_current > 80 && m2_current > 80)) {
+        if ((abs(dist_traveled) >= abs(dist_final)) || (t > 0.5 && last_state == 'b' && (m1_current > 100 || m2_current > 100))) {
           md.setSpeeds(0, 0);
           dump_dist_upper = 13;
           line_follow_speed = line_speed;
