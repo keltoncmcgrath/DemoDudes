@@ -5,10 +5,10 @@ clc;                    % Clear command window
 delete(instrfindall);   % Delete any remaining instruments
 
 % Initialize
-COM = 'com10';                  % Set this to match Arduino Com port
+COM = 'com5';                  % Set this to match Arduino Com port
 BaudRate = 9600;               % Set this to match Arduino baud rate
 s1 = serialport(COM,BaudRate);  % Open serial port
-pause(4)  % Give the Arduino time to complete the experiment
+pause(11)  % Give the Arduino time to complete the experiment
 
 % Read data
 i = 1;

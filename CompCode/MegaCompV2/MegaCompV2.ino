@@ -228,9 +228,9 @@ struct block blue[4] = {
 
 // Control Vars
 float dump_KP = 20;
-float KP = 95.7;
-float KI = 900;
-float KD = 1.78;
+float KP = 56;
+float KI = 500;
+float KD = 1.56;
 float error1, d_error1, integral_error1;
 float error2, d_error2, integral_error2;
 int m1s, m2s;
