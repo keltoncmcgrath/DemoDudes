@@ -128,8 +128,8 @@ int blue_pin = 33;
 int green_pin = 34;
 int red_pin = 35;
 const uint8_t ir_pins[] = { 24, 25, 26, 28, 27, 29, 30, 31 };
-int right_turn_pin = 37;
-int left_turn_pin = 36;
+int right_turn_pin = 36;
+int left_turn_pin = 37;
 
 // Analog
 int dist_pin_right = A9;
@@ -155,7 +155,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 'w', '6', 'l', false, 'y' };
+struct block current_block = { 's', '3', 'l', false, 'y' };
 struct block read_block;
 // struct block red1[6] = {
 //   { 'e', '4', 'l', true },
@@ -343,10 +343,10 @@ int color_ranges[4][3][2] = {
 };  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 200; // 200?, 1000, 4
+int kp = 150; // 200?, 1000, 4
 int kd = 5;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
-int ir_bias[] = { 140, 94, 130, 124, 140, 140, 140, 140 };
+int ir_bias[] = { 140, 94, 130, 134, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count];
 int ir_unbiased[ir_sensor_count];
@@ -362,7 +362,7 @@ float den = 0;
 // Range Finder Vars
 float dist_alpha = 0.01;
 float dist_actual_alpha = 0.4;
-float dump_dist_upper = 13;
+float dump_dist_upper = 12.5;
 float dump_dist_lower;
 float dump_dist_lower_right = 11;
 float dump_dist_lower_left = 9.5;
@@ -473,7 +473,7 @@ void loop() {
       if(current_block.color == '\0' || current_block.color == 'x') {
         ColorSense();
       } else {
-        DetermineBlockLoc();
+        // DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
         Serial.print(current_block.pos);

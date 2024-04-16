@@ -30,7 +30,7 @@ void LineFollow(void) {
     }
   }
   // If half the sensros read black, at junction
-  if (black_count <= ir_sensor_count/2) {
+  if (black_count < ir_sensor_count/2) {
     m1s = line_follow_speed - kp*ir_error - kd*ir_d_error;
     m2s = line_follow_speed + kp*ir_error + kd*ir_d_error;
   }
