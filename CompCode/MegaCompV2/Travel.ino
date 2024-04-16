@@ -129,22 +129,25 @@ void Travel(void) {
 
       // Follow Line
       LineFollow();
+      m1_current = md.getM1CurrentMilliamps();
+      m2_current = md.getM2CurrentMilliamps();
+      Serial.print(m1_current);
+      Serial.print('\t');
+      Serial.println(m2_current);
       if (line_dist) {  // Follow line until range finder trips
         DistSenseRight();
         if (last_state == 'e' || last_state == 'a') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 350);
         }
-        m1_current = md.getM1CurrentMilliamps();
-        m2_current = md.getM2CurrentMilliamps();
-        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && (m1_current > max_current && m2_current > max_current)) || (t > 0.1 && last_state == 'b' && m1_current > 40 && m2_current > 40)) {
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && (m1_current > max_current && m2_current > max_current))){
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;
         }
       } else {  // Follow line for set distance
         ReadEncoderDist();
-        if (abs(dist_traveled) >= abs(dist_final)) { // || (last_state == 'b' && md.getM1CurrentMilliamps() > 60 && md.getM2CurrentMilliamps() > 60)
+        if ((abs(dist_traveled) >= abs(dist_final)) || (t > 0.1 && last_state == 'b' && m1_current > 80 && m2_current > 80)) {
           md.setSpeeds(0, 0);
           dump_dist_upper = 13;
           line_follow_speed = line_speed;

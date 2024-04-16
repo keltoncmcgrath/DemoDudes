@@ -37,7 +37,7 @@ void setup() {
   arm_servo.write(93);
   shov_angle_start = shovel_servo.read();
   shov_t_final = 0.01;
-  shov_angle_final = 35;
+  shov_angle_final = 120;
   Serial.println("Start...");
   t_begin = millis();
 }

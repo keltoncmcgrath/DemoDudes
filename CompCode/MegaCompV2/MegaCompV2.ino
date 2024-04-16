@@ -260,7 +260,7 @@ float wheel_dist = 18.7;        // cm
 float turn_time = 0.6;          // s
 float arc_time_big = 2;         // s
 float arc_time_little = 1.5;    // s
-float ir_to_wheel = 5.2;        // cm
+float ir_to_wheel = 5.5;        // cm
 float ir_to_wheel_time = 0.3;   // s
 int max_current = 150;          // mA
 
@@ -301,6 +301,7 @@ float arm_tol = 0.1;
 int shov_max_angle = 35; // 20
 int shov_low_dump_angle = 105; // 80
 int shov_dump_angle = 0;
+int shov_button_angle = 120;
 int shov_collect_angle = 150; // 120
 float shov_angle_des;
 int shov_angle_start;
@@ -429,7 +430,7 @@ void setup() {
   //     rc = Serial2.read();
   //     if (rc == flag) {
   //       Serial.println("START");
-  //       shovel_servo.write(shov_low_dump_angle);
+  //       shovel_servo.write(shov_button_angle);
   //       ReadBlockInfo();
   //       break;
   //     } // end if
@@ -447,7 +448,7 @@ void loop() {
     // Initiate Dispenser Travel
     case 'a':
       current_block.Reset();
-      directions.AddTailNode('l', dist_collect, line_follow_speed, 0, 'a', shov_low_dump_angle, 2);
+      directions.AddTailNode('l', dist_collect, line_follow_speed, 0, 'a', servo_home, 2);
       dist_right = true;
       line_dist = true;
       new_action = true;
