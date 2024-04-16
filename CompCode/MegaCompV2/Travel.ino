@@ -135,7 +135,9 @@ void Travel(void) {
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 350);
         }
-        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e'  && line_follow_speed < 300 && md.getM1CurrentMilliamps() > max_current || md.getM1CurrentMilliamps() > max_current)) {
+        m1_current = md.getM1CurrentMilliamps();
+        m2_current = md.getM2CurrentMilliamps();
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+50 && (m1_current > max_current && m2_current > max_current))) {
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;
@@ -145,7 +147,6 @@ void Travel(void) {
         if (abs(dist_traveled) >= abs(dist_final)) { // || (last_state == 'b' && md.getM1CurrentMilliamps() > 60 && md.getM2CurrentMilliamps() > 60)
           md.setSpeeds(0, 0);
           dump_dist_upper = 13;
-          dump_dist_lower = 10.9;
           line_follow_speed = line_speed;
           next_node = true;
         }
@@ -161,6 +162,7 @@ void Travel(void) {
           new_action = false;
         }
       }
+      
       // Read from left or right range finder
       if (dist_right) {
         DistSenseRight();
@@ -168,14 +170,15 @@ void Travel(void) {
         DistSenseLeft();
       }
       if (last_state == 'e') {  // Control speed based on distance from chassis
-        line_speed = line_base + dump_KP * (dist_actual - dist_final);
+        line_speed = line_base + dump_KP * (dist_actualf - dist_final);
         line_speed = constrain(line_speed, line_base, line_follow_speed);
       }
       StraightRange();
-      if (dist_actual <= dist_final || (last_state == 'e' && line_speed < 150 && md.getM1CurrentMilliamps() > max_current && md.getM2CurrentMilliamps() > max_current)) {
+      m1_current = md.getM1CurrentMilliamps();
+      m2_current = md.getM2CurrentMilliamps();
+      if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+50 && (m1_current > max_current && m2_current > max_current))) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
-        dump_dist_lower = 10.9;
         dump_dist_upper = 13;
         next_node = true;
       }

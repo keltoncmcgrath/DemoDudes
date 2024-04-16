@@ -42,9 +42,8 @@ float alpha = 0.1;
 // Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 3.5;      // cm
-float wheel_dist_arc = 20.35;  // cm
-float wheel_dist_turn;         // cm
+float wheel_radius = 4.2;      // cm
+float wheel_dist = 18.7;       // cm
 float turn_time = 1.5;         // s
 
 // Encoder Vars
@@ -113,17 +112,16 @@ void setup() {
   md.init();
   md.enableDrivers();
   // // Turn
-  // turn_angle_final = -PI;
-  // time_final = turn_time+1;
-  // wheel_dist_turn = 19;
-  // theta1_final = turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
-  // theta2_final = -turn_angle_final * (wheel_dist_turn / 2) / wheel_radius;
+  turn_angle_final = -PI;
+  time_final = turn_time;
+  theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
+  theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;
 
-  // Striaght
-  dist_final = 100;
-  time_final = 5;
-  theta1_final = dist_final / wheel_radius;
-  theta2_final = dist_final / wheel_radius;
+  //Striaght
+  // dist_final = 15;
+  // time_final = 3;
+  // theta1_final = dist_final / wheel_radius;
+  // theta2_final = dist_final / wheel_radius;
 
   t_start = millis();
   t_old = 0;
@@ -140,9 +138,13 @@ void setup() {
 void loop() {
   if(drive){
       TimedDrive();
-      Serial.print(m1s);
+      Serial.print(theta1);
       Serial.print('\t');
-      Serial.println(m2s);
+      Serial.print(theta1_des);
+      Serial.print('\t');
+      Serial.print(theta2);
+      Serial.print('\t');
+      Serial.println(theta2_des);
   }
   if(abs(theta1)>=abs(theta1_final) && abs(theta2) >= abs(theta2_final) && md.getM1CurrentMilliamps() == 0 && md.getM2CurrentMilliamps() == 0){
     md.setSpeeds(0, 0);

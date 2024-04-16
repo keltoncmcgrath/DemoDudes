@@ -23,7 +23,7 @@ int gear_ratio = 131;
 float t, t_start, delta_T, t_old;
 int error1, d_error1, integral_error1;
 
-const uint8_t ir_pins[] = { 24, 25, 26, 27, 28, 29, 30, 31 };
+const uint8_t ir_pins[] = { 24, 25, 26, 28, 27, 29, 30, 31 };
 const uint8_t ir_sensor_count = 8;
 uint16_t ir_values[ir_sensor_count] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 

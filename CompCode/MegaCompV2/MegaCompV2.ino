@@ -227,7 +227,7 @@ struct block blue[4] = {
 };
 
 // Control Vars
-float dump_KP = 30;
+float dump_KP = 20;
 float KP = 95.7;
 float KI = 900;
 float KD = 1.78;
@@ -243,6 +243,7 @@ float turn_angle_final;        // rad
 float arc_radius;              // cm
 float arc_angle_final;         // rad
 float time_final;
+int m1_current, m2_current;
 float theta1, theta1_des, theta1_desf, theta1_final, theta1_old;
 float theta2, theta2_des, theta2_desf, theta2_final, theta2_old;
 float omega1, omega1_des;
@@ -254,14 +255,14 @@ float theta_alpha = 0.075;
 // Travel Constants
 int counts_per_rev = 64;
 int gear_ratio = 131;
-float wheel_radius = 4.1;    // cm
-float wheel_dist = 19;       // cm
+float wheel_radius = 4.2;    // cm
+float wheel_dist = 18.7;       // cm
 float turn_time = 1.1;       // s
 float arc_time_big = 2.5;    // s
 float arc_time_little = 2;
 float ir_to_wheel = 5.5;
 float ir_to_wheel_time = 0.4;
-int max_current = 300;
+int max_current = 150;
 
 // Travel Vals
 float east_guide = 122;     // cm
@@ -363,10 +364,8 @@ float dist_alpha = 0.01;
 float dist_actual_alpha = 0.4;
 float dump_dist_upper = 13;
 float dump_dist_lower;
-// float dump_dist_lower_right = 11;
-float dump_dist_lower_right = 0;
-// float dump_dist_lower_left = 9.5;
-float dump_dist_lower_left = 0;
+float dump_dist_lower_right = 11;
+float dump_dist_lower_left = 9.5;
 float dist_collect = 10.4;
 float dist_actual, dist_actualf;
 float dist_to_wall = 11;

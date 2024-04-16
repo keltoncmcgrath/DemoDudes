@@ -18,7 +18,7 @@ void setup() {
   Serial.begin(9600);
   md.init();
   md.enableDrivers();
-  md.setSpeeds(375, 375);
+  md.setSpeeds(150, 150);
 }
 
 void loop() {
