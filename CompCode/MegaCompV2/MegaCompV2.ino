@@ -257,12 +257,12 @@ int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 4.2;       // cm
 float wheel_dist = 18.7;        // cm
-float turn_time = 1.1;          // s
-float arc_time_big = 2.5;       // s
-float arc_time_little = 2;      // s
-float ir_to_wheel = 5.5;        // cm
-float ir_to_wheel_time = 0.4;   // s
-int max_current = 200;          // mA
+float turn_time = 0.6;          // s
+float arc_time_big = 2;         // s
+float arc_time_little = 1.5;    // s
+float ir_to_wheel = 5.2;        // cm
+float ir_to_wheel_time = 0.3;   // s
+int max_current = 150;          // mA
 
 // Travel Vals
 float east_guide = 122;     // cm
@@ -298,10 +298,10 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Vars
-int shov_max_angle = 20;
-int shov_low_dump_angle = 80;
+int shov_max_angle = 35; // 20
+int shov_low_dump_angle = 105; // 80
 int shov_dump_angle = 0;
-int shov_collect_angle = 120;
+int shov_collect_angle = 150; // 120
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -342,9 +342,8 @@ int color_ranges[4][3][2] = {
 };  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 250; // 200?, 500, 4
-// int ki = 1000;
-int kd = 4; // 7?
+int kp = 200; // 200?, 1000, 4
+int kd = 5;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
 int ir_bias[] = { 140, 94, 130, 124, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
@@ -353,7 +352,7 @@ int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
 float ir_dist_desired = 2.8;                                           // cm
 float ir_dist_actual, ir_dist_actualf;
-float ir_alpha = 0.5;
+float ir_alpha = 0.4;
 bool all_black;
 int black_count = 0;
 float num = 0;
@@ -448,7 +447,7 @@ void loop() {
     // Initiate Dispenser Travel
     case 'a':
       current_block.Reset();
-      directions.AddTailNode('l', dist_collect, line_follow_speed, 0, 'a', servo_home, 2);
+      directions.AddTailNode('l', dist_collect, line_follow_speed, 0, 'a', shov_low_dump_angle, 2);
       dist_right = true;
       line_dist = true;
       new_action = true;

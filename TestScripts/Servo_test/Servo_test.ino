@@ -5,7 +5,7 @@ Servo shovel_servo;
 
 int arm_pin = 22;
 int shovel_pin = 23;
-int home = 93;
+int servo_home = 93;
 
 float t, t_start, shov_t_final;
 int shov_angle_start, shov_angle_final, shov_angle_des;
@@ -33,12 +33,11 @@ void setup() {
   arm_servo.attach(arm_pin);
   shovel_servo.attach(shovel_pin);
 
-  shovel_servo.write(shov_low_dump_angle);
-  delay(1000);
+  shovel_servo.write(servo_home);
+  arm_servo.write(93);
   shov_angle_start = shovel_servo.read();
   shov_t_final = 0.01;
-  shov_angle_final = shov_collect_angle;
-  delay(1000);
+  shov_angle_final = 35;
   Serial.println("Start...");
   t_begin = millis();
 }

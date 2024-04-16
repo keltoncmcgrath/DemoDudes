@@ -22,6 +22,7 @@ void LineFollow(void) {
   ir_d_error = (ir_error - ir_error_last) / delta_T;
   // ir_integral_error += ir_integral_error * delta_T;
   // ir_integral_error = constrain(ir_integral_error, -400/ki, 400/ki);
+
   // Check how many sensors read black
   for (int i=0; i<ir_sensor_count; i++) {
     if(ir_values[i] > 500) {
@@ -29,7 +30,7 @@ void LineFollow(void) {
     }
   }
   // If half the sensros read black, at junction
-  if (black_count < ir_sensor_count/2) {
+  if (black_count <= ir_sensor_count/2) {
     m1s = line_follow_speed - kp*ir_error - kd*ir_d_error;
     m2s = line_follow_speed + kp*ir_error + kd*ir_d_error;
   }

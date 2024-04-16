@@ -137,7 +137,7 @@ void Travel(void) {
         }
         m1_current = md.getM1CurrentMilliamps();
         m2_current = md.getM2CurrentMilliamps();
-        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && (m1_current > max_current && m2_current > max_current))) {
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && (m1_current > max_current && m2_current > max_current)) || (t > 0.1 && last_state == 'b' && m1_current > 40 && m2_current > 40)) {
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;

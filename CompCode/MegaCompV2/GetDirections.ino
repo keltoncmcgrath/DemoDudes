@@ -264,9 +264,9 @@ void GetDirections(void) {
         if (current_block.pos == 2){
           directions.AddTailNode('d', -15, 1.5);
         } else if (current_block.elev == 'l'){
-          directions.AddTailNode('d', -10, 1, 0, 'a', arm_low_dump_angle, 1);
+          directions.AddTailNode('d', -6, 1, 0, 'a', arm_low_dump_angle, 1);
         } else if (current_block.elev == 'u'){
-          directions.AddTailNode('d', -10, 1);
+          directions.AddTailNode('d', -6, 1);
         }
         break;
 
