@@ -300,11 +300,11 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Vars
-int shov_max_angle = 35; // 20
-int shov_low_dump_angle = 105; // 80
+int shov_max_angle = 20; // 20
+int shov_low_dump_angle = 80; // 80
 int shov_dump_angle = 0;
-int shov_button_angle = 120;
-int shov_collect_angle = 145; // 120
+int shov_button_angle = 95;
+int shov_collect_angle = 120; // 120
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
