@@ -304,6 +304,7 @@ int shov_max_angle = 20; // 20
 int shov_low_dump_angle = 80; // 80
 int shov_dump_angle = 0;
 int shov_button_angle = 95;
+int shov_travel_angle = 110;
 int shov_collect_angle = 120; // 120
 float shov_angle_des;
 int shov_angle_start;
@@ -486,6 +487,7 @@ void loop() {
         Serial.println(current_block.color);
         if (current_block.face != '\0') {
           GetDirections();
+          shovel_servo.write(shov_travel_angle);
           new_action = true;
           last_state = state;
           state = 'd';
