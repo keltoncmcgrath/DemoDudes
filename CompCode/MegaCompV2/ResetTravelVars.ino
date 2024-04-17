@@ -16,4 +16,5 @@ void ResetTravelVars(void) {
   ir_integral_error = 0;
   ir_dist_actualf = 0;
   dist_actualf = 0;
+  speed_dist_error = 0;
 }

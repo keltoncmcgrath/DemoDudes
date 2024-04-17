@@ -25,14 +25,14 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('d', -6, 0.5);
         directions.AddTailNode('t', -PI / 2, turn_time);
         if (current_block.pos == '1') {
-          directions.AddTailNode('d', guide1, 2, 0, 'a', servo_home, 2);
+          directions.AddTailNode('d', guide1, 1.5, 0, 'a', servo_home, 2);
         } else if (current_block.pos == '2') {
-          directions.AddTailNode('d', guide2, 2.2, 0, 'a', servo_home, 2);
+          directions.AddTailNode('d', guide2, 1.75, 0, 'a', servo_home, 2);
         } else if (current_block.pos == '3') {
-          directions.AddTailNode('d', guide3, 2.4, 0, 'a', servo_home, 2);
+          directions.AddTailNode('d', guide3, 2, 0, 'a', servo_home, 2);
         }
         directions.AddTailNode('t', PI / 2, turn_time);
-        directions.AddTailNode('d', north_guide, 2);
+        directions.AddTailNode('d', north_guide, 1);
         break;
 
       // West Face

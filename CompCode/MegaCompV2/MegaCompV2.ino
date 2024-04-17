@@ -155,7 +155,7 @@ int flag = 33;
 int num_blocks;
 char block_color;
 bool use_first = true;
-struct block current_block = { 's', '3', 'l', false, 'y' };
+struct block current_block = { 'n', '1', 'l', false, 'y' };
 struct block read_block;
 // struct block red1[6] = {
 //   { 'e', '4', 'l', true },
@@ -239,6 +239,8 @@ float V1, V2;
 // Travel Vars
 float dist_traveled;
 float dist_final;
+float speed_dist_error;
+float speed_alpha = 0.1;
 float turn_angle_final;        // rad
 float arc_radius;              // cm
 float arc_angle_final;         // rad
@@ -257,10 +259,10 @@ int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 4.2;       // cm
 float wheel_dist = 18.7;        // cm
-float turn_time = 0.6;          // s
+float turn_time = 0.8;          // s
 float arc_time_big = 2;         // s
 float arc_time_little = 1.5;    // s
-float ir_to_wheel = 5.5;        // cm
+float ir_to_wheel = 5;          // cm
 float ir_to_wheel_time = 0.3;   // s
 int max_current = 150;          // mA
 
@@ -275,10 +277,10 @@ float guide4 = 52;          // cm
 float guide5 = 59.5;        // cm
 float guide6 = 67.5;        // cm
 float next_pos_dist = 8;    // cm
-float collect_dist = 5.5;   // cm
-int line_follow_speed = 375;
-int line_base = 100;
-int line_speed = 375;
+float collect_dist = 6;   // cm
+int line_follow_speed = 390;
+int line_base = 75;
+int line_speed = 390;
 
 // Encoder Vars
 int encoder1_count;
@@ -302,7 +304,7 @@ int shov_max_angle = 35; // 20
 int shov_low_dump_angle = 105; // 80
 int shov_dump_angle = 0;
 int shov_button_angle = 120;
-int shov_collect_angle = 150; // 120
+int shov_collect_angle = 145; // 120
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -343,8 +345,9 @@ int color_ranges[4][3][2] = {
 };  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
-int kp = 150; // 200?, 1000, 4
-int kd = 5;
+int kp = 250;
+int ki = 600;
+int kd = 4;
 float ir_error, ir_error_last, ir_d_error, ir_integral_error;
 int ir_bias[] = { 140, 94, 130, 134, 140, 140, 140, 140 };
 const uint8_t ir_sensor_count = 8;
@@ -353,7 +356,7 @@ int ir_unbiased[ir_sensor_count];
 float ir_sensor_spacing[] = { 0, 0.8, 1.6, 2.4, 3.2, 4.0, 4.8, 5.6 };  // cm
 float ir_dist_desired = 2.8;                                           // cm
 float ir_dist_actual, ir_dist_actualf;
-float ir_alpha = 0.4;
+float ir_alpha = 1;
 bool all_black;
 int black_count = 0;
 float num = 0;
@@ -362,7 +365,7 @@ float den = 0;
 // Range Finder Vars
 float dist_alpha = 0.01;
 float dist_actual_alpha = 0.4;
-float dump_dist_upper = 12.5;
+float dump_dist_upper = 13;
 float dump_dist_lower;
 float dump_dist_lower_right = 11;
 float dump_dist_lower_left = 9.5;
@@ -473,7 +476,7 @@ void loop() {
       if(current_block.color == '\0' || current_block.color == 'x') {
         ColorSense();
       } else {
-        // DetermineBlockLoc();
+        DetermineBlockLoc();
         Serial.print(current_block.face);
         Serial.print('\t');
         Serial.print(current_block.pos);

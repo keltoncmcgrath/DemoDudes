@@ -27,7 +27,7 @@ void Travel(void) {
       TimedDrive();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      if (abs(theta1_des) >= abs(theta1_final) && abs(theta1_des) >= abs(theta2_final)) {
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
@@ -65,7 +65,7 @@ void Travel(void) {
 
       // Action
       TimedDrive();
-      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && md.getM1CurrentMilliamps() <= 5 && md.getM2CurrentMilliamps() <= 5) {
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
@@ -109,7 +109,7 @@ void Travel(void) {
 
       // Action
       TimedDrive();
-      if (abs(theta1_des) >= abs(theta1_final) && abs(theta2_des) >= abs(theta2_final)) {
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
@@ -133,27 +133,22 @@ void Travel(void) {
       LineFollow();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      Serial.print(m1_current);
-      Serial.print('\t');
-      Serial.print(m2_current);
-      Serial.print('\t');
-      Serial.println(!line_dist);
       if (line_dist) {  // Follow line until range finder trips
         DistSenseRight();
         if (last_state == 'e' || last_state == 'a') {  // Control speed based on distance from chassis
           line_follow_speed = line_base + dump_KP * (dist_actual - dist_final);
           line_follow_speed = constrain(line_follow_speed, line_base, 350);
         }
-        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && (m1_current > max_current && m2_current > max_current))){
+        if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_follow_speed < line_base+100 && t > 1 && (m1_current > max_current && m2_current > max_current))){
           md.setSpeeds(0, 0);
           line_follow_speed = line_speed;
           next_node = true;
         }
       } else {  // Follow line for set distance
         ReadEncoderDist();
-        if ((abs(dist_traveled) >= abs(dist_final)) || (t > 0.5 && last_state == 'b' && (m1_current > 100 || m2_current > 100))) {
+        if ((last_state != 'b' && abs(dist_traveled) >= abs(dist_final)) || (t > 1 && last_state == 'b' && (m1_current > 90 || m2_current > 90))) {
           md.setSpeeds(0, 0);
-          dump_dist_upper = 13;
+          dump_dist_upper = 12;
           line_follow_speed = line_speed;
           next_node = true;
         }
@@ -162,6 +157,7 @@ void Travel(void) {
 
     // Distance Sensor Straight Line
     case 'r':
+
       if (new_action) {
         dist_final = directions.head->final_val[0];
         ResetTravelVars();
@@ -176,20 +172,27 @@ void Travel(void) {
       } else {
         DistSenseLeft();
       }
-      Serial.print(dist_actualf);
-      Serial.print('\t');
-      Serial.println(dist_final);
       if (last_state == 'e') {  // Control speed based on distance from chassis
-        line_speed = line_base + dump_KP * (dist_actualf - dist_final);
+        speed_dist_error = speed_alpha*(dist_actualf - dist_final) + (1-speed_alpha)*speed_dist_error;
+        line_speed = line_base + dump_KP * speed_dist_error;
         line_speed = constrain(line_speed, line_base, line_follow_speed);
       }
       StraightRange();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+100 && (m1_current > max_current && m2_current > max_current))) {
+      Serial.print(dist_actualf);
+      Serial.print('\t');
+      Serial.print(dist_final);
+      Serial.print('\t');
+      Serial.print(line_speed);
+      Serial.print('\t');
+      Serial.print(m1_current);
+      Serial.print('\t');
+      Serial.println(m2_current);
+      if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+50 && t > 1 && (m1_current > max_current && m2_current > max_current))) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
-        dump_dist_upper = 13;
+        dump_dist_upper = 12;
         next_node = true;
       }
       break;
