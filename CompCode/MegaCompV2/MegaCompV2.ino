@@ -259,9 +259,9 @@ int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 4.2;       // cm
 float wheel_dist = 18.7;        // cm
-float turn_time = 1;          // s
-float arc_time_big = 1.5;      // s
-float arc_time_little = 0.75;    // s
+float turn_time = 0.8;          // s
+float arc_time_big = 1.5;       // s
+float arc_time_little = 0.75;   // s
 float ir_to_wheel = 5;          // cm
 float ir_to_wheel_time = 0.3;   // s
 int max_current = 100;          // mA
@@ -300,11 +300,11 @@ float arm_t_final = 1;
 float arm_tol = 0.1;
 
 // Shovel Servo Vars
-int shov_max_angle = 20; // 20
-int shov_low_dump_angle = 80; // 80
+int shov_max_angle = 20;
+int shov_low_dump_angle = 75;
 int shov_dump_angle = 0;
-int shov_button_angle = 90;
-int shov_collect_angle = 120; // 120
+int shov_button_angle = 80;
+int shov_collect_angle = 120;
 float shov_angle_des;
 int shov_angle_start;
 int shov_angle_final;
@@ -316,7 +316,7 @@ int color_samples_sense = 10;
 float color_alpha = 0.01;
 float color_sense_alpha = 0.5;
 int color_delay_time = 10;
-float block_wait_time = 1.5;
+int block_wait_time = 1.5;
 bool is_color = false;
 long red_sum = 0;
 long green_sum = 0;
