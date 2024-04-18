@@ -13,14 +13,11 @@ float t_start;
 float delta_T;
 
 // Control Vars
-float KP = 95.7;
-// float KP = 80;
-float KI = 900;
-float KD = 1.78;
-// float KD = 3;
+float KP = 56;
+float KI = 500;
+float KD = 1.56;
 float error1, d_error1, integral_error1;
 float error2, d_error2, integral_error2;
-// int straight_kp = 125;
 int m1s, m2s;
 float V1, V2;
 
@@ -44,7 +41,7 @@ int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 4.2;      // cm
 float wheel_dist = 18.7;       // cm
-float turn_time = 1.5;         // s
+float turn_time = 1;         // s
 
 // Encoder Vars
 int encoder1_count;
@@ -111,8 +108,9 @@ void setup() {
   Serial.begin(9600);
   md.init();
   md.enableDrivers();
+
   // Turn
-  turn_angle_final = -PI/2;
+  turn_angle_final = PI/2;
   time_final = turn_time;
   theta1_final = turn_angle_final * (wheel_dist / 2) / wheel_radius;
   theta2_final = -turn_angle_final * (wheel_dist / 2) / wheel_radius;

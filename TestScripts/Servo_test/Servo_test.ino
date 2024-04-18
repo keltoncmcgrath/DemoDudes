@@ -54,8 +54,8 @@ void setup() {
   arm_t_final = 1;
   arm_angle_final = 20;
 
-  arm_servo.write(25);
-  shovel_servo.write(120);
+  arm_servo.write(93);
+  shovel_servo.write(93);
 }
 
 void loop() {

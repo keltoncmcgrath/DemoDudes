@@ -2,7 +2,8 @@ void ReadBlockInfo(void) {
   while (true) {                                        // Wait until all blocks are read and compared
     if (Serial2.available() >= 2) {                     // If possible start flag and number of blocks are recieved
       if (Serial2.read() == flag) {                     // If first byte is start flag
-        num_blocks = Serial2.read() - '0';              // Read number of blocks
+        //num_blocks = Serial2.read() - '0';              // Read number of blocks
+        num_blocks = Serial2.readStringUntil(flag).toInt();
         while (true) {                                  // Wait until all data is recieved
           if (Serial2.available() >= num_blocks * 4) {  // If all data is present
             for (int i = 0; i < num_blocks; i++) {      // Iterate thorugh each block
@@ -32,6 +33,7 @@ void ReadBlockInfo(void) {
               } // end yellow for
               for (int j = 0; j < (sizeof(blue) / sizeof(struct block)); j++) {
                 if (read_block.face == blue[j].face && read_block.pos == blue[j].pos && read_block.elev == blue[j].elev) {
+                  Serial.println("Set to True");
                   blue[j].placed = true;
                   blue[j].color = read_block.color;
                 } // end if

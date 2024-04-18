@@ -6,6 +6,6 @@ void CollectBlock(void) {
   directions.AddTailNode('l', collect_dist, 75, 0, 'a', servo_home, 0.3);
   directions.AddTailNode('\0', 0, 0, 0, 's', shov_collect_angle, 0.01);
   directions.AddTailNode('d', -collect_dist, 1.5, 0, 'a', arm_collect_angle, 0.75);
-  directions.AddTailNode('\0', 0, 0, 0, 'a', 25, 0.05); // 30
+  directions.AddTailNode('\0', 0, 0, 0, 'a', 25, 0.07); // 30
   directions.AddTailNode('\0', 0, 0, 0, 'a', arm_collect_angle, 0.05); // 0.1
 }

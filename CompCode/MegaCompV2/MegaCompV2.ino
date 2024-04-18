@@ -227,7 +227,7 @@ struct block blue[4] = {
 };
 
 // Control Vars
-float dump_KP = 20;
+float dump_KP = 25;
 float KP = 56;
 float KI = 500;
 float KD = 1.56;
@@ -259,12 +259,12 @@ int counts_per_rev = 64;
 int gear_ratio = 131;
 float wheel_radius = 4.2;       // cm
 float wheel_dist = 18.7;        // cm
-float turn_time = 0.8;          // s
-float arc_time_big = 2;         // s
-float arc_time_little = 1.5;    // s
+float turn_time = 1;          // s
+float arc_time_big = 1.5;      // s
+float arc_time_little = 0.75;    // s
 float ir_to_wheel = 5;          // cm
 float ir_to_wheel_time = 0.3;   // s
-int max_current = 150;          // mA
+int max_current = 100;          // mA
 
 // Travel Vals
 float east_guide = 122;     // cm
@@ -277,7 +277,7 @@ float guide4 = 52;          // cm
 float guide5 = 59.5;        // cm
 float guide6 = 67.5;        // cm
 float next_pos_dist = 8;    // cm
-float collect_dist = 6;   // cm
+float collect_dist = 5.5;   // cm
 int line_follow_speed = 390;
 int line_base = 75;
 int line_speed = 390;
@@ -303,8 +303,7 @@ float arm_tol = 0.1;
 int shov_max_angle = 20; // 20
 int shov_low_dump_angle = 80; // 80
 int shov_dump_angle = 0;
-int shov_button_angle = 95;
-int shov_travel_angle = 110;
+int shov_button_angle = 90;
 int shov_collect_angle = 120; // 120
 float shov_angle_des;
 int shov_angle_start;
@@ -317,7 +316,7 @@ int color_samples_sense = 10;
 float color_alpha = 0.01;
 float color_sense_alpha = 0.5;
 int color_delay_time = 10;
-int block_wait_time = 2;
+float block_wait_time = 1.5;
 bool is_color = false;
 long red_sum = 0;
 long green_sum = 0;
@@ -339,9 +338,9 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][4];
 int color_ranges[4][3][2] = {
-  { { 594, 689 },   { 27, 98 },   { 2, 53 } },
-  { { 826, 910 }, { 623, 700 }, { 36, 109 } },
-  {   { 15, 88 },  { 59, 140 }, { 99, 199 } },
+  { { 576, 689 },   { 19, 98 },   { 0, 53 } },
+  { { 806, 910 }, { 610, 700 }, { 36, 109 } },
+  {   { 10, 88 },  { 50, 140 }, { 99, 199 } },
   {   { 0, 113 },   { 0, 126 },  { 0, 115 } }
 };  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
@@ -366,7 +365,7 @@ float den = 0;
 // Range Finder Vars
 float dist_alpha = 0.01;
 float dist_actual_alpha = 0.4;
-float dump_dist_upper = 13;
+float dump_dist_upper = 15;
 float dump_dist_lower;
 float dump_dist_lower_right = 11;
 float dump_dist_lower_left = 9.5;
@@ -411,7 +410,6 @@ void setup() {
   // Attatch Pins to Servo Objects
   arm_servo.attach(arm_servo_pin);
   shovel_servo.attach(shovel_servo_pin);
-  // shovel_servo.write(shov_max_angle);
 
   // Setup IR Array
   qtr.setTypeRC();
@@ -426,21 +424,21 @@ void setup() {
   pinMode(right_turn_pin, OUTPUT);
   pinMode(left_turn_pin, OUTPUT);
 
-  // // Check for Start Command and Read Block Info
-  // Serial.println("Ready For Signal...");
-  // shovel_servo.write(shov_max_angle);
-  // while (true) {
-  //   if (Serial2.available()) {
-  //     rc = Serial2.read();
-  //     if (rc == flag) {
-  //       Serial.println("START");
-  //       shovel_servo.write(shov_button_angle);
-  //       ReadBlockInfo();
-  //       break;
-  //     } // end if
-  //   } // end if
-  // } // end while
-  // delay(200);
+  // Check for Start Command and Read Block Info
+  Serial.println("Ready For Signal...");
+  shovel_servo.write(shov_max_angle);
+  while (true) {
+    if (Serial2.available()) {
+      rc = Serial2.read();
+      if (rc == flag) {
+        Serial.println("START");
+        shovel_servo.write(shov_button_angle);
+        ReadBlockInfo();
+        break;
+      } // end if
+    } // end if
+  } // end while
+  delay(200);
 }
 
 
@@ -487,7 +485,6 @@ void loop() {
         Serial.println(current_block.color);
         if (current_block.face != '\0') {
           GetDirections();
-          shovel_servo.write(shov_travel_angle);
           new_action = true;
           last_state = state;
           state = 'd';
@@ -496,7 +493,7 @@ void loop() {
         }
       }
       // Else collect another block
-      if (t > block_wait_time) {
+      if (t > block_wait_time + float(random(0, 100))/100) {
         if (current_block.color == '\0'){
           current_block.color = 'y';
         } else if (current_block.color == 'x') {

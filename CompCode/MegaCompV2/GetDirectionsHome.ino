@@ -17,7 +17,7 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', servo_home, 2);
         directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 1);
         directions.AddTailNode('o', -PI / 2, arc_time_big, arc_radius);
-        directions.AddTailNode('d', -20, 1);
+        directions.AddTailNode('d', -20, 0.5);
         break;
 
       // South Face
@@ -62,7 +62,7 @@ void GetDirectionsHome(void) {
         directions.AddTailNode('k', line_follow_speed, 0, 0, 'a', servo_home, 2);
         directions.AddTailNode('d', abs(arc_radius) + wheel_dist / 2 + ir_to_wheel, 1);
         directions.AddTailNode('o', PI / 2, arc_time_big, arc_radius);
-        directions.AddTailNode('d', -15, 1);
+        directions.AddTailNode('d', -20, 0.5);
         break;
 
       // East face

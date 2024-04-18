@@ -1,5 +1,12 @@
 void Travel(void) {
   // Traveling actions
+  if (new_action) {
+    Serial.print(directions.head->action[0]);
+    Serial.print('\t');
+    Serial.print(directions.head->action[1]);
+    Serial.print('\t');
+    Serial.println(state);
+  }
   switch (directions.head->action[0]) {
     // Drive straight for a distance
     case 'd':
@@ -27,7 +34,7 @@ void Travel(void) {
       TimedDrive();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && m1_current == 0 && m2_current == 0) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
@@ -65,7 +72,12 @@ void Travel(void) {
 
       // Action
       TimedDrive();
-      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
+      m1_current = md.getM1CurrentMilliamps();
+      m2_current = md.getM2CurrentMilliamps();
+      Serial.print(theta1);
+      Serial.print('\t');
+      Serial.print(theta1_final);
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && m1_current == 0 && m2_current == 0) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
@@ -109,7 +121,9 @@ void Travel(void) {
 
       // Action
       TimedDrive();
-      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final)) {
+      m1_current = md.getM1CurrentMilliamps();
+      m2_current = md.getM2CurrentMilliamps();
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && m1_current == 0 && m2current == 0) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
@@ -180,15 +194,6 @@ void Travel(void) {
       StraightRange();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      Serial.print(dist_actualf);
-      Serial.print('\t');
-      Serial.print(dist_final);
-      Serial.print('\t');
-      Serial.print(line_speed);
-      Serial.print('\t');
-      Serial.print(m1_current);
-      Serial.print('\t');
-      Serial.println(m2_current);
       if ((t > 0.1 && dist_actualf <= dist_final) || (last_state == 'e' && current_block.elev == 'l' && line_speed < line_base+50 && t > 1 && (m1_current > max_current && m2_current > max_current))) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
