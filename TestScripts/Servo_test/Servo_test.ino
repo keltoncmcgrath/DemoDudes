@@ -32,24 +32,26 @@ void setup() {
 
   arm_servo.attach(arm_pin);
   shovel_servo.attach(shovel_pin);
+  
 
-  shovel_servo.write(servo_home);
-  arm_servo.write(93);
-  shov_angle_start = shovel_servo.read();
-  shov_t_final = 0.01;
-  shov_angle_final = 120;
-  Serial.println("Start...");
-  t_begin = millis();
+  shovel_servo.write(93);
+  // arm_servo.write(20);
+  // shov_angle_start = shovel_servo.read();
+  // shov_t_final = 0.01;
+  // shov_angle_final = 120;
+  // Serial.println("Start...");
+  // t_begin = millis();
 }
 
 void loop() {
-  ShovelServo();
-  if(shovel_servo.read() >= shov_angle_final && first_time) {
-    t_done = millis();
-    Serial.print("Done! Finished in: ");
-    Serial.print('\t');
-    Serial.println((t_done-t_begin)/1000);
-    first_time = false;
-  }
-  // arm_servo.write(93);
+  // ShovelServo();
+  // if(shovel_servo.read() >= shov_angle_final && first_time) {
+  //   t_done = millis();
+  //   Serial.print("Done! Finished in: ");
+  //   Serial.print('\t');
+  //   Serial.println((t_done-t_begin)/1000);
+  //   first_time = false;
+  // }
+  // // arm_servo.write(93);
+
 }

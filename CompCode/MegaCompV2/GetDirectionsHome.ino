@@ -22,7 +22,7 @@ void GetDirectionsHome(void) {
 
       // South Face
       case 's':
-        directions.AddTailNode('d', -6, 0.5);
+        directions.AddTailNode('d', -7, 0.8);
         directions.AddTailNode('t', -PI / 2, turn_time);
         if (current_block.pos == '1') {
           directions.AddTailNode('d', guide1, 1.5, 0, 'a', servo_home, 2);
@@ -32,7 +32,7 @@ void GetDirectionsHome(void) {
           directions.AddTailNode('d', guide3, 2, 0, 'a', servo_home, 2);
         }
         directions.AddTailNode('t', PI / 2, turn_time);
-        directions.AddTailNode('d', north_guide, 1);
+        directions.AddTailNode('d', north_guide-10, 0.8);
         break;
 
       // West Face

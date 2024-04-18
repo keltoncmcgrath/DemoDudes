@@ -24,38 +24,36 @@ void loop() {
     // Read num blocks on chassis
     while (true) {                          // Wait for user input of number of blocks (atoi if read as char)
       if (Serial.available() >= 2 && Serial.read() == flag) {   // The first bit corresponds to the flag
-        num_blocks = Serial.read() - '0';   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
+        num_blocks = Serial.readStringUntil(flag).toInt();   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
         break;
       } // end if
     } // end while
     
     // Read block data from serial monitor
-    char block_data[4 * num_blocks + 2] = {};  // Create array to store block data
+    char block_data[4 * num_blocks + 4] = {};  // Create array to store block data
     block_data[0] = flag;
+    block_data[1] = String(num_blocks)[0];
+    block_data[2] = String(num_blocks)[1];
+    block_data[3] = flag;
     for (int i = 0; i < num_blocks; i++) {    // Loop over number of blockes reported
       while (true) {                    // Wait for user input of block data
         if (Serial.available() >= 4) {  // Read data if available
-          block_data[i * 4 + 1] = Serial.read();
-          block_data[i * 4 + 2] = Serial.read();
-          block_data[i * 4 + 3] = Serial.read();
           block_data[i * 4 + 4] = Serial.read();
+          block_data[i * 4 + 5] = Serial.read();
+          block_data[i * 4 + 6] = Serial.read();
+          block_data[i * 4 + 7] = Serial.read();
           break;
         } // end if
       } // end while
       if (i == num_blocks - 1) {  // Add 'null character' at last index to signal end of array
-        block_data[i * 4 + 5] = '\0';
+        block_data[i * 4 + 8] = '\0';
       } // end if
     } // end for
 
     // Send block data to mega
-    mySerial.write(flag);
-    for (int i = 0; i < num_blocks * 4 + 2; i++) {
+    for (int i = 0; i < num_blocks * 4 + 4; i++) {
       mySerial.write(block_data[i]);
       Serial.write(block_data[i]);
-      if (i == 0) {
-        mySerial.write(num_blocks + '0');
-        Serial.write(num_blocks + '0');
-      } // end if
     } // end for
     Serial.println();
     Serial.println(F("Enter Block Info String:"));
