@@ -338,10 +338,10 @@ int green_calibration_vals[color_samples];
 int blue_calibration_vals[color_samples];
 int color_vals[color_samples][4];
 int color_ranges[4][3][2] = {
-  { { 576, 689 },   { 19, 98 },   { 0, 53 } },
-  { { 806, 910 }, { 610, 700 }, { 36, 109 } },
-  {   { 10, 88 },  { 50, 140 }, { 99, 199 } },
-  {   { 0, 113 },   { 0, 126 },  { 0, 115 } }
+  { { 557, 689 },   { 16, 98 },   { 0, 53 } },
+  { { 770, 910 }, { 581, 700 }, { 31, 109 } },
+  {   { 10, 88 },  { 46, 140 }, { 89, 199 } },
+  {   { 0, 210 },   { 0, 215 },  { 0, 210 } }
 };  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
