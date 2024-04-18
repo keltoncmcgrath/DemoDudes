@@ -61,19 +61,20 @@ void GetDirections(void) {
         directions.AddTailNode('t', PI / 2, turn_time);
         if (current_block.pos == '4') {
           dist_right = false;
-          dump_dist_upper -= 5;
+          dump_dist_upper -= 10;
           dump_dist_lower = dump_dist_lower_left;
           directions.AddTailNode('j', 300);
           directions.AddTailNode('d', -next_pos_dist + ir_to_wheel+2, ir_to_wheel_time);
         } else if (current_block.pos == '5') {
           dist_right = true;
+          dump_dist_upper -= 3;
           dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', line_follow_speed);
           directions.AddTailNode('d', ir_to_wheel, ir_to_wheel_time);
         } else if (current_block.pos == '6') {
           dist_right = true;
-          dump_dist_lower = dump_dist_lower_right;
           dump_dist_upper = 18;
+          dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', line_follow_speed);
           directions.AddTailNode('d', next_pos_dist + ir_to_wheel-4, ir_to_wheel_time+0.4);
         }
@@ -201,13 +202,13 @@ void GetDirections(void) {
         }
         if (current_block.pos == '4') {
           dist_right = false;
-          dump_dist_upper -= 5;
+          dump_dist_upper -= 10;
           dump_dist_lower = dump_dist_lower_left;
           directions.AddTailNode('j', 300);
           directions.AddTailNode('d', -next_pos_dist + ir_to_wheel+2, ir_to_wheel_time);
         } else if (current_block.pos == '5') {
           dist_right = true;
-          dump_dist_upper -= 2;
+          dump_dist_upper -= 3;
           dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', line_follow_speed);
           directions.AddTailNode('d', ir_to_wheel, ir_to_wheel_time);

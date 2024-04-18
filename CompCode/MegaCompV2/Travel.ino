@@ -123,7 +123,7 @@ void Travel(void) {
       TimedDrive();
       m1_current = md.getM1CurrentMilliamps();
       m2_current = md.getM2CurrentMilliamps();
-      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && m1_current == 0 && m2current == 0) {
+      if (abs(theta1) >= abs(theta1_final) && abs(theta2) >= abs(theta2_final) && m1_current == 0 && m2_current == 0) {
         md.setSpeeds(0, 0);
         digitalWrite(right_turn_pin, LOW);
         digitalWrite(left_turn_pin, LOW);
