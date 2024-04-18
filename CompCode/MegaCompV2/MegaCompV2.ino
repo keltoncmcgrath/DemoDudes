@@ -340,8 +340,8 @@ int color_vals[color_samples][4];
 int color_ranges[4][3][2] = {
   { { 557, 689 },   { 16, 98 },   { 0, 53 } },
   { { 770, 910 }, { 581, 700 }, { 31, 109 } },
-  {   { 10, 88 },  { 46, 140 }, { 89, 199 } },
-  {   { 0, 210 },   { 0, 215 },  { 0, 210 } }
+  {  { 10, 100 },  { 46, 170 }, { 89, 210 } },
+  {   { 0, 350 },   { 0, 350 },  { 0, 350 } }
 };  // Rows: ranges for each block (rybx)   Cols: Ranges for each LED (rgb)
 
 // Line Following Vars
@@ -470,6 +470,7 @@ void loop() {
 
     // Color Sense
     case 'c':
+      Serial.println(current_block.color);
       t = (millis() - t_start) / 1000;
       // Sense Color and change state
       if(current_block.color == '\0' || current_block.color == 'x') {

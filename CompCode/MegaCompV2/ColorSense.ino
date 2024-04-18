@@ -34,14 +34,16 @@ void ColorSense(){
           is_color = true;
           if(i==0){
             current_block.color = 'r';
-          }
-          else if(i==1){
+            break;
+          } else if(i==1){
             current_block.color = 'y';
-          }
-          else if (i == 2){
+            break;
+          } else if (i == 2){
             current_block.color = 'b';
+            break;
           } else {
             current_block.color = 'x';
+            break;
           }
         }
       }
