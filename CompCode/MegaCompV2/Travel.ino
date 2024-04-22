@@ -163,6 +163,7 @@ void Travel(void) {
         if ((last_state != 'b' && abs(dist_traveled) >= abs(dist_final)) || (t > 1 && last_state == 'b' && (m1_current > 90 || m2_current > 90))) {
           md.setSpeeds(0, 0);
           dump_dist_upper = 12;
+          max_current = 100;
           line_follow_speed = line_speed;
           next_node = true;
         }
@@ -198,6 +199,7 @@ void Travel(void) {
         md.setSpeeds(0, 0);
         line_speed = line_follow_speed;
         dump_dist_upper = 12;
+        max_current = 100;
         next_node = true;
       }
       break;

@@ -2,14 +2,16 @@ void ReadBlockInfo(void) {
   while (true) {                                            // Wait until all blocks are read and compared
     if (Serial2.available() >= 3) {                         // If possible start flag and number of blocks are recieved
       num_blocks = Serial2.readStringUntil(flag).toInt(); // Read number of blocks
-      Serial.println(num_blocks);
       while (true) {                                      // Wait until all data is recieved
-        if (Serial2.available() >= num_blocks * 4) {      // If all data is present
-          for (int i = 0; i < num_blocks; i++) {          // Iterate thorugh each block
+        if (Serial2.available() >= num_blocks * 4-5) {      // If all data is present
+          delay(20);
+          for (int i = 0; i < num_blocks; i++) {
+            Serial.println(read_block.face);          // Iterate thorugh each block
             read_block.face = Serial2.read();             // Read face value
             read_block.pos = Serial2.read();              // Read position value
             read_block.elev = Serial2.read();             // Read elevation value
             read_block.color = Serial2.read();            // Read Block Color
+            Serial.println("hello");
 
             // Cross off read block from desired block position array
             for (int j = 0; j < (sizeof(red1) / sizeof(struct block)); j++) {                                                    // Loop over length of array

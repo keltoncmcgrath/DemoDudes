@@ -24,14 +24,8 @@ void loop() {
   while(Serial.available()){
     // Read num blocks on chassis
     while (true) {                          // Wait for user input of number of blocks (atoi if read as char)
-<<<<<<< HEAD
-      if (Serial.available() >= 4 && Serial.read() == flag) {   // The first bit corresponds to the flag
-        //num_blocks = Serial.read() - '0';   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
-        num_blocks = Serial.readStringUntil(flag).toInt();
-=======
       if (Serial.available() >= 2 && Serial.read() == flag) {   // The first bit corresponds to the flag
         num_blocks = Serial.readStringUntil(flag).toInt();   // Serial.read() reads char into an ascii value, subtract ascii for '0' to convert to actual num
->>>>>>> revamp
         break;
       } // end if
     } // end while

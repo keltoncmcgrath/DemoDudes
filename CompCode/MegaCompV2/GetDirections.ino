@@ -76,7 +76,11 @@ void GetDirections(void) {
           dump_dist_upper = 18;
           dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', line_follow_speed);
-          directions.AddTailNode('d', next_pos_dist + ir_to_wheel-4, ir_to_wheel_time+0.4);
+          if (current_block.elev == 'l') {
+            directions.AddTailNode('d', next_pos_dist + ir_to_wheel-1.5, ir_to_wheel_time+0.4);
+          } else {
+            directions.AddTailNode('d', next_pos_dist + ir_to_wheel-4, ir_to_wheel_time+0.4);
+          }
         }
         directions.AddTailNode('t', PI / 2, turn_time);
         break;
@@ -139,7 +143,7 @@ void GetDirections(void) {
           dump_dist_upper += 5;
           dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', 300);
-          directions.AddTailNode('d', -next_pos_dist + ir_to_wheel-1, ir_to_wheel_time);
+          directions.AddTailNode('d', -next_pos_dist + ir_to_wheel, ir_to_wheel_time);
         } else if (current_block.pos == '5') {
           dist_right = true;
           dump_dist_lower = dump_dist_lower_right-2;
@@ -208,7 +212,8 @@ void GetDirections(void) {
         if (current_block.pos == '4') {
           dist_right = false;
           dump_dist_upper += 4;
-          dump_dist_lower = dump_dist_lower_left - 2;
+          max_current -= 5;
+          dump_dist_lower = dump_dist_lower_left - 1;
           directions.AddTailNode('j', 300);
           directions.AddTailNode('d', -next_pos_dist + ir_to_wheel+2, ir_to_wheel_time);
         } else if (current_block.pos == '5') {
@@ -222,7 +227,7 @@ void GetDirections(void) {
           dump_dist_upper = 18;
           dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', line_follow_speed);
-          directions.AddTailNode('d', next_pos_dist + ir_to_wheel-4, ir_to_wheel_time+0.4);
+          directions.AddTailNode('d', next_pos_dist + ir_to_wheel-3.5, ir_to_wheel_time+0.4);
         }
         if(current_block.elev == 'l') {
           directions.AddTailNode('t', PI / 2, turn_time, 0, 's', shov_low_dump_angle, turn_time);
@@ -295,7 +300,7 @@ void GetDirections(void) {
           dump_dist_lower += 5;
           dump_dist_lower = dump_dist_lower_right;
           directions.AddTailNode('j', 300);
-          directions.AddTailNode('d', -next_pos_dist + ir_to_wheel-1, ir_to_wheel_time);
+          directions.AddTailNode('d', -next_pos_dist + ir_to_wheel, ir_to_wheel_time);
         } else if (current_block.pos == '5') {
           dist_right = true;
           dump_dist_lower = dump_dist_lower_right-2;
